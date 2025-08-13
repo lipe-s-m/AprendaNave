@@ -1,0 +1,30 @@
+@use "./../../../scss/variables";
+
+.dark {
+  &.primary {
+    background-color: #ac87c5;
+    color: #fffffff5;
+  }
+  &.secondary {
+    background-color: #faf3ff;
+    color: #090116f5;
+  }
+}
+
+.large {
+  width: 26rem;
+  min-height: 4.2rem;
+  font-size: variables.$fonte-tamanho-p;
+  font-weight: 400;
+  text-transform: uppercase;
+  border-radius: variables.$borda-radius-card;
+  border: none;
+}
+button {
+  cursor: pointer;
+
+  &:hover {
+    transition: ease-in-out 0.1s;
+    opacity: 0.92;
+  }
+}
