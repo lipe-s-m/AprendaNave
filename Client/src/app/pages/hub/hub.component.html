@@ -1,0 +1,15 @@
+<div class="container">
+  <h2>Eu quero aprender...</h2>
+
+  <ul>
+    <li *ngFor="let trilha of trilhas">
+      <p>{{trilha.nome}}</p>
+      <img src={{trilha.imagem}} alt="imagem da trilha {{trilha.nome}}">
+    </li>
+  </ul>
+
+  <p>Aproveite 100% de nossa plataforma entrando em sua conta</p>
+
+  <app-button buttonText='Entrar na Sua Conta' buttonSize="large" buttonLevel="primary" buttonTheme="dark" buttonType="button" [buttonDisabled]=false (click)="entrarComoUsuario()" />
+
+</div>
