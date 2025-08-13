@@ -40,6 +40,13 @@
         font-weight: 500;
         opacity: 0.9;
       }
+
+      &:hover {
+        cursor: pointer;
+        opacity: 0.95;
+        transition: ease-in-out 0.16s;
+        border: 0.24rem solid variables.$cor-button-primary-dark;
+      }
     }
   }
 }
