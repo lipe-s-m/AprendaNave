@@ -1,0 +1,61 @@
+<div class="container">
+
+  <header>
+    <span (click)="handleBackToMenu()">x</span>
+    <app-button *ngIf="!signInFormIsActive; else elseBlockHeader" buttonText="CADASTRAR" buttonSize="small" buttonTheme="dark" buttonLevel="secondary" buttonType="button" (click)="handleChangeForm()" />
+
+    <ng-template #elseBlockHeader>
+      <app-button buttonText="ENTRAR" buttonSize="small" buttonTheme="dark" buttonLevel="secondary" buttonType="button" (click)="handleChangeForm()" />
+    </ng-template>
+  </header>
+  <div class="content">
+    <section class="login" *ngIf="!signInFormIsActive; else elseBlock">
+      <h1>Entrar</h1>
+      <form (ngSubmit)="submit()">
+        <div class="inputs">
+          <app-input placeholder="Email ou nome de usuário" inputName="email" inputSize="large" inputType="text" />
+          <app-input placeholder="Senha" inputName="password" inputSize="large" inputType="password" />
+        </div>
+        <app-button buttonText=" Entrar" buttonSize="large" buttonTheme="dark" buttonType="submit" buttonLevel="primary" />
+      </form>
+      <span>
+        <hr>
+        <p>OU</p>
+        <hr>
+      </span>
+      <div class="outros-meios-login">
+        <app-button buttonText="Entrar com Facebook" buttonSize="large" buttonType="submit" buttonBackgroundColor="blue" button />
+        <app-button buttonText="Entrar com google " buttonSize="large" buttonType="submit" buttonBackgroundColor="white" buttonTextColor="black" button />
+      </div>
+    </section>
+
+    <!-- cadastro -->
+    <ng-template #elseBlock>
+      <section class="login">
+        <h1>Cadastrar</h1>
+        <form (ngSubmit)="submit()" [formGroup]="formSignIn">
+          <div class="inputs">
+            <app-input placeholder="Nome de usuário" inputName="email" inputSize="large" inputType="text" formControlName="nomeDeUsuario" />
+
+            <app-input placeholder="Email" inputName="email" inputSize="large" inputType="email" formControlName="email" />
+            <p *ngIf="formSignIn.controls.email.invalid && formSignIn.controls.email.touched" [ngStyle]="{'color': 'red'}">Insira um email válido</p>
+            <app-input placeholder="Senha" inputName="password" inputSize="large" inputType="password" formControlName="senha" />
+            <app-input placeholder="Confirmar senha" inputName="passwordConfirm" inputSize="large" inputType="password" formControlName="confirmarSenha" />
+            <p *ngIf="formSignIn.hasError('passwordNotMatch') && formSignIn.touched" [ngStyle]="{'color': 'red'}">As senhas não coincidem</p>
+          </div>
+          <app-button buttonText="Cadastrar" buttonSize="large" buttonTheme="dark" buttonType="submit" buttonLevel="primary" [buttonDisabled]="formSignIn.invalid" />
+        </form>
+        <span>
+          <hr>
+          <p>OU</p>
+          <hr>
+        </span>
+        <div class="outros-meios-login">
+          <app-button buttonText="Entrar com Facebook" buttonSize="large" buttonType="submit" buttonBackgroundColor="blue" button />
+          <app-button buttonText="Entrar com google " buttonSize="large" buttonType="submit" buttonBackgroundColor="white" buttonTextColor="black" button />
+        </div>
+      </section>
+    </ng-template>
+    <p class="termos">Ao se cadastrar, você concorda com nossos <u>Termos de Serviço</u> e <u>Política de Privacidade</u>.</p>
+  </div>
+</div>

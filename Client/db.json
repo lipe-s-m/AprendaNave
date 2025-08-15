@@ -1,0 +1,5 @@
+{
+  "usuarios": [
+    { "id": 0, "nome": "Teste 1", "cursos": [{ "nomeCurso": "CursoTeste" }] }
+  ]
+}

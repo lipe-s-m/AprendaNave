@@ -2,29 +2,62 @@
 
 .dark {
   &.primary {
-    background-color: #ac87c5;
+    background-color: variables.$cor-button-primary-dark;
     color: #fffffff5;
+    &:disabled {
+      background-color: rgb(133, 127, 133);
+    }
   }
   &.secondary {
-    background-color: #faf3ff;
-    color: #090116f5;
+    background-color: transparent;
+    color: variables.$cor-button-secundary-dark;
+    border: 0.3rem solid variables.$cor-button-secundary-dark;
+
+    &:hover {
+      background-color: variables.$cor-button-secundary-dark;
+      color: #120116f5;
+      border: none;
+    }
   }
 }
-
-.large {
-  width: 26rem;
+.small {
+  width: 14rem;
+  min-height: 4rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-radius: variables.$borda-radius;
+  border: none;
+}
+.medium {
+  width: 20rem;
   min-height: 4.2rem;
   font-size: variables.$fonte-tamanho-p;
-  font-weight: 400;
+  font-weight: 600;
   text-transform: uppercase;
   border-radius: variables.$borda-radius-card;
   border: none;
 }
+.large {
+  width: 100%;
+  min-width: 26rem;
+  // max-width: 40rem;
+  min-height: 4.8rem;
+  font-size: variables.$fonte-tamanho-p;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-radius: variables.$borda-radius-card;
+  border: none;
+}
+
 button {
   cursor: pointer;
 
   &:hover {
-    transition: ease-in-out 0.1s;
+    transition: ease-in-out 0.2s;
     opacity: 0.92;
+  }
+  &:disabled {
+    cursor: not-allowed;
   }
 }

@@ -1,15 +1,21 @@
 @use "app/scss/variables";
 
-html {
+html,
+body {
   font-size: 62.5%;
-  background-color: variables.$cor-background-dark;
+  background-color: variables.$cor-header-dark;
+  min-height: 100dvh;
 }
 
 * {
-  font-family: variables.$fonte-principal, sans-serif;
+  // font-family: "Poppins", sans-serif;
+  font-family: "Nunito", sans-serif;
+  // font-family: variables.$fonte-principal, sans-serif;
+  color: #fff;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  outline: none;
 }
 
 p {

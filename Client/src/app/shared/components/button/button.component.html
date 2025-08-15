@@ -1,1 +1,3 @@
-<button [ngClass]="[buttonTheme, buttonLevel, buttonSize]">{{buttonText}}</button>
+<button [ngClass]="[buttonTheme, buttonLevel, buttonSize]" [style.background-color]="buttonBackgroundColor && buttonBackgroundColor" [style.color]="buttonTextColor && buttonTextColor" [disabled]="buttonDisabled">
+  {{buttonText}}
+</button>

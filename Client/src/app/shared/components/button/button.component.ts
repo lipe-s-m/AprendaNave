@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-button',
@@ -14,5 +14,7 @@ export class ButtonComponent {
   @Input() buttonLevel: 'primary' | 'secondary' = 'primary';
   @Input() buttonTheme: 'light' | 'dark' = 'light';
   @Input() buttonType: 'submit' | 'button' = 'button';
-  @Input() buttonDisabled = false;
+  @Input() buttonDisabled: boolean = false;
+  @Input() buttonBackgroundColor?: string;
+  @Input() buttonTextColor?: string;
 }
