@@ -11,7 +11,7 @@
   <div class="content">
     <section class="login" *ngIf="!signInFormIsActive; else elseBlock">
       <h1>Entrar</h1>
-      <form (ngSubmit)="submit()">
+      <form (ngSubmit)="handleLoginFormSubmit()">
         <div class="inputs">
           <app-input placeholder="Email ou nome de usuário" inputName="email" inputSize="large" inputType="text" />
           <app-input placeholder="Senha" inputName="password" inputSize="large" inputType="password" />
@@ -33,7 +33,7 @@
     <ng-template #elseBlock>
       <section class="login">
         <h1>Cadastrar</h1>
-        <form (ngSubmit)="submit()" [formGroup]="formSignIn">
+        <form (ngSubmit)="handleSignInFormSubmit()" [formGroup]="formSignIn">
           <div class="inputs">
             <app-input placeholder="Nome de usuário" inputName="email" inputSize="large" inputType="text" formControlName="nomeDeUsuario" />
 
@@ -51,8 +51,8 @@
           <hr>
         </span>
         <div class="outros-meios-login">
-          <app-button buttonText="Entrar com Facebook" buttonSize="large" buttonType="submit" buttonBackgroundColor="blue" button />
-          <app-button buttonText="Entrar com google " buttonSize="large" buttonType="submit" buttonBackgroundColor="white" buttonTextColor="black" button />
+          <app-button buttonText="Entrar com Facebook" buttonSize="large" buttonType="submit" buttonBackgroundColor="blue" />
+          <app-button buttonText="Entrar com google " buttonSize="large" buttonType="submit" buttonBackgroundColor="white" buttonTextColor="black" />
         </div>
       </section>
     </ng-template>

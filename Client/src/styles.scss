@@ -4,7 +4,12 @@ html,
 body {
   font-size: 62.5%;
   background-color: variables.$cor-header-dark;
-  min-height: 100dvh;
+  height: 100%;
+}
+app-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 * {

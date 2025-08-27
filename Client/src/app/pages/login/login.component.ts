@@ -45,18 +45,19 @@ export class LoginComponent {
     },
     { validators: passwordMatchValidator }
   );
-  submit() {
+
+  handleLoginFormSubmit() {
     alert('suvmitou');
+  }
+  handleSignInFormSubmit() {
+    console.log(this.formSignIn.value);
   }
   handleChangeForm() {
     this.signInFormIsActive = !this.signInFormIsActive;
   }
   handleBackToMenu() {
-    console.log(this.formSignIn.value);
-
-    // this.formSignIn.reset();
+    this.formSignIn.reset();
     this.router.navigate(['']);
-    console.log(this.formSignIn.value);
   }
 }
 
