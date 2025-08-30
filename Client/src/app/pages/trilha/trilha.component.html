@@ -1,0 +1,28 @@
+<div class="trilha-container" *ngIf="trilha; else notFound">
+  <header class="trilha-header">
+    <button class="back" (click)="goBack()">← Voltar</button>
+    <div class="trilha-info">
+      <h1>{{ trilha.nome }}</h1>
+      <p class="descricao">{{ trilha.descricao }}</p>
+    </div>
+  </header>
+
+  <section class="modulos-section">
+    <h2>Módulos ({{ trilha.modulos }})</h2>
+    <div class="modulos-grid">
+      <div class="modulo-card" *ngFor="let i of [].constructor(trilha.modulos); let idx = index">
+        <div class="modulo-number">{{ idx + 1 }}</div>
+        <h3 class="modulo-title">Módulo {{ idx + 1 }}</h3>
+        <p class="modulo-description">Conteúdo do módulo {{ idx + 1 }}</p>
+        <button class="start-btn">Iniciar</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<ng-template #notFound>
+  <div class="notfound">
+    <h2>Trilha não encontrada</h2>
+    <button class="back-btn" (click)="goBack()">Voltar para Home</button>
+  </div>
+</ng-template>

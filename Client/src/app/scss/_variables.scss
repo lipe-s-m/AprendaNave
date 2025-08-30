@@ -1,3 +1,53 @@
+// Variáveis para o tema escuro (padrão)
+:root {
+  --background-primary: #0d1117;
+  --background-secondary: #161b22;
+  --background-tertiary: #21262d;
+  --text-primary: #e1e1e6;
+  --text-secondary: #c9d1d9;
+  --text-muted: #8b949e;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --accent-primary: #4EA8DE;
+  --accent-secondary: #5965e0;
+  --success-color: #00875F;
+  --error-color: #F75A68;
+  --warning-color: #FBA94C;
+}
+
+// Tema claro
+.light-theme {
+  --background-primary: #ffffff;
+  --background-secondary: #f6f8fa;
+  --background-tertiary: #ffffff;
+  --text-primary: #24292f;
+  --text-secondary: #57606a;
+  --text-muted: #656d76;
+  --border-color: rgba(27, 31, 36, 0.15);
+  --accent-primary: #0969da;
+  --accent-secondary: #9972e0;
+  --success-color: #1a7f37;
+  --error-color: #d1242f;
+  --warning-color: #9a6700;
+}
+
+// Tema escuro (explícito)
+.dark-theme {
+  --background-primary: #0d1117;
+  --background-secondary: #161b22;
+  --background-tertiary: #21262d;
+  --text-primary: #e1e1e6;
+  --text-secondary: #c9d1d9;
+  --text-muted: #8b949e;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --accent-primary: #a7c;
+  --accent-secondary: #f0dffc;
+
+  --success-color: #00875F;
+  --error-color: #F75A68;
+  --warning-color: #FBA94C;
+}
+
+// Cores antigas (mantidas para compatibilidade)
 $cor-background-light: #f0f8ff;
 $cor-background-dark: #161b50;
 $cor-header-dark: #0c1032;

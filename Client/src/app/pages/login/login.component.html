@@ -11,12 +11,18 @@
   <div class="content">
     <section class="login" *ngIf="!signInFormIsActive; else elseBlock">
       <h1>Entrar</h1>
-      <form (ngSubmit)="handleLoginFormSubmit()">
+      <form (ngSubmit)="handleLoginFormSubmit()" [formGroup]="formLogin">
         <div class="inputs">
-          <app-input placeholder="Email ou nome de usuário" inputName="email" inputSize="large" inputType="text" />
-          <app-input placeholder="Senha" inputName="password" inputSize="large" inputType="password" />
+          <app-input placeholder="Email" inputName="email" inputSize="large" inputType="text" formControlName="email" />
+          <p *ngIf="formLogin.get('email')?.invalid && formLogin.get('email')?.touched" [ngStyle]="{'color': 'red'}">
+            Email é obrigatório
+          </p>
+          <app-input placeholder="Senha" inputName="senha" inputSize="large" inputType="password" formControlName="senha" />
+          <p *ngIf="formLogin.get('senha')?.invalid && formLogin.get('senha')?.touched" [ngStyle]="{'color': 'red'}">
+            Senha é obrigatória
+          </p>
         </div>
-        <app-button buttonText=" Entrar" buttonSize="large" buttonTheme="dark" buttonType="submit" buttonLevel="primary" />
+        <app-button [buttonText]="isLoading ? 'Entrando...' : 'Entrar'" buttonSize="large" buttonTheme="dark" buttonType="submit" buttonLevel="primary" [buttonDisabled]="formLogin.invalid || isLoading" />
       </form>
       <span>
         <hr>
@@ -38,12 +44,15 @@
             <app-input placeholder="Nome de usuário" inputName="email" inputSize="large" inputType="text" formControlName="nomeDeUsuario" />
 
             <app-input placeholder="Email" inputName="email" inputSize="large" inputType="email" formControlName="email" />
-            <p *ngIf="formSignIn.controls.email.invalid && formSignIn.controls.email.touched" [ngStyle]="{'color': 'red'}">Insira um email válido</p>
+            <p *ngIf="formSignIn.controls.email.invalid && formSignIn.controls.email.touched" [ngStyle]="{'color': 'red'}">
+              <ng-container *ngIf="formSignIn.controls.email.errors?.['email']">Insira um email válido</ng-container>
+              <ng-container *ngIf="formSignIn.controls.email.errors?.['emailTaken']">Este email já está cadastrado</ng-container>
+            </p>
             <app-input placeholder="Senha" inputName="password" inputSize="large" inputType="password" formControlName="senha" />
             <app-input placeholder="Confirmar senha" inputName="passwordConfirm" inputSize="large" inputType="password" formControlName="confirmarSenha" />
             <p *ngIf="formSignIn.hasError('passwordNotMatch') && formSignIn.touched" [ngStyle]="{'color': 'red'}">As senhas não coincidem</p>
           </div>
-          <app-button buttonText="Cadastrar" buttonSize="large" buttonTheme="dark" buttonType="submit" buttonLevel="primary" [buttonDisabled]="formSignIn.invalid" />
+          <app-button [buttonText]="isLoading ? 'Cadastrando...' : 'Cadastrar'" buttonSize="large" buttonTheme="dark" buttonType="submit" buttonLevel="primary" [buttonDisabled]="formSignIn.invalid || isLoading" />
         </form>
         <span>
           <hr>

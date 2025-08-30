@@ -1,10 +1,57 @@
 @use "app/scss/variables";
+@import 'ngx-toastr/toastr';
+
+// Custom toast styles
+.toast-container {
+  .ngx-toastr {
+    background-color: var(--background-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    font-size: 1.5rem !important;
+    padding: 1.2rem !important;
+
+    &:hover {
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .toast-title {
+      font-size: 1.8rem !important;
+      font-weight: 600 !important;
+      margin-bottom: 0.8rem !important;
+      color: var(--text-primary) !important;
+    }
+
+    .toast-message {
+      font-size: 1.6rem !important;
+      color: var(--text-secondary) !important;
+    }
+  }
+
+  .toast-success {
+    background-color: var(--success-color) !important;
+  }
+
+  .toast-error {
+    background-color: var(--error-color) !important;
+  }
+
+  .toast-info {
+    background-color: var(--accent-primary) !important;
+  }
+
+  .toast-warning {
+    background-color: var(--warning-color) !important;
+  }
+}
 
 html,
 body {
   font-size: 62.5%;
-  background-color: variables.$cor-header-dark;
+  background-color: var(--background-primary);
   height: 100%;
+  transition: background-color 0.3s ease;
 }
 app-root {
   display: flex;
@@ -16,25 +63,35 @@ app-root {
   // font-family: "Poppins", sans-serif;
   font-family: "Nunito", sans-serif;
   // font-family: variables.$fonte-principal, sans-serif;
-  color: #fff;
+  color: var(--text-primary);
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   outline: none;
 }
 
+body {
+  background-color: var(--background-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
 p {
   font-size: variables.$fonte-tamanho-p;
+  color: var(--text-secondary);
 }
 h1 {
   font-size: variables.$fonte-tamanho-h1;
+  color: var(--text-primary);
 }
 h2 {
   font-size: variables.$fonte-tamanho-h2;
+  color: var(--text-primary);
 }
 h3 {
   font-size: variables.$fonte-tamanho-h3;
+  color: var(--text-primary);
 }
 h4 {
   font-size: variables.$fonte-tamanho-h4;
+  color: var(--text-primary);
 }

@@ -1,8 +1,10 @@
 @use "./../../scss/variables";
+
 .container {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
+  background-color: var(--background-primary);
 }
 
 header {
@@ -16,6 +18,8 @@ header {
     font-weight: 800;
     padding: 0rem 0.4rem;
     opacity: 0.8;
+    color: var(--text-primary);
+
     &:hover {
       transition: ease-in-out 0.1s;
       cursor: pointer;
@@ -59,17 +63,19 @@ section {
 
     input {
       padding: 1.6rem;
-      border-radius: variables.$borda-radius;
-      border: 0.24rem solid #e4e4e446;
-      background-color: #5e48794d;
+      border-radius: 6px;
+      border: 0.24rem solid var(--border-color);
+      background-color: var(--background-secondary);
       font-size: variables.$fonte-tamanho-p;
-      color: #fff;
+      color: var(--text-primary);
+      transition: all 0.2s ease;
 
       &::placeholder {
-        color: #ffffffde;
+        color: var(--text-muted);
       }
       &:focus {
-        border-color: variables.$cor-button-primary-dark;
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 2px rgba(78, 168, 222, 0.2);
       }
     }
   }
@@ -87,12 +93,13 @@ section {
     align-items: center;
     gap: 0.8rem;
     width: 100%;
+    color: var(--text-secondary);
 
     hr {
       width: 100%;
       height: 0rem;
       padding: 0.01rem;
-      background-color: #fff;
+      background-color: var(--border-color);
     }
   }
 
@@ -113,8 +120,12 @@ section {
   opacity: 0.8;
   font-weight: 200;
   padding: 1rem;
+  color: var(--text-secondary);
 }
+
 u {
+  color: var(--accent-primary);
+
   &:hover {
     opacity: 0.8;
     cursor: pointer;

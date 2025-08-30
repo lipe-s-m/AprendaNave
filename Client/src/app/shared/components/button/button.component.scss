@@ -2,20 +2,21 @@
 
 .dark {
   &.primary {
-    background-color: variables.$cor-button-primary-dark;
-    color: #fffffff5;
+    background-color: var(--accent-primary);
+    color: var(--text-primary);
     &:disabled {
-      background-color: rgb(133, 127, 133);
+      background-color: var(--text-muted);
+      opacity: 0.6;
     }
   }
   &.secondary {
     background-color: transparent;
-    color: variables.$cor-button-secundary-dark;
-    border: 0.3rem solid variables.$cor-button-secundary-dark;
+    color: var(--accent-secondary);
+    border: 0.3rem solid var(--accent-secondary);
 
     &:hover {
-      background-color: variables.$cor-button-secundary-dark;
-      color: #120116f5;
+      background-color: var(--accent-secondary);
+      color: var(--background-primary);
       border: none;
     }
   }
@@ -26,7 +27,7 @@
   font-size: 1.4rem;
   font-weight: 600;
   text-transform: uppercase;
-  border-radius: variables.$borda-radius;
+  border-radius: 6px;
   border: none;
 }
 .medium {
@@ -35,7 +36,7 @@
   font-size: variables.$fonte-tamanho-p;
   font-weight: 600;
   text-transform: uppercase;
-  border-radius: variables.$borda-radius-card;
+  border-radius: 8px;
   border: none;
 }
 .large {
@@ -46,18 +47,20 @@
   font-size: variables.$fonte-tamanho-p;
   font-weight: 600;
   text-transform: uppercase;
-  border-radius: variables.$borda-radius-card;
+  border-radius: 8px;
   border: none;
 }
 
 button {
   cursor: pointer;
+  transition: all 0.2s ease;
 
   &:hover {
-    transition: ease-in-out 0.2s;
+    transform: translateY(-1px);
     opacity: 0.92;
   }
   &:disabled {
     cursor: not-allowed;
+    transform: none;
   }
 }

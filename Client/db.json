@@ -1,5 +1,84 @@
 {
-  "usuarios": [
-    { "id": 0, "nome": "Teste 1", "cursos": [{ "nomeCurso": "CursoTeste" }] }
+  "users": [
+    {
+      "id": "1",
+      "nomeDeUsuario": "admin",
+      "email": "admin@admin.com",
+      "senha": "admin123"
+    },
+    {
+      "id": "c739",
+      "nomeDeUsuario": "felipedoteste3",
+      "email": "felipedoteste3@g",
+      "senha": "felipedoteste3"
+    },
+    {
+      "id": "fc53",
+      "nomeDeUsuario": "felipedoteste3",
+      "email": "felipedoteste3@fg",
+      "senha": "felipedoteste3"
+    },
+    {
+      "id": "c597",
+      "nomeDeUsuario": "teste5",
+      "email": "teste5@gmail.com",
+      "senha": "teste5"
+    },
+    {
+      "id": "7e46",
+      "nomeDeUsuario": "teste5",
+      "email": "teste5@gmail.com",
+      "senha": "teste5"
+    },
+    {
+      "id": "6056",
+      "email": "admin@admin.com",
+      "senha": "admin123"
+    },
+    {
+      "id": "71ad",
+      "email": "admin@admin.com ",
+      "senha": "admin123"
+    },
+    {
+      "id": "c0de",
+      "email": "admin@admin.com ",
+      "senha": "admin"
+    },
+    {
+      "id": "e6d2",
+      "email": "admin@admin.com ",
+      "senha": "admin123"
+    },
+    {
+      "id": "f0b0",
+      "email": "admin@admin.com ",
+      "senha": "admin@admin.com "
+    },
+    {
+      "id": "0e44",
+      "email": "admin@admin.com ",
+      "senha": "adad"
+    },
+    {
+      "id": "bab3",
+      "email": "admin@admin.c",
+      "senha": "asad"
+    },
+    {
+      "id": "1063",
+      "email": "o  login esta reagindo como sucesso, mesmo quando nao ha dados daquele usuario no banco d dados. a verificação nao esta certa",
+      "senha": "asasas"
+    },
+    {
+      "id": "a78b",
+      "email": "ggdrgrd",
+      "senha": "drgdrgdrggdr"
+    },
+    {
+      "id": "8417",
+      "email": "ererer",
+      "senha": "ererere"
+    }
   ]
 }
