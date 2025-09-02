@@ -1,0 +1,186 @@
+import { Trilha } from '../models/trilha.model';
+
+export const TRILHAS_MOCK: Trilha[] = [
+  {
+    id: 1,
+    nome: 'Matemática',
+    imagem: 'assets/matematica.svg',
+    matriculas: 37,
+    professor: 'Professor Paulo',
+    tag: 'NOVA',
+    descricao:
+      'Aprenda os fundamentos da matemática, desde operações básicas até a resolução de problemas complexos.',
+    modulos: [
+      {
+        id: 1,
+        nome: 'Fundamentos da Matemática',
+        status: 'NAO_INICIADO',
+        aulas: 5,
+        duracao: '2h 30m',
+        nivel: 'INICIANTE',
+        descricao:
+          'Bem-vindo, explorador! Antes de decorar, você precisa dominar o Mundo da Base. Aqui, vamos fortalecer sua base em frações e números decimais. Aprenda a somar, subtrair e multiplicar esses números de um jeito prático, sem complicação. Ao final, você estará pronto para qualquer desafio.',
+      },
+      {
+        id: 2,
+        nome: 'Mundo das Finanças',
+        status: 'NAO_INICIADO',
+        aulas: 4,
+        duracao: '4h',
+        nivel: 'INTERMEDIÁRIO',
+        descricao:
+          'O planeta Finanças está cheio de mistérios! Neste mundo, a gente vai desvendar a porcentagem e o cálculo de juros . Prepare-se para missões que te ensinarão a economizar descontos, aumentar e entender como o dinheiro se multiplica. Seus novos superpoderes matemáticos vão te ajudar a tomar decisões mais inteligentes na vida real.',
+      },
+      {
+        id: 3,
+        nome: 'Mundo da Construção',
+        status: 'NAO_INICIADO',
+        aulas: 4,
+        duracao: '3h 15m',
+        nivel: 'INTERMEDIÁRIO',
+        descricao:
+          'Chegou a hora de ser um arquiteto! No Mundo da Construção, a geometria é sua principal ferramenta. Vamos aprender a calcular a área de terrenos, paredes e a quantidade de material para construir. Você também vai descobrir como calcular o volume de caixas e piscinas. Prepare-se para construir seu caminho e ser o mestre do espaço!',
+      },
+      {
+        id: 4,
+        nome: 'Mundo da Lógica',
+        status: 'NAO_INICIADO',
+        aulas: 4,
+        duracao: '2h',
+        nivel: 'AVANÇADO',
+        descricao:
+          'Você chegou à última fronteira: o Mundo da Lógica . Aqui, o desafio é maior, mas a recompensa também! Este módulo vai te introduzir as funções de 1º e 2º grau, mostrando como a matemática pode prever o futuro e resolver problemas complexos. Ao conquistar este mundo, você terá as ferramentas para desvendar os mistérios mais profundos da matemática.',
+      },
+    ],
+  },
+  {
+    id: 2,
+    nome: 'Português',
+    imagem: 'assets/dicionario.svg',
+    matriculas: 24,
+    professor: 'Professora Ana',
+    descricao:
+      'Domine a gramática e a interpretação de textos para uma comunicação mais eficaz.',
+    modulos: [
+      {
+        id: 1,
+        nome: 'Ortografia e Acentuação',
+        status: 'NAO_INICIADO',
+        aulas: 8,
+        duracao: '1h 45m',
+        nivel: 'INICIANTE',
+      },
+      {
+        id: 2,
+        nome: 'Classes Gramaticais',
+        status: 'NAO_INICIADO',
+        aulas: 10,
+        duracao: '2h',
+        nivel: 'INTERMEDIÁRIO',
+      },
+      {
+        id: 3,
+        nome: 'Sintaxe: Frases e Orações',
+        status: 'NAO_INICIADO',
+        aulas: 12,
+        duracao: '3h',
+        nivel: 'INTERMEDIÁRIO',
+      },
+      {
+        id: 4,
+        nome: 'Interpretação de Textos',
+        status: 'NAO_INICIADO',
+        aulas: 7,
+        duracao: '1h 30m',
+        nivel: 'AVANÇADO',
+      },
+    ],
+  },
+  {
+    id: 3,
+    nome: 'Música',
+    imagem: 'assets/notas-musicais.svg',
+    matriculas: 11,
+    professor: 'Maestro Silva',
+    descricao:
+      'Explore o mundo da música, aprendendo teoria musical e harmonia de forma prática.',
+    modulos: [
+      {
+        id: 1,
+        nome: 'Teoria Musical Básica',
+        status: 'NAO_INICIADO',
+        aulas: 5,
+        duracao: '1h',
+        nivel: 'INICIANTE',
+      },
+      {
+        id: 2,
+        nome: 'Leitura de Partituras',
+        status: 'NAO_INICIADO',
+        aulas: 10,
+        duracao: '2h 30m',
+        nivel: 'INTERMEDIÁRIO',
+      },
+      {
+        id: 3,
+        nome: 'Harmonia Funcional',
+        status: 'NAO_INICIADO',
+        aulas: 15,
+        duracao: '4h',
+        nivel: 'AVANÇADO',
+      },
+      {
+        id: 4,
+        nome: 'Composição',
+        status: 'NAO_INICIADO',
+        aulas: 8,
+        duracao: '2h',
+        nivel: 'AVANÇADO',
+      },
+    ],
+  },
+  {
+    id: 4,
+    nome: 'Programação',
+    imagem: 'assets/programacao.svg',
+    matriculas: 725,
+    professor: 'Professor Felipe',
+    tag: 'POPULAR',
+    descricao:
+      'Desenvolva suas habilidades de programação com foco em lógica e algoritmos.',
+    modulos: [
+      {
+        id: 1,
+        nome: 'Lógica de Programação',
+        status: 'NAO_INICIADO',
+        aulas: 20,
+        duracao: '5h',
+        nivel: 'INICIANTE',
+      },
+      {
+        id: 2,
+        nome: 'Estruturas de Dados',
+        status: 'NAO_INICIADO',
+        aulas: 18,
+        duracao: '4h 30m',
+        nivel: 'INTERMEDIÁRIO',
+      },
+      {
+        id: 3,
+        nome: 'Algoritmos Avançados',
+        status: 'NAO_INICIADO',
+        aulas: 25,
+        duracao: '6h',
+        nivel: 'AVANÇADO',
+      },
+      {
+        id: 4,
+        nome: 'Paradigmas de Programação',
+        status: 'NAO_INICIADO',
+        aulas: 10,
+        duracao: '2h 45m',
+        nivel: 'AVANÇADO',
+      },
+    ],
+  },
+];

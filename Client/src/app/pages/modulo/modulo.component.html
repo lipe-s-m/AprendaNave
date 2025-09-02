@@ -1,0 +1,80 @@
+<div class="modulo-container" *ngIf="modulo; else notFound">
+  <header class="modulo-header">
+    <button class="back" (click)="voltarParaTrilha()">← Voltar para Trilha</button>
+    <div class="header-info">
+      <h1>{{ modulo.nome }}</h1>
+      <div class="header-meta">
+        <p class="trilha-nome">Trilha: {{ trilha?.nome }}</p>
+        <div class="nivel-badge" *ngIf="modulo.nivel" [ngClass]="getNivelClass(modulo.nivel)">
+          {{ modulo.nivel }}
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="modulo-content">
+    <div class="modulo-info">
+      <div class="info-card">
+        <div class="info-icon">
+          <i class="fas fa-book"></i>
+        </div>
+        <div class="info-text">
+          <h4>Aulas</h4>
+          <p>{{ modulo.aulas }}</p>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-icon">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div class="info-text">
+          <h4>Duração</h4>
+          <p>{{ modulo.duracao }}</p>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-icon">
+          <i class="fas fa-trophy"></i>
+        </div>
+        <div class="info-text">
+          <h4>Status</h4>
+          <p [ngClass]="{
+            'status-concluido': modulo.status === 'CONCLUIDO',
+            'status-andamento': modulo.status === 'EM_ANDAMENTO',
+            'status-nao-iniciado': modulo.status === 'NAO_INICIADO'
+          }">
+            {{ modulo.status === 'CONCLUIDO' ? 'Concluído' :
+            modulo.status === 'EM_ANDAMENTO' ? 'Em andamento' : 'Não iniciado' }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modulo-descricao">
+      <h2>Sobre este módulo</h2>
+      <p>{{ modulo.descricao }}</p>
+    </div>
+
+    <div class="aulas-section">
+      <h2>Aulas do módulo</h2>
+      <p class="coming-soon">O conteúdo das aulas estará disponível em breve!</p>
+
+      <!-- Aqui você pode adicionar a lista de aulas quando estiverem disponíveis -->
+    </div>
+
+    <div class="modulo-actions">
+      <button class="action-button concluir" (click)="marcarConcluido()" [disabled]="modulo.status === 'CONCLUIDO'">
+        {{ modulo.status === 'CONCLUIDO' ? 'Módulo Concluído' : 'Marcar como Concluído' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<ng-template #notFound>
+  <div class="notfound">
+    <h2>Módulo não encontrado</h2>
+    <button class="back-btn" (click)="voltarParaTrilha()">Voltar para Trilha</button>
+  </div>
+</ng-template>

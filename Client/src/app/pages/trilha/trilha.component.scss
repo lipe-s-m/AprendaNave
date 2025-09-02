@@ -1,3 +1,7 @@
+@use "./../../scss/variables";
+@import './modulo-nivel.scss';
+
+
 .trilha-container {
   max-width: 1200px;
   margin: 2rem auto;
@@ -8,6 +12,10 @@
 
 .trilha-header {
   margin-bottom: 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
 
   .back {
     background: transparent;
@@ -27,17 +35,35 @@
   }
 
   .trilha-info {
+    flex-grow: 1;
+    margin: 0 2rem;
+
     h1 {
       font-size: 3.2rem;
-      color: var(--text-primary);
       margin: 0 0 1rem 0;
-      color: #e1e1e6;
+      color: var(--text-primary);
     }
 
     .descricao {
       font-size: 1.8rem;
-      color: #9c9ca3;
+      color: var(--text-secondary);
       margin: 0;
+    }
+  }
+
+  .reset-btn {
+    background-color: #ff5252;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease;
+    align-self: flex-start;
+
+    &:hover {
+      background-color: #ff1a1a;
     }
   }
 }
@@ -45,7 +71,7 @@
 .modulos-section {
   h2 {
     font-size: 2.4rem;
-    color: #e1e1e6;
+    color: var(--text-primary);
     margin-bottom: 2rem;
   }
 
@@ -57,7 +83,7 @@
   }
 
   .modulo-card {
-    background: #202024;
+    background: var(--background-secondary);
     border-radius: 12px;
     padding: 2.5rem;
     display: flex;
@@ -67,16 +93,36 @@
     min-height: 280px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.05);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
 
     &:hover {
       transform: translateY(-5px);
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+
+      &::after {
+        opacity: 1;
+      }
     }
 
     .modulo-number {
       width: 60px;
       height: 60px;
-      background: #4EA8DE;
+      background: var(--accent-primary);
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -90,21 +136,39 @@
     .modulo-title {
       font-size: 2rem;
       font-weight: 600;
-      color: #e1e1e6;
+      color: var(--text-primary);
       margin: 0 0 1rem 0;
     }
 
     .modulo-description {
       font-size: 1.6rem;
-      color: #9c9ca3;
+      color: var(--text-secondary);
       margin: 0 0 2rem 0;
       flex: 1;
       display: flex;
       align-items: center;
     }
 
-    .start-btn {
-      background: #4EA8DE;
+    .modulo-status {
+      font-size: 1.4rem;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      background: var(--background-tertiary);
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      display: inline-block;
+
+      &.concluido {
+        background: var(--success-color);
+        color: white;
+      }
+
+      &.em-andamento {
+        background: var(--accent-primary);
+        color: white;
+      }
+    }    .start-btn {
+      background: var(--accent-primary);
       color: #fff;
       border: none;
       padding: 1.2rem 2.4rem;
@@ -115,7 +179,158 @@
       transition: background 0.2s;
 
       &:hover {
-        background: #3a8bc2;
+        background: var(--accent-secondary);
+        color: variables.$cor-text-hover-light;
+      }
+    }
+  }
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background: var(--background-secondary);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  width: 90%;
+  max-width: 600px;
+  position: relative;
+  overflow: hidden;
+  animation: modalFadeIn 0.3s ease;
+  border: 1px solid var(--border-color);
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 2.4rem;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  z-index: 2;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+
+  &:hover {
+    background: var(--background-tertiary);
+    color: var(--text-primary);
+  }
+}
+
+.modal-header {
+  padding: 2.5rem 2.5rem 1.5rem;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+
+  .modulo-number {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    background: var(--accent-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #fff;
+    margin-right: 1.5rem;
+  }
+
+  h2 {
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+  }
+}
+
+.modal-body {
+  padding: 2rem 2.5rem;
+
+  .modal-info {
+    font-size: 1.6rem;
+    color: var(--text-secondary);
+    margin: 0.8rem 0;
+
+    span {
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-right: 0.5rem;
+    }
+  }
+
+  .modal-description {
+    font-size: 1.6rem;
+    color: var(--text-secondary);
+    margin: 2rem 0 1rem;
+    line-height: 1.6;
+  }
+}
+
+.modal-footer {
+  padding: 1.5rem 2.5rem 2.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1.5rem;
+
+  .modal-btn {
+    padding: 1.2rem 2.4rem;
+    border-radius: 6px;
+    font-size: 1.6rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &.primary {
+      background: var(--accent-primary);
+      color: #fff;
+      border: none;
+
+      &:hover {
+        background: var(--accent-secondary);
+      }
+    }
+
+    &.secondary {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+
+      &:hover {
+        background: var(--background-tertiary);
+        border-color: var(--accent-primary);
       }
     }
   }
@@ -128,12 +343,12 @@
 
   h2 {
     font-size: 2.4rem;
-    color: #e1e1e6;
+    color: var(--text-primary);
     margin-bottom: 2rem;
   }
 
   .back-btn {
-    background: #4EA8DE;
+    background: var(--accent-primary);
     color: #fff;
     border: none;
     padding: 1.2rem 2.4rem;
@@ -143,7 +358,7 @@
     transition: background 0.2s;
 
     &:hover {
-      background: #3a8bc2;
+      background: var(--accent-secondary);
     }
   }
 }
