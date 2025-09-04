@@ -4,6 +4,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { ModuloComponent } from './pages/modulo/modulo.component';
 import { StartComponent } from './pages/start/start.component';
 import { TrilhaComponent } from './pages/trilha/trilha.component';
+import { AulaComponent } from './pages/aula/aula.component';
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
@@ -13,5 +14,6 @@ export const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'trilha/:id', component: TrilhaComponent },
   { path: 'modulo/:trilhaId/:moduloId', component: ModuloComponent },
+  { path: 'aula/:trilhaId/:moduloId/:aulaId', component: AulaComponent },
   { path: '**', redirectTo: '' },
 ];

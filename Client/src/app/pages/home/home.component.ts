@@ -87,6 +87,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   logout() {
+    this.themeService.setTheme('dark');
     this.loginService.logout();
     this.toastr.success('Logout realizado com sucesso!', 'Sucesso');
     this.router.navigate(['/']);

@@ -9,54 +9,166 @@
     border: 1px solid var(--border-color);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 6px;
-    font-size: 1.5rem !important;
-    padding: 1.2rem !important;
+    font-size: 1.2rem !important;
+    padding: 0.8rem 1rem !important;
+    min-height: auto !important;
+
+    // Remover ícones dos toasts
+    &::before {
+      display: none !important;
+    }
+
+    // Ajustar o padding para compensar a remoção do ícone
+    padding-left: 1rem !important;
 
     &:hover {
       box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
     }
 
     .toast-title {
-      font-size: 1.8rem !important;
+      font-size: 1.4rem !important;
       font-weight: 600 !important;
-      margin-bottom: 0.8rem !important;
+      margin-bottom: 0.4rem !important;
       color: var(--text-primary) !important;
+      padding-left: 0 !important;
     }
 
     .toast-message {
-      font-size: 1.6rem !important;
+      font-size: 1.2rem !important;
       color: var(--text-secondary) !important;
+      padding-left: 0 !important;
+    }
+
+    .toast-close-button {
+      font-size: 1.4rem !important;
+      top: 0.2rem !important;
+      right: 0.2rem !important;
     }
   }
 
   .toast-success {
     background-color: var(--success-color) !important;
+    color: white !important;
+
+    .toast-title, .toast-message {
+      color: white !important;
+    }
   }
 
   .toast-error {
     background-color: var(--error-color) !important;
+    color: white !important;
+
+    .toast-title, .toast-message {
+      color: white !important;
+    }
   }
 
   .toast-info {
     background-color: var(--accent-primary) !important;
+    color: white !important;
+
+    .toast-title, .toast-message {
+      color: white !important;
+    }
   }
 
   .toast-warning {
     background-color: var(--warning-color) !important;
+    color: white !important;
+
+    .toast-title, .toast-message {
+      color: white !important;
+    }
   }
+
+  // Esconder todos os ícones em todos os tipos de toasts
+  .toast-success, .toast-error, .toast-info, .toast-warning {
+    background-image: none !important;
+    padding: 10px 15px !important;
+
+    // Adicionar uma borda sutil para melhorar a aparência
+    border: none !important;
+  }
+}
+
+// Ajustar o posicionamento e tamanho do container de toasts
+.toast-top-right {
+  top: 12px !important;
+  right: 12px !important;
+}
+
+.toast-container {
+  width: auto !important;
+  max-width: 300px !important;
+}
+
+// Classe para toasts sem ícone
+.no-icon {
+  padding-left: 15px !important;
+
+  .toast-title, .toast-message {
+    padding-left: 0 !important;
+  }
+
+  // Garantir que o botão de fechar seja visível em todos os tipos de toast
+  .toast-close-button {
+    color: white !important;
+    opacity: 0.8 !important;
+
+    &:hover {
+      opacity: 1 !important;
+    }
+  }
+
+  // Garantir que o texto seja legível em toasts coloridos
+  &.toast-success, &.toast-error, &.toast-info, &.toast-warning,
+  &.toast-success-no-icon, &.toast-error-no-icon, &.toast-info-no-icon, &.toast-warning-no-icon {
+    .toast-title, .toast-message {
+      color: white !important;
+    }
+  }
+}
+
+// Definir classes para toasts sem ícones mas com cores
+.toast-success-no-icon,
+.toast-error-no-icon,
+.toast-info-no-icon,
+.toast-warning-no-icon {
+  background-image: none !important;
+}
+
+.toast-success-no-icon {
+  background-color: var(--success-color) !important;
+}
+
+.toast-error-no-icon {
+  background-color: var(--error-color) !important;
+}
+
+.toast-info-no-icon {
+  background-color: var(--accent-primary) !important;
+}
+
+.toast-warning-no-icon {
+  background-color: var(--warning-color) !important;
 }
 
 html,
 body {
   font-size: 62.5%;
   background-color: var(--background-primary);
-  height: 100%;
+  min-height: 100%;
+  height: auto;
+  margin: 0;
+  padding: 0;
   transition: background-color 0.3s ease;
 }
+
 app-root {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  min-height: 100vh;
 }
 
 * {
@@ -72,7 +184,9 @@ app-root {
 
 body {
   background-color: var(--background-primary);
+  min-height: 100vh;
   transition: background-color 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
 }
 
 p {

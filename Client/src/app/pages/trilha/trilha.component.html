@@ -51,8 +51,11 @@
       </div>
       <div class="modal-footer">
         <button class="modal-btn secondary" (click)="fecharModal()">Cancelar</button>
-        <button class="modal-btn primary" *ngIf="moduloSelecionado!.status !== 'CONCLUIDO'" (click)="confirmarIniciarModulo()">
-          {{ moduloSelecionado!.status === 'EM_ANDAMENTO' ? 'Continuar' : 'Iniciar Módulo' }}
+        <button class="modal-btn primary" *ngIf="moduloSelecionado!.status !== 'CONCLUIDO' && moduloSelecionado!.status === 'EM_ANDAMENTO'" (click)="confirmarIniciarModulo()">
+          Continuar
+        </button>
+        <button class="modal-btn primary" *ngIf="moduloSelecionado!.status !== 'CONCLUIDO' && moduloSelecionado!.status === 'NAO_INICIADO'" click="(abrirModalModulo)">
+          Iniciar
         </button>
         <button class="modal-btn primary" *ngIf="moduloSelecionado!.status === 'CONCLUIDO'" (click)="confirmarIniciarModulo()">
           Revisar Módulo

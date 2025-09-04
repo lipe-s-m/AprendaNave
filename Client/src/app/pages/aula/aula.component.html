@@ -1,0 +1,80 @@
+<div class="aula-container" *ngIf="aula; else notFound">
+  <header class="aula-header">
+    <button class="back" (click)="voltarParaModulo()">← Voltar para Módulo</button>
+    <div class="header-info">
+      <h1>{{ aula.titulo }}</h1>
+      <div class="header-meta">
+        <p class="trilha-nome">Trilha: {{ trilha?.nome }} > {{ modulo?.nome }}</p>
+        <div class="status-badge" *ngIf="aula.concluida">
+          <span class="concluded">Concluído</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="aula-content">
+    <div class="video-container" *ngIf="videoUrl">
+      <iframe 
+        [src]="videoUrl" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen>
+      </iframe>
+    </div>
+
+    <div class="aula-navigation">
+      <button 
+        class="nav-button anterior" 
+        [disabled]="!aulaAnterior" 
+        (click)="irParaAulaAnterior()"
+        *ngIf="aulaAnterior">
+        <i class="fas fa-chevron-left"></i> Aula Anterior: {{ aulaAnterior.titulo }}
+      </button>
+
+      <button 
+        class="nav-button proxima" 
+        [disabled]="!proximaAula" 
+        (click)="irParaProximaAula()"
+        *ngIf="proximaAula">
+        Próxima Aula: {{ proximaAula.titulo }} <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+
+    <div class="aulas-section">
+      <h2>Todas as aulas deste módulo</h2>
+
+      <div class="aulas-lista">
+        <!-- Timeline conectando as aulas -->
+        <div class="aulas-timeline"></div>
+
+        <!-- Lista de aulas -->
+        <div class="aula-item" 
+          *ngFor="let aulaItem of aulasList; let i = index" 
+          [ngClass]="{
+            'aula-concluida': aulaItem.concluida,
+            'aula-atual': aulaItem.id === aula.id
+          }"
+          (click)="aulaItem.id !== aula.id && irParaAula(aulaItem)">
+          <div class="aula-play-icon">
+            <i [ngClass]="aulaItem.concluida ? 'fas fa-check' : (aulaItem.id === aula.id ? 'fas fa-play-circle' : 'fas fa-play')"></i>
+          </div>
+          <div class="aula-info">
+            <h3 class="aula-titulo">{{ aulaItem.titulo }}</h3>
+            <p class="aula-duracao">{{ aulaItem.duracao }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #notFound>
+  <div class="notfound" *ngIf="!isLoading">
+    <h2>{{ error || 'Aula não encontrada' }}</h2>
+    <button class="back-btn" (click)="voltarParaModulo()">Voltar para Módulo</button>
+  </div>
+
+  <div class="loading" *ngIf="isLoading">
+    <p>Carregando aula...</p>
+  </div>
+</ng-template>

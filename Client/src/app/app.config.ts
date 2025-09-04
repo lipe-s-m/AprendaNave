@@ -13,9 +13,21 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideAnimations(),
     provideToastr({
-      timeOut: 3000,
+      timeOut: 2500,
       positionClass: 'toast-top-right',
-      preventDuplicates: true
-    })
-  ]
+      preventDuplicates: true,
+      closeButton: true,
+      progressBar: true,
+      maxOpened: 3,
+      autoDismiss: true,
+      newestOnTop: true,
+      iconClasses: {
+        error: 'toast-error-no-icon',
+        info: 'toast-info-no-icon',
+        success: 'toast-success-no-icon',
+        warning: 'toast-warning-no-icon',
+      },
+      toastClass: 'ngx-toastr no-icon',
+    }),
+  ],
 };

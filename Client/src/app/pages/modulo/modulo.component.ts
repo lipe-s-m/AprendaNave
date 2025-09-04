@@ -2,8 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TrilhaService } from '../../services/trilha/trilha.service';
-import { Trilha, Modulo } from '../../models/trilha.model';
-import { Subscription } from 'rxjs';
+import { Trilha, Modulo, Aula } from '../../models/trilha.model';
+import { Observable, Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -20,6 +20,7 @@ export class ModuloComponent implements OnInit, OnDestroy {
   modulo: Modulo | null = null;
   isLoading = true;
   error: string | null = null;
+  aulas: any[] = [];
 
   private subscription: Subscription | null = null;
 
@@ -66,6 +67,29 @@ export class ModuloComponent implements OnInit, OnDestroy {
 
         if (!this.modulo) {
           this.error = `Módulo com ID ${moduloId} não encontrado na trilha`;
+        } else {
+          // Carregar as aulas do módulo
+          this.aulas = this.modulo.aulasList || [];
+
+          // Atualiza o número de aulas no módulo para refletir o número real de aulas
+          this.modulo.aulas = this.aulas.length;
+
+          // Se o módulo estiver marcado como concluído, marque todas as aulas como concluídas
+          if (this.modulo.status === 'CONCLUIDO') {
+            this.aulas.forEach((aula) => {
+              aula.concluida = true;
+            });
+          }
+          // Se o módulo estiver em andamento mas nenhuma aula estiver concluída,
+          // marque pelo menos a primeira aula como concluída
+          else if (
+            this.modulo.status === 'EM_ANDAMENTO' &&
+            !this.aulas.some((a) => a.concluida)
+          ) {
+            if (this.aulas.length > 0) {
+              this.aulas[0].concluida = true;
+            }
+          }
         }
 
         this.isLoading = false;
@@ -80,25 +104,67 @@ export class ModuloComponent implements OnInit, OnDestroy {
 
   marcarConcluido(): void {
     if (this.trilhaId && this.moduloId) {
-      this.trilhaService
-        .atualizarStatusModulo(this.trilhaId, this.moduloId, 'CONCLUIDO')
-        .subscribe({
-          next: (trilha) => {
-            this.trilha = trilha;
-            this.modulo =
-              trilha.modulos.find((m) => m.id === this.moduloId) || null;
-            this.toastr.success('Módulo concluído com sucesso!', 'Parabéns');
+      // Primeiro, vamos marcar todas as aulas como concluídas
+      const promises: Observable<Trilha>[] = [];
 
-            // Navegar de volta para a trilha após 2 segundos
-            setTimeout(() => {
-              this.router.navigate(['/trilha', this.trilhaId]);
-            }, 2000);
+      // Para cada aula não concluída, criamos uma Promise para atualizá-la
+      this.aulas.forEach((aula) => {
+        if (!aula.concluida) {
+          promises.push(
+            this.trilhaService.atualizarStatusAula(
+              this.trilhaId!,
+              this.moduloId!,
+              aula.id,
+              true
+            )
+          );
+        }
+      });
+
+      // Se não houver aulas para concluir, ou após todas as atualizações,
+      // marcamos o módulo como concluído
+      if (promises.length === 0) {
+        this.atualizarStatusModulo();
+      } else {
+        // Utilizamos o último Observable para atualizar o módulo após todas as aulas serem atualizadas
+        promises[promises.length - 1].subscribe({
+          next: () => {
+            // Marcar todas as aulas como concluídas na interface
+            this.aulas.forEach((aula) => {
+              aula.concluida = true;
+            });
+
+            // Agora atualizamos o status do módulo
+            this.atualizarStatusModulo();
           },
-          error: (err) => {
-            this.toastr.error(err.message, 'Erro');
+          error: (err: any) => {
+            this.toastr.error('Erro ao concluir as aulas', 'Erro');
+            console.error('Erro ao concluir as aulas:', err);
           },
         });
+      }
     }
+  }
+
+  private atualizarStatusModulo(): void {
+    this.trilhaService
+      .atualizarStatusModulo(this.trilhaId!, this.moduloId!, 'CONCLUIDO')
+      .subscribe({
+        next: (trilha) => {
+          this.trilha = trilha;
+          this.modulo =
+            trilha.modulos.find((m) => m.id === this.moduloId) || null;
+          this.toastr.success('Módulo concluído com sucesso!', 'Parabéns');
+
+          // Navegar de volta para a trilha após 2 segundos
+          setTimeout(() => {
+            this.router.navigate(['/trilha', this.trilhaId]);
+          }, 2000);
+        },
+        error: (err) => {
+          this.toastr.error(err.message, 'Erro');
+        },
+      });
   }
 
   voltarParaTrilha(): void {
@@ -117,6 +183,51 @@ export class ModuloComponent implements OnInit, OnDestroy {
         return 'nivel-avancado';
       default:
         return 'nivel-iniciante';
+    }
+  }
+
+  todasAulasConcluidas(): boolean {
+    return this.aulas.every((aula) => aula.concluida === true);
+  }
+
+  podeConcluirModulo(): boolean {
+    return this.modulo?.status !== 'CONCLUIDO' && this.todasAulasConcluidas();
+  }
+
+  iniciarAula(aula: any): void {
+    if (!this.trilhaId || !this.moduloId) return;
+
+    // Navegar para a página da aula
+    this.router.navigate(['/aula', this.trilhaId, this.moduloId, aula.id]);
+
+    // Marca a aula como concluída
+    aula.concluida = true;
+
+    // Atualiza o estado no localStorage
+    if (this.trilha && this.modulo) {
+      this.trilhaService
+        .atualizarStatusAula(this.trilhaId, this.moduloId, aula.id, true)
+        .subscribe({
+          next: (trilhaAtualizada) => {
+            // Atualiza a trilha e o módulo com os dados atualizados
+            this.trilha = trilhaAtualizada;
+            this.modulo =
+              trilhaAtualizada.modulos.find((m) => m.id === this.moduloId) ||
+              null;
+
+            // Verifica se todas as aulas estão concluídas
+            const todasAulasConcluidas = this.aulas.every((a) => a.concluida);
+
+            // Se todas as aulas estiverem concluídas, mostra uma mensagem
+            if (todasAulasConcluidas) {
+              this.toastr.success('Todas as aulas concluídas!', 'Parabéns');
+            }
+          },
+          error: (err: any) => {
+            this.toastr.error('Erro ao atualizar status da aula', 'Erro');
+            console.error('Erro ao atualizar status da aula:', err);
+          },
+        });
     }
   }
 }

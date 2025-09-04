@@ -59,14 +59,40 @@
 
     <div class="aulas-section">
       <h2>Aulas do módulo</h2>
-      <p class="coming-soon">O conteúdo das aulas estará disponível em breve!</p>
 
-      <!-- Aqui você pode adicionar a lista de aulas quando estiverem disponíveis -->
+      <div class="aulas-lista">
+        <!-- Timeline conectando as aulas -->
+        <div class="aulas-timeline"></div>
+
+        <!-- Lista de aulas -->
+        <div class="aula-item" *ngFor="let aula of aulas; let i = index" [ngClass]="{'aula-concluida': aula.concluida}" (click)="iniciarAula(aula)">
+          <div class="aula-play-icon">
+            <i [ngClass]="aula.concluida ? 'fas fa-check' : 'fas fa-play'"></i>
+          </div>
+          <div class="aula-info">
+            <h3 class="aula-titulo">{{ aula.titulo }}</h3>
+            <p class="aula-duracao">{{ aula.duracao }}</p>
+          </div>
+        </div>
+
+        <!-- Se não houver aulas, mostra mensagem -->
+        <p class="no-aulas" *ngIf="!aulas || aulas.length === 0">Nenhuma aula disponível neste módulo.</p>
+      </div>
     </div>
 
     <div class="modulo-actions">
-      <button class="action-button concluir" (click)="marcarConcluido()" [disabled]="modulo.status === 'CONCLUIDO'">
-        {{ modulo.status === 'CONCLUIDO' ? 'Módulo Concluído' : 'Marcar como Concluído' }}
+      <button class="action-button concluir" (click)="marcarConcluido()" [disabled]="modulo.status === 'CONCLUIDO' || !todasAulasConcluidas()">
+        <ng-container *ngIf="modulo.status === 'CONCLUIDO'; else notConcluido">
+          Módulo Concluído
+        </ng-container>
+        <ng-template #notConcluido>
+          <ng-container *ngIf="todasAulasConcluidas(); else aulasPendentes">
+            Marcar como Concluído
+          </ng-container>
+          <ng-template #aulasPendentes>
+            Complete todas as aulas primeiro
+          </ng-template>
+        </ng-template>
       </button>
     </div>
   </div>

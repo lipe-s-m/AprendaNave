@@ -164,4 +164,88 @@ export class TrilhaService {
     // Simula uma chamada de API com delay
     return of(trilha).pipe(delay(300));
   }
+
+  /**
+   * Atualizar status de uma aula
+   * @param trilhaId ID da trilha
+   * @param moduloId ID do módulo
+   * @param aulaId ID da aula
+   * @param concluida Status de conclusão da aula
+   * @returns Observable com a trilha atualizada
+   */
+  atualizarStatusAula(
+    trilhaId: number,
+    moduloId: number,
+    aulaId: number,
+    concluida: boolean
+  ): Observable<Trilha> {
+    console.log(
+      `Atualizando status da aula ${aulaId} do módulo ${moduloId} na trilha ${trilhaId} para ${
+        concluida ? 'concluída' : 'não concluída'
+      }`
+    );
+
+    const trilhaIndex = this.trilhas.findIndex((t) => t.id === trilhaId);
+
+    if (trilhaIndex === -1) {
+      console.error(`Trilha com ID ${trilhaId} não encontrada`);
+      return throwError(
+        () => new Error(`Trilha com ID ${trilhaId} não encontrada`)
+      );
+    }
+
+    const trilha = this.trilhas[trilhaIndex];
+    const moduloIndex = trilha.modulos.findIndex((m) => m.id === moduloId);
+
+    if (moduloIndex === -1) {
+      console.error(
+        `Módulo com ID ${moduloId} não encontrado na trilha ${trilhaId}`
+      );
+      return throwError(
+        () =>
+          new Error(
+            `Módulo com ID ${moduloId} não encontrado na trilha ${trilhaId}`
+          )
+      );
+    }
+
+    const modulo = trilha.modulos[moduloIndex];
+
+    // Inicializa aulasList se ainda não existir
+    if (!modulo.aulasList) {
+      modulo.aulasList = [];
+    }
+
+    const aulaIndex = modulo.aulasList.findIndex((a) => a.id === aulaId);
+
+    if (aulaIndex === -1) {
+      console.log(
+        `Aula com ID ${aulaId} não encontrada, adicionando ao módulo`
+      );
+      // Se a aula não existir ainda, adiciona ao módulo
+      modulo.aulasList.push({
+        id: aulaId,
+        titulo: `Aula ${aulaId}`,
+        duracao: '00:00',
+        concluida: concluida,
+      });
+    } else {
+      // Atualiza o status da aula
+      modulo.aulasList[aulaIndex].concluida = concluida;
+    }
+
+    // Se todas as aulas estiverem concluídas, marca o módulo como concluído
+    const todasAulasConcluidas = modulo.aulasList.every((a) => a.concluida);
+    if (todasAulasConcluidas && modulo.aulasList.length > 0) {
+      modulo.status = 'CONCLUIDO';
+    } else if (modulo.aulasList.some((a) => a.concluida)) {
+      modulo.status = 'EM_ANDAMENTO';
+    }
+
+    // Salva as alterações no localStorage
+    this.salvarTrilhasNoLocalStorage();
+
+    // Simula uma chamada de API com delay
+    return of(trilha).pipe(delay(300));
+  }
 }

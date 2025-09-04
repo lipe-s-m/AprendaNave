@@ -1,0 +1,111 @@
+// Estilo para a seção de aulas
+.aulas-section {
+  margin-top: 4rem;
+
+  h2 {
+    font-size: 2.4rem;
+    margin-bottom: 2.5rem;
+    color: var(--text-primary);
+  }
+}
+
+// Container das aulas com timeline
+.aulas-lista {
+  position: relative;
+  padding-left: 2rem;
+  margin-left: 1rem;
+
+  // A linha vertical que conecta as aulas
+  .aulas-timeline {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: var(--border-color);
+    z-index: 1;
+  }
+}
+
+// Cada item da aula
+.aula-item {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem 0;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateX(5px);
+    .aula-play-icon {
+      background-color: var(--accent-secondary);
+      color: var(--text-on-accent);
+    }
+  }
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--border-color-light);
+  }
+
+  // Estilo para aulas concluídas
+  &.aula-concluida {
+    .aula-play-icon {
+      background-color: var(--success-color);
+      color: #fff;
+    }
+
+    .aula-titulo {
+      color: var(--text-secondary);
+    }
+
+    &:hover .aula-play-icon {
+      background-color: var(--success-color-dark);
+      color: #fff;
+    }
+  }
+}
+
+// Ícone de play para cada aula
+.aula-play-icon {
+  width: 3.6rem;
+  height: 3.6rem;
+  border-radius: 50%;
+  background-color: var(--background-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1.5rem;
+  flex-shrink: 0;
+  color: var(--accent-primary);
+  transition: background-color 0.2s ease, color 0.2s ease;
+  z-index: 2;
+}
+
+// Informações da aula
+.aula-info {
+  flex-grow: 1;
+}
+
+// Título da aula
+.aula-titulo {
+  font-size: 1.8rem;
+  font-weight: 500;
+  margin: 0 0 0.5rem 0;
+  color: var(--text-primary);
+}
+
+// Duração da aula
+.aula-duracao {
+  font-size: 1.4rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+// Mensagem quando não há aulas
+.no-aulas {
+  font-size: 1.6rem;
+  color: var(--text-secondary);
+  padding: 2rem 0;
+  text-align: center;
+}

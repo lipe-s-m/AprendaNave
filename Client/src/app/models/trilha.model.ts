@@ -1,3 +1,11 @@
+export interface Aula {
+  id: number;
+  titulo: string;
+  duracao: string;
+  conteudo?: string;
+  concluida?: boolean;
+}
+
 export interface Modulo {
   id: number;
   nome: string;
@@ -6,6 +14,7 @@ export interface Modulo {
   duracao: string;
   descricao?: string;
   nivel?: 'INICIANTE' | 'INTERMEDIÁRIO' | 'AVANÇADO';
+  aulasList?: Aula[];
 }
 
 export interface Trilha {

@@ -160,8 +160,8 @@ export class TrilhaComponent implements OnInit, OnDestroy {
     try {
       if (modulo.status === 'NAO_INICIADO') {
         // Se não iniciado, marca como em andamento e navega para a página do módulo
-        console.log('Iniciando módulo...', modulo.id);
-        this.atualizarStatusModulo(modulo.id, 'EM_ANDAMENTO');
+        console.log('abrindo modulo...', modulo.id);
+        this.abrirModalModulo(modulo, event);
       } else {
         // Se já em andamento ou concluído, apenas navega para a página do módulo
         console.log('Navegando para módulo já iniciado...', modulo.id);
