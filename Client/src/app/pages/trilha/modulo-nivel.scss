@@ -4,7 +4,7 @@
   align-items: flex-start;
   margin-bottom: 0.5rem;
   width: 100%;
-  
+
   .modulo-title {
     flex-grow: 1;
     margin: 0;
@@ -22,21 +22,21 @@
   text-transform: lowercase;
   margin-left: 1rem;
   white-space: nowrap;
-  
+
   &::first-letter {
     text-transform: uppercase;
   }
-  
+
   &.nivel-iniciante {
     background-color: #4caf50;
     color: white;
   }
-  
+
   &.nivel-intermediario {
     background-color: #ff9800;
     color: white;
   }
-  
+
   &.nivel-avancado {
     background-color: #f44336;
     color: white;

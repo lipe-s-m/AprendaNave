@@ -106,13 +106,17 @@ export class ModuloComponent implements OnInit, OnDestroy {
       this.router.navigate(['/trilha', this.trilhaId]);
     }
   }
-  
+
   getNivelClass(nivel?: string): string {
-    switch(nivel) {
-      case 'INICIANTE': return 'nivel-iniciante';
-      case 'INTERMEDIÁRIO': return 'nivel-intermediario';
-      case 'AVANÇADO': return 'nivel-avancado';
-      default: return 'nivel-iniciante';
+    switch (nivel) {
+      case 'INICIANTE':
+        return 'nivel-iniciante';
+      case 'INTERMEDIÁRIO':
+        return 'nivel-intermediario';
+      case 'AVANÇADO':
+        return 'nivel-avancado';
+      default:
+        return 'nivel-iniciante';
     }
   }
 }

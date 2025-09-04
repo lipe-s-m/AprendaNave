@@ -17,16 +17,10 @@
     color: white;
   }
 
-}
-
-.em-andamento {
+  &.em-andamento {
     background: #006787;
     color: rgb(218, 0, 0);
   }
-
-.action-button.concluir{
-  background-color: aqua;
-   &:hover {
-    color: variables.$cor-text-hover-light;
-  }
 }
+
+

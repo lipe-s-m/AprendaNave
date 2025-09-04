@@ -254,11 +254,15 @@ export class TrilhaComponent implements OnInit, OnDestroy {
   }
 
   getNivelClass(nivel?: string): string {
-    switch(nivel) {
-      case 'INICIANTE': return 'nivel-iniciante';
-      case 'INTERMEDIÁRIO': return 'nivel-intermediario';
-      case 'AVANÇADO': return 'nivel-avancado';
-      default: return 'nivel-iniciante';
+    switch (nivel) {
+      case 'INICIANTE':
+        return 'nivel-iniciante';
+      case 'INTERMEDIÁRIO':
+        return 'nivel-intermediario';
+      case 'AVANÇADO':
+        return 'nivel-avancado';
+      default:
+        return 'nivel-iniciante';
     }
   }
 }
