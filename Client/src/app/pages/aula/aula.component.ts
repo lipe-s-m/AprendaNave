@@ -12,26 +12,26 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './aula.component.html',
-  styleUrl: './aula.component.scss'
+  styleUrl: './aula.component.scss',
 })
 export class AulaComponent implements OnInit, OnDestroy {
   trilhaId: number | null = null;
   moduloId: number | null = null;
   aulaId: number | null = null;
-  
+
   trilha: Trilha | null = null;
   modulo: Modulo | null = null;
   aula: Aula | null = null;
-  
+
   aulasList: Aula[] = [];
   proximaAula: Aula | null = null;
   aulaAnterior: Aula | null = null;
-  
+
   isLoading = true;
   error: string | null = null;
-  
+
   videoUrl: SafeResourceUrl | null = null;
-  
+
   private subscription: Subscription | null = null;
 
   constructor(
@@ -52,7 +52,11 @@ export class AulaComponent implements OnInit, OnDestroy {
       this.moduloId = moduloId !== null ? Number(moduloId) : null;
       this.aulaId = aulaId !== null ? Number(aulaId) : null;
 
-      if (this.trilhaId !== null && this.moduloId !== null && this.aulaId !== null) {
+      if (
+        this.trilhaId !== null &&
+        this.moduloId !== null &&
+        this.aulaId !== null
+      ) {
         this.loadAula(this.trilhaId, this.moduloId, this.aulaId);
       } else {
         this.error = 'ID de trilha, módulo ou aula inválido';
@@ -88,7 +92,7 @@ export class AulaComponent implements OnInit, OnDestroy {
         this.aulasList = this.modulo.aulasList || [];
 
         // Encontrar a aula atual
-        this.aula = this.aulasList.find(a => a.id === aulaId) || null;
+        this.aula = this.aulasList.find((a) => a.id === aulaId) || null;
 
         if (!this.aula) {
           this.error = `Aula com ID ${aulaId} não encontrada no módulo`;
@@ -113,29 +117,29 @@ export class AulaComponent implements OnInit, OnDestroy {
         this.error = 'Erro ao carregar a trilha: ' + err.message;
         this.isLoading = false;
         this.toastr.error(this.error, 'Erro');
-      }
+      },
     });
   }
 
   gerarVideoUrl(): void {
     // Lista de IDs de vídeos do YouTube sobre educação
     const videoIds = [
-      'jNQXAC9IVRw',  // "Me at the zoo" (primeiro vídeo do YouTube)
-      'dQw4w9WgXcQ',  // Rick Astley - Never Gonna Give You Up
-      'J---aiyznGQ',  // Keyboard Cat
-      'QH2-TGUlwu4',  // Nyan Cat
-      'EwTZ2xpQwpA',  // "Chocolate Rain"
-      '9bZkp7q19f0',  // Gangnam Style
-      'z9Uz1icjwrM',  // "Despacito"
-      'PeonBmeFR8o',  // Matemática - Frações
-      'FTsIGF-vz7s',  // Matemática - Geometria
-      'RF4wnAXJfIA'   // Português - Gramática
+      'jNQXAC9IVRw', // "Me at the zoo" (primeiro vídeo do YouTube)
+      'dQw4w9WgXcQ', // Rick Astley - Never Gonna Give You Up
+      'J---aiyznGQ', // Keyboard Cat
+      'QH2-TGUlwu4', // Nyan Cat
+      'EwTZ2xpQwpA', // "Chocolate Rain"
+      '9bZkp7q19f0', // Gangnam Style
+      'z9Uz1icjwrM', // "Despacito"
+      'PeonBmeFR8o', // Matemática - Frações
+      'FTsIGF-vz7s', // Matemática - Geometria
+      'RF4wnAXJfIA', // Português - Gramática
     ];
 
     // Usar o ID da aula para selecionar um vídeo (de forma circular)
     const videoIndex = (this.aulaId! - 1) % videoIds.length;
     const videoId = videoIds[videoIndex];
-    
+
     // Gerar URL segura para o iframe
     const url = `https://www.youtube.com/embed/${videoId}?autoplay=0`;
     this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
@@ -144,15 +148,17 @@ export class AulaComponent implements OnInit, OnDestroy {
   definirNavegacaoAulas(): void {
     if (!this.aula || !this.aulasList.length) return;
 
-    const currentIndex = this.aulasList.findIndex(a => a.id === this.aula!.id);
-    
+    const currentIndex = this.aulasList.findIndex(
+      (a) => a.id === this.aula!.id
+    );
+
     // Próxima aula
     if (currentIndex < this.aulasList.length - 1) {
       this.proximaAula = this.aulasList[currentIndex + 1];
     } else {
       this.proximaAula = null;
     }
-    
+
     // Aula anterior
     if (currentIndex > 0) {
       this.aulaAnterior = this.aulasList[currentIndex - 1];
@@ -163,39 +169,49 @@ export class AulaComponent implements OnInit, OnDestroy {
 
   marcarAulaConcluida(): void {
     if (!this.trilhaId || !this.moduloId || !this.aulaId) return;
-    
-    this.trilhaService.atualizarStatusAula(
-      this.trilhaId, 
-      this.moduloId, 
-      this.aulaId, 
-      true
-    ).subscribe({
-      next: (trilhaAtualizada) => {
-        this.trilha = trilhaAtualizada;
-        this.modulo = trilhaAtualizada.modulos.find(m => m.id === this.moduloId) || null;
-        
-        if (this.modulo) {
-          this.aulasList = this.modulo.aulasList || [];
-          this.aula = this.aulasList.find(a => a.id === this.aulaId) || null;
-        }
-        
-        this.toastr.success('Aula marcada como concluída', 'Sucesso');
-      },
-      error: (err) => {
-        this.toastr.error('Erro ao marcar aula como concluída', 'Erro');
-      }
-    });
+
+    this.trilhaService
+      .atualizarStatusAula(this.trilhaId, this.moduloId, this.aulaId, true)
+      .subscribe({
+        next: (trilhaAtualizada) => {
+          this.trilha = trilhaAtualizada;
+          this.modulo =
+            trilhaAtualizada.modulos.find((m) => m.id === this.moduloId) ||
+            null;
+
+          if (this.modulo) {
+            this.aulasList = this.modulo.aulasList || [];
+            this.aula =
+              this.aulasList.find((a) => a.id === this.aulaId) || null;
+          }
+
+          this.toastr.success('Aula marcada como concluída', 'Sucesso');
+        },
+        error: (err) => {
+          this.toastr.error('Erro ao marcar aula como concluída', 'Erro');
+        },
+      });
   }
 
   irParaProximaAula(): void {
     if (this.proximaAula && this.trilhaId && this.moduloId) {
-      this.router.navigate(['/aula', this.trilhaId, this.moduloId, this.proximaAula.id]);
+      this.router.navigate([
+        '/aula',
+        this.trilhaId,
+        this.moduloId,
+        this.proximaAula.id,
+      ]);
     }
   }
 
   irParaAulaAnterior(): void {
     if (this.aulaAnterior && this.trilhaId && this.moduloId) {
-      this.router.navigate(['/aula', this.trilhaId, this.moduloId, this.aulaAnterior.id]);
+      this.router.navigate([
+        '/aula',
+        this.trilhaId,
+        this.moduloId,
+        this.aulaAnterior.id,
+      ]);
     }
   }
 

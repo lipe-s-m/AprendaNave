@@ -30,48 +30,8 @@
     </div>
   </section>
 
-  <!-- Modal do Módulo -->
-  <div class="modal-backdrop" *ngIf="moduloSelecionado" (click)="fecharModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-      <button class="modal-close" (click)="fecharModal()">×</button>
-      <div class="modal-header">
-        <div class="modulo-number">{{ getIndexModuloSelecionado() + 1 }}</div>
-        <h2>{{ moduloSelecionado!.nome }}</h2>
-        <div class="nivel-badge" *ngIf="moduloSelecionado!.nivel" [ngClass]="getNivelClass(moduloSelecionado!.nivel)">
-          {{ moduloSelecionado!.nivel }}
-        </div>
-      </div>
-      <div class="modal-body">
-        <p class="modal-info"><span>Status:</span> {{ getStatusText(moduloSelecionado!.status) }}</p>
-        <p class="modal-info"><span>Aulas:</span> {{ moduloSelecionado!.aulas }}</p>
-        <p class="modal-info"><span>Duração estimada:</span> {{ moduloSelecionado!.duracao }}</p>
-        <p class="modal-description">
-          {{ moduloSelecionado!.descricao || 'Informações detalhadas sobre este módulo serão adicionadas em breve.' }}
-        </p>
-      </div>
-      <div class="modal-footer">
-        <button class="modal-btn secondary" (click)="fecharModal()">Cancelar</button>
-        <button class="modal-btn primary" *ngIf="moduloSelecionado!.status !== 'CONCLUIDO' && moduloSelecionado!.status === 'EM_ANDAMENTO'" (click)="confirmarIniciarModulo()">
-          Continuar
-        </button>
-        <button class="modal-btn primary" *ngIf="moduloSelecionado!.status !== 'CONCLUIDO' && moduloSelecionado!.status === 'NAO_INICIADO'" click="(abrirModalModulo)">
-          Iniciar
-        </button>
-        <button class="modal-btn primary" *ngIf="moduloSelecionado!.status === 'CONCLUIDO'" (click)="confirmarIniciarModulo()">
-          Revisar Módulo
-        </button>
-      </div>
-    </div>
-  </div>
+
 </div>
-
-<ng-template #notFound>
-  <div class="notfound">
-    <h2>Trilha não encontrada</h2>
-    <button class="back-btn" (click)="goBack()">Voltar para Home</button>
-  </div>
-</ng-template>
-
 
 <!-- Modal do Módulo -->
 <div class="modal-backdrop" *ngIf="moduloSelecionado" (click)="fecharModal()">

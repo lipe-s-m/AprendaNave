@@ -70,8 +70,8 @@ export class LoginComponent implements OnInit {
 
   handleLoginFormSubmit() {
     if (
-      this.formLogin.get('email')?.value === 'admin' &&
-      this.formLogin.get('senha')?.value === 'admin'
+      this.formLogin.get('email')?.value?.toLowerCase() === 'admin' &&
+      this.formLogin.get('senha')?.value?.toLowerCase() === 'admin'
     ) {
       this.router.navigate(['/home']);
       return;

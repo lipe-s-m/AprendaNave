@@ -25,33 +25,33 @@ export const TRILHAS_MOCK: Trilha[] = [
             id: 1,
             titulo: 'Introdução aos Fundamentos da Matemática',
             duracao: '25:30',
-            concluida: false
+            concluida: false,
           },
           {
             id: 2,
             titulo: 'Conceitos Básicos de Frações',
             duracao: '32:15',
-            concluida: false
+            concluida: false,
           },
           {
             id: 3,
             titulo: 'Operações com Números Decimais',
             duracao: '28:45',
-            concluida: false
+            concluida: false,
           },
           {
             id: 4,
             titulo: 'Exercícios Práticos de Frações e Decimais',
             duracao: '35:00',
-            concluida: false
+            concluida: false,
           },
           {
             id: 5,
             titulo: 'Avaliação dos Fundamentos',
             duracao: '29:00',
-            concluida: false
-          }
-        ]
+            concluida: false,
+          },
+        ],
       },
       {
         id: 2,
@@ -67,27 +67,27 @@ export const TRILHAS_MOCK: Trilha[] = [
             id: 1,
             titulo: 'Introdução às Finanças Matemáticas',
             duracao: '40:15',
-            concluida: false
+            concluida: false,
           },
           {
             id: 2,
             titulo: 'Porcentagens e Aplicações',
             duracao: '55:30',
-            concluida: false
+            concluida: false,
           },
           {
             id: 3,
             titulo: 'Juros Simples e Compostos',
             duracao: '50:45',
-            concluida: false
+            concluida: false,
           },
           {
             id: 4,
             titulo: 'Exercícios Práticos de Finanças',
             duracao: '53:30',
-            concluida: false
-          }
-        ]
+            concluida: false,
+          },
+        ],
       },
       {
         id: 3,
@@ -103,27 +103,27 @@ export const TRILHAS_MOCK: Trilha[] = [
             id: 1,
             titulo: 'Introdução à Geometria',
             duracao: '35:45',
-            concluida: false
+            concluida: false,
           },
           {
             id: 2,
             titulo: 'Cálculo de Áreas',
             duracao: '50:20',
-            concluida: false
+            concluida: false,
           },
           {
             id: 3,
             titulo: 'Cálculo de Volumes',
             duracao: '55:10',
-            concluida: false
+            concluida: false,
           },
           {
             id: 4,
             titulo: 'Aplicações Práticas na Construção',
             duracao: '53:45',
-            concluida: false
-          }
-        ]
+            concluida: false,
+          },
+        ],
       },
       {
         id: 4,
@@ -139,27 +139,27 @@ export const TRILHAS_MOCK: Trilha[] = [
             id: 1,
             titulo: 'Introdução ao Raciocínio Lógico',
             duracao: '30:25',
-            concluida: false
+            concluida: false,
           },
           {
             id: 2,
             titulo: 'Funções de 1º Grau',
             duracao: '35:15',
-            concluida: false
+            concluida: false,
           },
           {
             id: 3,
             titulo: 'Funções de 2º Grau',
             duracao: '28:30',
-            concluida: false
+            concluida: false,
           },
           {
             id: 4,
             titulo: 'Resolução de Problemas Complexos',
             duracao: '25:50',
-            concluida: false
-          }
-        ]
+            concluida: false,
+          },
+        ],
       },
     ],
   },
@@ -184,51 +184,51 @@ export const TRILHAS_MOCK: Trilha[] = [
             id: 1,
             titulo: 'Introdução à Ortografia',
             duracao: '15:30',
-            concluida: false
+            concluida: false,
           },
           {
             id: 2,
             titulo: 'Regras Básicas de Acentuação',
             duracao: '18:45',
-            concluida: false
+            concluida: false,
           },
           {
             id: 3,
             titulo: 'Uso de Hífen',
             duracao: '12:20',
-            concluida: false
+            concluida: false,
           },
           {
             id: 4,
             titulo: 'Palavras Homônimas e Parônimas',
             duracao: '14:30',
-            concluida: false
+            concluida: false,
           },
           {
             id: 5,
             titulo: 'Exercícios de Ortografia',
             duracao: '13:15',
-            concluida: false
+            concluida: false,
           },
           {
             id: 6,
             titulo: 'Exercícios de Acentuação',
             duracao: '10:45',
-            concluida: false
+            concluida: false,
           },
           {
             id: 7,
             titulo: 'Ditado Ortográfico',
             duracao: '08:20',
-            concluida: false
+            concluida: false,
           },
           {
             id: 8,
             titulo: 'Avaliação de Ortografia e Acentuação',
             duracao: '11:35',
-            concluida: false
-          }
-        ]
+            concluida: false,
+          },
+        ],
       },
       {
         id: 2,
@@ -242,63 +242,63 @@ export const TRILHAS_MOCK: Trilha[] = [
             id: 1,
             titulo: 'Introdução às Classes Gramaticais',
             duracao: '12:30',
-            concluida: false
+            concluida: false,
           },
           {
             id: 2,
             titulo: 'Substantivos',
             duracao: '13:45',
-            concluida: false
+            concluida: false,
           },
           {
             id: 3,
             titulo: 'Adjetivos',
             duracao: '10:20',
-            concluida: false
+            concluida: false,
           },
           {
             id: 4,
             titulo: 'Verbos',
             duracao: '15:10',
-            concluida: false
+            concluida: false,
           },
           {
             id: 5,
             titulo: 'Advérbios',
             duracao: '11:35',
-            concluida: false
+            concluida: false,
           },
           {
             id: 6,
             titulo: 'Pronomes',
             duracao: '14:15',
-            concluida: false
+            concluida: false,
           },
           {
             id: 7,
             titulo: 'Preposições',
             duracao: '09:50',
-            concluida: false
+            concluida: false,
           },
           {
             id: 8,
             titulo: 'Conjunções',
             duracao: '10:35',
-            concluida: false
+            concluida: false,
           },
           {
             id: 9,
             titulo: 'Exercícios Práticos',
             duracao: '12:40',
-            concluida: false
+            concluida: false,
           },
           {
             id: 10,
             titulo: 'Avaliação sobre Classes Gramaticais',
             duracao: '09:20',
-            concluida: false
-          }
-        ]
+            concluida: false,
+          },
+        ],
       },
       {
         id: 3,
@@ -312,75 +312,75 @@ export const TRILHAS_MOCK: Trilha[] = [
             id: 1,
             titulo: 'Introdução à Sintaxe',
             duracao: '15:30',
-            concluida: false
+            concluida: false,
           },
           {
             id: 2,
             titulo: 'Frases e Tipos de Frases',
             duracao: '14:25',
-            concluida: false
+            concluida: false,
           },
           {
             id: 3,
             titulo: 'Sujeito e Predicado',
             duracao: '16:40',
-            concluida: false
+            concluida: false,
           },
           {
             id: 4,
             titulo: 'Complementos Verbais',
             duracao: '13:50',
-            concluida: false
+            concluida: false,
           },
           {
             id: 5,
             titulo: 'Complementos Nominais',
             duracao: '14:15',
-            concluida: false
+            concluida: false,
           },
           {
             id: 6,
             titulo: 'Adjuntos Adverbiais',
             duracao: '15:20',
-            concluida: false
+            concluida: false,
           },
           {
             id: 7,
             titulo: 'Adjuntos Adnominais',
             duracao: '12:10',
-            concluida: false
+            concluida: false,
           },
           {
             id: 8,
             titulo: 'Período Simples e Composto',
             duracao: '18:30',
-            concluida: false
+            concluida: false,
           },
           {
             id: 9,
             titulo: 'Orações Coordenadas',
             duracao: '16:15',
-            concluida: false
+            concluida: false,
           },
           {
             id: 10,
             titulo: 'Orações Subordinadas',
             duracao: '17:45',
-            concluida: false
+            concluida: false,
           },
           {
             id: 11,
             titulo: 'Exercícios de Análise Sintática',
             duracao: '15:10',
-            concluida: false
+            concluida: false,
           },
           {
             id: 12,
             titulo: 'Avaliação de Sintaxe',
             duracao: '10:20',
-            concluida: false
-          }
-        ]
+            concluida: false,
+          },
+        ],
       },
       {
         id: 4,
@@ -394,45 +394,45 @@ export const TRILHAS_MOCK: Trilha[] = [
             id: 1,
             titulo: 'Introdução à Interpretação Textual',
             duracao: '13:25',
-            concluida: false
+            concluida: false,
           },
           {
             id: 2,
             titulo: 'Tipos de Texto',
             duracao: '12:50',
-            concluida: false
+            concluida: false,
           },
           {
             id: 3,
             titulo: 'Gêneros Textuais',
             duracao: '15:15',
-            concluida: false
+            concluida: false,
           },
           {
             id: 4,
             titulo: 'Coerência e Coesão',
             duracao: '13:45',
-            concluida: false
+            concluida: false,
           },
           {
             id: 5,
             titulo: 'Inferência e Pressuposições',
             duracao: '11:20',
-            concluida: false
+            concluida: false,
           },
           {
             id: 6,
             titulo: 'Exercícios de Interpretação',
             duracao: '14:55',
-            concluida: false
+            concluida: false,
           },
           {
             id: 7,
             titulo: 'Avaliação de Interpretação Textual',
             duracao: '09:20',
-            concluida: false
-          }
-        ]
+            concluida: false,
+          },
+        ],
       },
     ],
   },
@@ -457,33 +457,33 @@ export const TRILHAS_MOCK: Trilha[] = [
             id: 1,
             titulo: 'Introdução à Teoria Musical',
             duracao: '12:30',
-            concluida: false
+            concluida: false,
           },
           {
             id: 2,
             titulo: 'Notas Musicais e Escala',
             duracao: '13:15',
-            concluida: false
+            concluida: false,
           },
           {
             id: 3,
             titulo: 'Ritmo e Compasso',
             duracao: '11:45',
-            concluida: false
+            concluida: false,
           },
           {
             id: 4,
             titulo: 'Intervalos Musicais',
             duracao: '10:50',
-            concluida: false
+            concluida: false,
           },
           {
             id: 5,
             titulo: 'Exercícios de Teoria Musical',
             duracao: '11:40',
-            concluida: false
-          }
-        ]
+            concluida: false,
+          },
+        ],
       },
       {
         id: 2,
@@ -497,63 +497,63 @@ export const TRILHAS_MOCK: Trilha[] = [
             id: 1,
             titulo: 'Introdução à Leitura de Partituras',
             duracao: '15:20',
-            concluida: false
+            concluida: false,
           },
           {
             id: 2,
             titulo: 'Pauta e Claves',
             duracao: '14:35',
-            concluida: false
+            concluida: false,
           },
           {
             id: 3,
             titulo: 'Valores das Notas',
             duracao: '13:50',
-            concluida: false
+            concluida: false,
           },
           {
             id: 4,
             titulo: 'Pausas e Sinais de Repetição',
             duracao: '16:10',
-            concluida: false
+            concluida: false,
           },
           {
             id: 5,
             titulo: 'Dinâmica e Expressão',
             duracao: '12:45',
-            concluida: false
+            concluida: false,
           },
           {
             id: 6,
             titulo: 'Acidentes Musicais',
             duracao: '15:30',
-            concluida: false
+            concluida: false,
           },
           {
             id: 7,
             titulo: 'Ligaduras e Articulações',
             duracao: '14:15',
-            concluida: false
+            concluida: false,
           },
           {
             id: 8,
             titulo: 'Leitura Rítmica',
             duracao: '15:40',
-            concluida: false
+            concluida: false,
           },
           {
             id: 9,
             titulo: 'Exercícios de Leitura',
             duracao: '17:25',
-            concluida: false
+            concluida: false,
           },
           {
             id: 10,
             titulo: 'Avaliação de Leitura de Partituras',
             duracao: '14:30',
-            concluida: false
-          }
-        ]
+            concluida: false,
+          },
+        ],
       },
       {
         id: 3,
@@ -567,93 +567,93 @@ export const TRILHAS_MOCK: Trilha[] = [
             id: 1,
             titulo: 'Introdução à Harmonia',
             duracao: '16:30',
-            concluida: false
+            concluida: false,
           },
           {
             id: 2,
             titulo: 'Acordes Básicos',
             duracao: '15:45',
-            concluida: false
+            concluida: false,
           },
           {
             id: 3,
             titulo: 'Inversões de Acordes',
             duracao: '14:20',
-            concluida: false
+            concluida: false,
           },
           {
             id: 4,
             titulo: 'Progressões Harmônicas',
             duracao: '18:10',
-            concluida: false
+            concluida: false,
           },
           {
             id: 5,
             titulo: 'Dominantes Secundárias',
             duracao: '16:35',
-            concluida: false
+            concluida: false,
           },
           {
             id: 6,
             titulo: 'Modulação',
             duracao: '17:45',
-            concluida: false
+            concluida: false,
           },
           {
             id: 7,
             titulo: 'Acordes de Tensão',
             duracao: '15:20',
-            concluida: false
+            concluida: false,
           },
           {
             id: 8,
             titulo: 'Substituições Harmônicas',
             duracao: '16:50',
-            concluida: false
+            concluida: false,
           },
           {
             id: 9,
             titulo: 'Harmonização de Melodias',
             duracao: '18:15',
-            concluida: false
+            concluida: false,
           },
           {
             id: 10,
             titulo: 'Análise Harmônica',
             duracao: '15:40',
-            concluida: false
+            concluida: false,
           },
           {
             id: 11,
             titulo: 'Harmonia no Jazz',
             duracao: '14:25',
-            concluida: false
+            concluida: false,
           },
           {
             id: 12,
             titulo: 'Harmonia na Música Popular',
             duracao: '13:50',
-            concluida: false
+            concluida: false,
           },
           {
             id: 13,
             titulo: 'Exercícios de Harmonia I',
             duracao: '12:30',
-            concluida: false
+            concluida: false,
           },
           {
             id: 14,
             titulo: 'Exercícios de Harmonia II',
             duracao: '13:45',
-            concluida: false
+            concluida: false,
           },
           {
             id: 15,
             titulo: 'Avaliação de Harmonia Funcional',
             duracao: '14:10',
-            concluida: false
-          }
-        ]
+            concluida: false,
+          },
+        ],
       },
       {
         id: 4,
@@ -667,51 +667,51 @@ export const TRILHAS_MOCK: Trilha[] = [
             id: 1,
             titulo: 'Introdução à Composição Musical',
             duracao: '15:30',
-            concluida: false
+            concluida: false,
           },
           {
             id: 2,
             titulo: 'Elementos da Composição',
             duracao: '14:45',
-            concluida: false
+            concluida: false,
           },
           {
             id: 3,
             titulo: 'Estrutura Musical',
             duracao: '16:20',
-            concluida: false
+            concluida: false,
           },
           {
             id: 4,
             titulo: 'Melodia e Motivos',
             duracao: '15:10',
-            concluida: false
+            concluida: false,
           },
           {
             id: 5,
             titulo: 'Técnicas de Desenvolvimento',
             duracao: '14:25',
-            concluida: false
+            concluida: false,
           },
           {
             id: 6,
             titulo: 'Arranjo e Orquestração',
             duracao: '16:40',
-            concluida: false
+            concluida: false,
           },
           {
             id: 7,
             titulo: 'Projeto de Composição',
             duracao: '13:50',
-            concluida: false
+            concluida: false,
           },
           {
             id: 8,
             titulo: 'Apresentação e Avaliação',
             duracao: '13:20',
-            concluida: false
-          }
-        ]
+            concluida: false,
+          },
+        ],
       },
     ],
   },
@@ -727,7 +727,7 @@ export const TRILHAS_MOCK: Trilha[] = [
     modulos: [
       {
         id: 1,
-        nome: 'Lógica de Programação',
+        nome: 'Introdução à Computação',
         status: 'NAO_INICIADO',
         aulas: 20,
         duracao: '5h',
@@ -735,125 +735,83 @@ export const TRILHAS_MOCK: Trilha[] = [
         aulasList: [
           {
             id: 1,
-            titulo: 'Introdução à Programação',
-            duracao: '15:30',
-            concluida: false
+            titulo: 'Introdução',
+            duracao: '03:00',
+            concluida: false,
           },
           {
             id: 2,
-            titulo: 'Algoritmos: Conceitos Básicos',
-            duracao: '16:45',
-            concluida: false
+            titulo: 'Resumo da História da Computação (Opcional)',
+            duracao: '15:30',
+            concluida: false,
           },
           {
             id: 3,
-            titulo: 'Variáveis e Tipos de Dados',
-            duracao: '14:20',
-            concluida: false
+            titulo: 'Áreas de Atuação',
+            duracao: '05:50',
+            concluida: false,
           },
           {
             id: 4,
-            titulo: 'Operadores Aritméticos',
-            duracao: '12:10',
-            concluida: false
+            titulo: 'Algoritmos: Conceitos Básicos',
+            duracao: '03:20',
+            concluida: false,
           },
           {
             id: 5,
-            titulo: 'Operadores Lógicos e Relacionais',
-            duracao: '13:45',
-            concluida: false
+            titulo: 'Operadores Aritméticos',
+            duracao: '03:10',
+            concluida: false,
           },
           {
             id: 6,
-            titulo: 'Estruturas Condicionais: if-else',
-            duracao: '15:20',
-            concluida: false
+            titulo: 'Operadores Lógicos',
+            duracao: '02:45',
+            concluida: false,
           },
           {
             id: 7,
-            titulo: 'Estruturas Condicionais: switch-case',
-            duracao: '12:35',
-            concluida: false
+            titulo: 'Estruturas Condicionais',
+            duracao: '5:20',
+            concluida: false,
           },
           {
             id: 8,
-            titulo: 'Estruturas de Repetição: for',
-            duracao: '14:50',
-            concluida: false
+            titulo: 'Desafios I',
+            duracao: '10:20',
+            concluida: false,
           },
           {
             id: 9,
-            titulo: 'Estruturas de Repetição: while e do-while',
-            duracao: '15:30',
-            concluida: false
+            titulo: 'Resolvendo Desafios I',
+            duracao: '12:50',
+            concluida: false,
           },
           {
             id: 10,
-            titulo: 'Vetores e Arrays',
-            duracao: '16:40',
-            concluida: false
+            titulo: 'Recaptulação do que vimos até agora',
+            duracao: '08:20',
+            concluida: false,
           },
           {
             id: 11,
-            titulo: 'Matrizes',
-            duracao: '15:25',
-            concluida: false
+            titulo: 'Estruturas de Repetição',
+            duracao: '4:50',
+            concluida: false,
           },
           {
             id: 12,
-            titulo: 'Funções e Procedimentos',
-            duracao: '17:10',
-            concluida: false
-          },
-          {
-            id: 13,
-            titulo: 'Passagem de Parâmetros',
-            duracao: '14:15',
-            concluida: false
+            titulo: 'Projeto Final',
+            duracao: '10:15',
+            concluida: false,
           },
           {
             id: 14,
-            titulo: 'Recursividade',
-            duracao: '16:30',
-            concluida: false
+            titulo: 'Finalização do Módulo de Lógica de Programação',
+            duracao: '4:45',
+            concluida: false,
           },
-          {
-            id: 15,
-            titulo: 'Introdução à Orientação a Objetos',
-            duracao: '18:45',
-            concluida: false
-          },
-          {
-            id: 16,
-            titulo: 'Resolução de Problemas I',
-            duracao: '13:20',
-            concluida: false
-          },
-          {
-            id: 17,
-            titulo: 'Resolução de Problemas II',
-            duracao: '12:50',
-            concluida: false
-          },
-          {
-            id: 18,
-            titulo: 'Resolução de Problemas III',
-            duracao: '14:30',
-            concluida: false
-          },
-          {
-            id: 19,
-            titulo: 'Projeto Final',
-            duracao: '18:15',
-            concluida: false
-          },
-          {
-            id: 20,
-            titulo: 'Avaliação de Lógica de Programação',
-            duracao: '14:45',
-            concluida: false
-          }
-        ]
+        ],
       },
       {
         id: 2,
@@ -867,111 +825,111 @@ export const TRILHAS_MOCK: Trilha[] = [
             id: 1,
             titulo: 'Introdução às Estruturas de Dados',
             duracao: '15:30',
-            concluida: false
+            concluida: false,
           },
           {
             id: 2,
             titulo: 'Análise de Complexidade',
             duracao: '16:45',
-            concluida: false
+            concluida: false,
           },
           {
             id: 3,
             titulo: 'Listas Lineares',
             duracao: '14:50',
-            concluida: false
+            concluida: false,
           },
           {
             id: 4,
             titulo: 'Listas Encadeadas',
             duracao: '17:20',
-            concluida: false
+            concluida: false,
           },
           {
             id: 5,
             titulo: 'Listas Duplamente Encadeadas',
             duracao: '15:40',
-            concluida: false
+            concluida: false,
           },
           {
             id: 6,
             titulo: 'Pilhas',
             duracao: '13:25',
-            concluida: false
+            concluida: false,
           },
           {
             id: 7,
             titulo: 'Filas',
             duracao: '14:10',
-            concluida: false
+            concluida: false,
           },
           {
             id: 8,
             titulo: 'Árvores: Conceitos Básicos',
             duracao: '16:30',
-            concluida: false
+            concluida: false,
           },
           {
             id: 9,
             titulo: 'Árvores Binárias',
             duracao: '18:15',
-            concluida: false
+            concluida: false,
           },
           {
             id: 10,
             titulo: 'Árvores Balanceadas',
             duracao: '17:45',
-            concluida: false
+            concluida: false,
           },
           {
             id: 11,
             titulo: 'Heaps',
             duracao: '14:50',
-            concluida: false
+            concluida: false,
           },
           {
             id: 12,
             titulo: 'Tabelas Hash',
             duracao: '16:20',
-            concluida: false
+            concluida: false,
           },
           {
             id: 13,
             titulo: 'Grafos: Conceitos Básicos',
             duracao: '15:35',
-            concluida: false
+            concluida: false,
           },
           {
             id: 14,
             titulo: 'Algoritmos em Grafos',
             duracao: '17:10',
-            concluida: false
+            concluida: false,
           },
           {
             id: 15,
             titulo: 'Implementação de Estruturas I',
             duracao: '15:25',
-            concluida: false
+            concluida: false,
           },
           {
             id: 16,
             titulo: 'Implementação de Estruturas II',
             duracao: '14:30',
-            concluida: false
+            concluida: false,
           },
           {
             id: 17,
             titulo: 'Projeto de Estruturas de Dados',
             duracao: '18:20',
-            concluida: false
+            concluida: false,
           },
           {
             id: 18,
             titulo: 'Avaliação de Estruturas de Dados',
             duracao: '16:10',
-            concluida: false
-          }
-        ]
+            concluida: false,
+          },
+        ],
       },
       {
         id: 3,
@@ -985,153 +943,153 @@ export const TRILHAS_MOCK: Trilha[] = [
             id: 1,
             titulo: 'Introdução aos Algoritmos Avançados',
             duracao: '14:30',
-            concluida: false
+            concluida: false,
           },
           {
             id: 2,
             titulo: 'Técnicas de Divisão e Conquista',
             duracao: '16:45',
-            concluida: false
+            concluida: false,
           },
           {
             id: 3,
             titulo: 'Algoritmos Gulosos',
             duracao: '15:20',
-            concluida: false
+            concluida: false,
           },
           {
             id: 4,
             titulo: 'Programação Dinâmica I',
             duracao: '17:30',
-            concluida: false
+            concluida: false,
           },
           {
             id: 5,
             titulo: 'Programação Dinâmica II',
             duracao: '18:15',
-            concluida: false
+            concluida: false,
           },
           {
             id: 6,
             titulo: 'Backtracking',
             duracao: '14:50',
-            concluida: false
+            concluida: false,
           },
           {
             id: 7,
             titulo: 'Branch and Bound',
             duracao: '15:40',
-            concluida: false
+            concluida: false,
           },
           {
             id: 8,
             titulo: 'Algoritmos de Ordenação Avançados',
             duracao: '16:25',
-            concluida: false
+            concluida: false,
           },
           {
             id: 9,
             titulo: 'Algoritmos de Busca Avançados',
             duracao: '15:10',
-            concluida: false
+            concluida: false,
           },
           {
             id: 10,
             titulo: 'Algoritmos em Strings I',
             duracao: '13:45',
-            concluida: false
+            concluida: false,
           },
           {
             id: 11,
             titulo: 'Algoritmos em Strings II',
             duracao: '14:30',
-            concluida: false
+            concluida: false,
           },
           {
             id: 12,
             titulo: 'Algoritmos Geométricos',
             duracao: '16:20',
-            concluida: false
+            concluida: false,
           },
           {
             id: 13,
             titulo: 'Algoritmos em Grafos I',
             duracao: '15:55',
-            concluida: false
+            concluida: false,
           },
           {
             id: 14,
             titulo: 'Algoritmos em Grafos II',
             duracao: '17:10',
-            concluida: false
+            concluida: false,
           },
           {
             id: 15,
             titulo: 'Algoritmos em Grafos III',
             duracao: '16:45',
-            concluida: false
+            concluida: false,
           },
           {
             id: 16,
             titulo: 'Algoritmos de Fluxo em Redes',
             duracao: '15:30',
-            concluida: false
+            concluida: false,
           },
           {
             id: 17,
             titulo: 'Algoritmos Probabilísticos',
             duracao: '14:25',
-            concluida: false
+            concluida: false,
           },
           {
             id: 18,
             titulo: 'Algoritmos Aproximativos',
             duracao: '13:50',
-            concluida: false
+            concluida: false,
           },
           {
             id: 19,
             titulo: 'Algoritmos Paralelos',
             duracao: '15:15',
-            concluida: false
+            concluida: false,
           },
           {
             id: 20,
             titulo: 'Algoritmos Distribuídos',
             duracao: '16:30',
-            concluida: false
+            concluida: false,
           },
           {
             id: 21,
             titulo: 'Resolução de Problemas Avançados I',
             duracao: '14:20',
-            concluida: false
+            concluida: false,
           },
           {
             id: 22,
             titulo: 'Resolução de Problemas Avançados II',
             duracao: '15:10',
-            concluida: false
+            concluida: false,
           },
           {
             id: 23,
             titulo: 'Resolução de Problemas Avançados III',
             duracao: '14:45',
-            concluida: false
+            concluida: false,
           },
           {
             id: 24,
             titulo: 'Projeto Final',
             duracao: '18:30',
-            concluida: false
+            concluida: false,
           },
           {
             id: 25,
             titulo: 'Avaliação de Algoritmos Avançados',
             duracao: '14:20',
-            concluida: false
-          }
-        ]
+            concluida: false,
+          },
+        ],
       },
       {
         id: 4,
@@ -1145,63 +1103,63 @@ export const TRILHAS_MOCK: Trilha[] = [
             id: 1,
             titulo: 'Introdução aos Paradigmas de Programação',
             duracao: '16:30',
-            concluida: false
+            concluida: false,
           },
           {
             id: 2,
             titulo: 'Programação Imperativa',
             duracao: '15:45',
-            concluida: false
+            concluida: false,
           },
           {
             id: 3,
             titulo: 'Programação Orientada a Objetos I',
             duracao: '18:20',
-            concluida: false
+            concluida: false,
           },
           {
             id: 4,
             titulo: 'Programação Orientada a Objetos II',
             duracao: '17:10',
-            concluida: false
+            concluida: false,
           },
           {
             id: 5,
             titulo: 'Programação Funcional I',
             duracao: '16:45',
-            concluida: false
+            concluida: false,
           },
           {
             id: 6,
             titulo: 'Programação Funcional II',
             duracao: '15:30',
-            concluida: false
+            concluida: false,
           },
           {
             id: 7,
             titulo: 'Programação Lógica',
             duracao: '14:20',
-            concluida: false
+            concluida: false,
           },
           {
             id: 8,
             titulo: 'Programação Reativa',
             duracao: '15:10',
-            concluida: false
+            concluida: false,
           },
           {
             id: 9,
             titulo: 'Projeto Multiparadigma',
             duracao: '18:45',
-            concluida: false
+            concluida: false,
           },
           {
             id: 10,
             titulo: 'Avaliação de Paradigmas de Programação',
             duracao: '16:35',
-            concluida: false
-          }
-        ]
+            concluida: false,
+          },
+        ],
       },
     ],
   },

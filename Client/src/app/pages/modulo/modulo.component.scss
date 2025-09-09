@@ -30,6 +30,13 @@
   }
 
   .header-info {
+
+    .header-meta{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-right: 2rem;
+    }
     h1 {
       font-size: 3.2rem;
       margin: 0 0 1rem 0;

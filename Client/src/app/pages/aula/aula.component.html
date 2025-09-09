@@ -14,28 +14,16 @@
 
   <div class="aula-content">
     <div class="video-container" *ngIf="videoUrl">
-      <iframe 
-        [src]="videoUrl" 
-        frameborder="0" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-        allowfullscreen>
+      <iframe [src]="videoUrl" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
       </iframe>
     </div>
 
     <div class="aula-navigation">
-      <button 
-        class="nav-button anterior" 
-        [disabled]="!aulaAnterior" 
-        (click)="irParaAulaAnterior()"
-        *ngIf="aulaAnterior">
+      <button class="nav-button anterior" [disabled]="!aulaAnterior" (click)="irParaAulaAnterior()" *ngIf="aulaAnterior">
         <i class="fas fa-chevron-left"></i> Aula Anterior: {{ aulaAnterior.titulo }}
       </button>
 
-      <button 
-        class="nav-button proxima" 
-        [disabled]="!proximaAula" 
-        (click)="irParaProximaAula()"
-        *ngIf="proximaAula">
+      <button class="nav-button proxima" [disabled]="!proximaAula" (click)="irParaProximaAula()" *ngIf="proximaAula">
         Próxima Aula: {{ proximaAula.titulo }} <i class="fas fa-chevron-right"></i>
       </button>
     </div>
@@ -48,13 +36,10 @@
         <div class="aulas-timeline"></div>
 
         <!-- Lista de aulas -->
-        <div class="aula-item" 
-          *ngFor="let aulaItem of aulasList; let i = index" 
-          [ngClass]="{
+        <div class="aula-item" *ngFor="let aulaItem of aulasList; let i = index" [ngClass]="{
             'aula-concluida': aulaItem.concluida,
             'aula-atual': aulaItem.id === aula.id
-          }"
-          (click)="aulaItem.id !== aula.id && irParaAula(aulaItem)">
+          }" (click)="aulaItem.id !== aula.id && irParaAula(aulaItem)">
           <div class="aula-play-icon">
             <i [ngClass]="aulaItem.concluida ? 'fas fa-check' : (aulaItem.id === aula.id ? 'fas fa-play-circle' : 'fas fa-play')"></i>
           </div>

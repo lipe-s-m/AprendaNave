@@ -25,9 +25,4 @@ export class StartComponent {
   entrarComoVisitante() {
     this.router.navigate(['/hub']);
   }
-
-  resetarDados() {
-    this.trilhaService.resetarTrilhas();
-    this.toastr.success('Dados resetados com sucesso!', 'Sucesso');
-  }
 }

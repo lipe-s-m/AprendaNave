@@ -17,7 +17,7 @@ export class TrilhaService {
 
     this.trilhas = this.trilhas.map((trilha) => ({
       ...trilha,
-      id: trilha.id + 1,
+      id: trilha.id,
     }));
     console.log('Trilhas carregadas:', this.trilhas);
   }
