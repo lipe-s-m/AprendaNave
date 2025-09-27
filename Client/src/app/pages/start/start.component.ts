@@ -1,9 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ButtonComponent } from '../../shared/components/button/button.component';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { HeaderComponent } from '../../layout/header/header.component';
-import { TrilhaService } from '../../services/trilha/trilha.service';
-import { ToastrService } from 'ngx-toastr';
+import { ThemeService } from '../../services/theme/theme.service';
 
 @Component({
   selector: 'app-start',
@@ -12,12 +11,14 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './start.component.html',
   styleUrl: './start.component.scss',
 })
-export class StartComponent {
-  constructor(
-    private router: Router,
-    private trilhaService: TrilhaService,
-    private toastr: ToastrService
-  ) {}
+export class StartComponent implements OnInit {
+  constructor(private router: Router, private themeService: ThemeService) {}
+  ngOnInit() {
+    // Garante que o tema escuro seja aplicado por padrão na tela de login
+    if (this.themeService.getCurrentTheme() !== 'dark') {
+      this.themeService.setTheme('dark');
+    }
+  }
 
   entrarComoUsuario() {
     this.router.navigate(['/login']);

@@ -3,14 +3,16 @@ import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TrilhaService } from '../../services/trilha/trilha.service';
 import { Trilha, Modulo, Aula } from '../../models/trilha.model';
+import { ButtonComponent } from '../../shared/components/button/button.component';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { LoaderComponent } from '../../shared/components/loader/loader.component';
 
 @Component({
   selector: 'app-aula',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ButtonComponent, LoaderComponent],
   templateUrl: './aula.component.html',
   styleUrl: './aula.component.scss',
 })

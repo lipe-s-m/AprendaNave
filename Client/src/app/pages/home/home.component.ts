@@ -1,16 +1,17 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { LoginService } from '../../services/login/login.service';
 import { ToastrService } from 'ngx-toastr';
 import { ThemeService } from '../../services/theme/theme.service';
 import { Subscription } from 'rxjs';
 import { TrilhaService } from '../../services/trilha/trilha.service';
+import { LoaderComponent } from '../../shared/components/loader/loader.component';
+import { SubheaderComponent } from '../../shared/components/subheader/subheader.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LoaderComponent, SubheaderComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
@@ -24,7 +25,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private loginService: LoginService,
     private toastr: ToastrService,
     private themeService: ThemeService,
     private trilhaService: TrilhaService
@@ -70,26 +70,5 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   goToTrilha(id: number) {
     this.router.navigate(['/trilha', id]);
-  }
-
-  toggleTheme() {
-    this.themeService.toggleTheme();
-    const newTheme = this.themeService.getCurrentTheme();
-    this.toastr.info(
-      `Tema alterado para ${newTheme === 'dark' ? 'escuro' : 'claro'}`,
-      'Tema'
-    );
-  }
-
-  goToProfile() {
-    // Rota para perfil (você pode criar depois)
-    this.toastr.info('Funcionalidade de perfil em desenvolvimento', 'Info');
-  }
-
-  logout() {
-    this.themeService.setTheme('dark');
-    this.loginService.logout();
-    this.toastr.success('Logout realizado com sucesso!', 'Sucesso');
-    this.router.navigate(['/']);
   }
 }

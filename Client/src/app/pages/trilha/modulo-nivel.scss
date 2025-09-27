@@ -20,25 +20,24 @@
   padding: 0.3rem 0.8rem;
   border-radius: 4px;
   text-transform: lowercase;
-  margin-left: 1rem;
   white-space: nowrap;
-
+  align-self: self-end;
   &::first-letter {
     text-transform: uppercase;
   }
 
   &.nivel-iniciante {
-    background-color: #4caf50;
+    background-color: #4c944d;
     color: white;
   }
 
   &.nivel-intermediario {
-    background-color: #ff9800;
+    background-color: #e49827;
     color: white;
   }
 
   &.nivel-avancado {
-    background-color: #f44336;
+    background-color: #d33f35;
     color: white;
   }
 }

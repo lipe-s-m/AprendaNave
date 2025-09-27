@@ -1,5 +1,5 @@
 @use "app/scss/variables";
-@import 'ngx-toastr/toastr';
+@import "ngx-toastr/toastr";
 
 // Custom toast styles
 .toast-container {
@@ -50,7 +50,8 @@
     background-color: var(--success-color) !important;
     color: white !important;
 
-    .toast-title, .toast-message {
+    .toast-title,
+    .toast-message {
       color: white !important;
     }
   }
@@ -59,7 +60,8 @@
     background-color: var(--error-color) !important;
     color: white !important;
 
-    .toast-title, .toast-message {
+    .toast-title,
+    .toast-message {
       color: white !important;
     }
   }
@@ -68,7 +70,8 @@
     background-color: var(--accent-primary) !important;
     color: white !important;
 
-    .toast-title, .toast-message {
+    .toast-title,
+    .toast-message {
       color: white !important;
     }
   }
@@ -77,13 +80,17 @@
     background-color: var(--warning-color) !important;
     color: white !important;
 
-    .toast-title, .toast-message {
+    .toast-title,
+    .toast-message {
       color: white !important;
     }
   }
 
   // Esconder todos os ícones em todos os tipos de toasts
-  .toast-success, .toast-error, .toast-info, .toast-warning {
+  .toast-success,
+  .toast-error,
+  .toast-info,
+  .toast-warning {
     background-image: none !important;
     padding: 10px 15px !important;
 
@@ -107,7 +114,8 @@
 .no-icon {
   padding-left: 15px !important;
 
-  .toast-title, .toast-message {
+  .toast-title,
+  .toast-message {
     padding-left: 0 !important;
   }
 
@@ -122,9 +130,16 @@
   }
 
   // Garantir que o texto seja legível em toasts coloridos
-  &.toast-success, &.toast-error, &.toast-info, &.toast-warning,
-  &.toast-success-no-icon, &.toast-error-no-icon, &.toast-info-no-icon, &.toast-warning-no-icon {
-    .toast-title, .toast-message {
+  &.toast-success,
+  &.toast-error,
+  &.toast-info,
+  &.toast-warning,
+  &.toast-success-no-icon,
+  &.toast-error-no-icon,
+  &.toast-info-no-icon,
+  &.toast-warning-no-icon {
+    .toast-title,
+    .toast-message {
       color: white !important;
     }
   }
@@ -168,7 +183,7 @@ body {
 app-root {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 * {
@@ -180,13 +195,6 @@ app-root {
   padding: 0;
   box-sizing: border-box;
   outline: none;
-}
-
-body {
-  background-color: var(--background-primary);
-  min-height: 100vh;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  overflow-x: hidden;
 }
 
 p {

@@ -1,13 +1,14 @@
+<header>
+  <app-subheader></app-subheader>
+</header>
+
 <div class="modulo-container" *ngIf="modulo; else notFound">
   <header class="modulo-header">
-    <button class="back" (click)="voltarParaTrilha()">← Voltar para Trilha</button>
     <div class="header-info">
       <h1>{{ modulo.nome }}</h1>
       <div class="header-meta">
         <p class="trilha-nome">Trilha: {{ trilha?.nome }}</p>
-        <div class="nivel-badge" *ngIf="modulo.nivel" [ngClass]="getNivelClass(modulo.nivel)">
-          {{ modulo.nivel }}
-        </div>
+
       </div>
     </div>
   </header>
@@ -23,16 +24,6 @@
           <p>{{ modulo.aulas }}</p>
         </div>
       </div>
-
-      <!-- <div class="info-card">
-        <div class="info-icon">
-          <i class="fas fa-clock"></i>
-        </div>
-        <div class="info-text">
-          <h4>Duração</h4>
-          <p>{{ modulo.duracao }}</p>
-        </div>
-      </div> -->
 
       <div class="info-card">
         <div class="info-icon">
@@ -104,3 +95,6 @@
     <button class="back-btn" (click)="voltarParaTrilha()">Voltar para Trilha</button>
   </div>
 </ng-template>
+<div class="loading" *ngIf="isLoading">
+  <app-loader></app-loader>
+</div>

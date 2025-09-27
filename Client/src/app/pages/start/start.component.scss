@@ -2,7 +2,7 @@
 :host {
   display: flex;
   flex-direction: column;
-  flex-grow: 1; /* Faz com que o componente de página ocupe todo o espaço do router-outlet */
+  flex-grow: 1;
 }
 
 .container {
@@ -14,15 +14,13 @@
 
   overflow-x: hidden;
 
-  flex-grow: 1; /* Faz com que o conteúdo principal ocupe todo o espaço restante */
-  overflow-y: auto; /* Adiciona scroll se o conteúdo for maior que a tela */
+  flex-grow: 1;
+  overflow-y: auto;
   img {
     width: 56vw;
     height: auto;
     max-width: 280px;
     margin: 4.8rem auto 0;
-    // border-radius: variables.$borda-radius-input;
-    // box-shadow: variables.$sombra-card;
   }
   h2 {
     width: 95%;

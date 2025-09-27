@@ -3,32 +3,48 @@
   margin: 0 auto;
   padding: 20px;
   color: var(--text-primary);
+  background-color: var(--background-secondary);
 }
 
 .aula-header {
   margin-bottom: 30px;
 
+  // .back {
+  //   background: none;
+  //   color: var(--accent-primary);
+  //   font-size: 2.6rem;
+  //   font-weight: 800;
+  //   cursor: pointer;
+  //   display: inline-flex;
+  //   align-items: center;
+  //   transition: color 0.2s;
+
+  //   &:hover {
+  //     transition: 0.2s;
+  //     opacity: 0.8;
+  //   }
+  // }
   .back {
-    background: none;
-    border: none;
-    color: var(--accent-primary);
-    font-size: 1rem;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 1rem 1.5rem;
+    border-radius: 6px;
+    width: auto;
     cursor: pointer;
-    padding: 5px 0;
-    display: inline-flex;
-    align-items: center;
-    margin-bottom: 10px;
-    transition: color 0.2s;
+    font-size: 1.6rem;
+    margin-bottom: 2rem;
+    transition: all 0.2s;
 
     &:hover {
-      opacity: 0.8;
+      background: var(--background-tertiary);
+      border-color: var(--accent-primary);
     }
   }
 
   .header-info {
     h1 {
       font-size: 2.2rem;
-      margin-bottom: 10px;
       color: var(--accent-primary);
     }
 
@@ -38,7 +54,7 @@
       gap: 20px;
 
       .trilha-nome {
-        font-size: 1rem;
+        font-size: 1.3rem;
         color: var(--text-secondary);
       }
 
@@ -230,7 +246,7 @@
   height: 300px;
 
   p {
-    font-size: 1.2rem;
+    font-size: 20rem;
     color: var(--text-secondary);
   }
 }

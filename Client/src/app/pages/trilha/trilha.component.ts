@@ -5,11 +5,14 @@ import { TrilhaService } from '../../services/trilha/trilha.service';
 import { Trilha, Modulo } from '../../models/trilha.model';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
+import { LoaderComponent } from '../../shared/components/loader/loader.component';
+import { HeaderComponent } from '../../layout/header/header.component';
+import { SubheaderComponent } from '../../shared/components/subheader/subheader.component';
 
 @Component({
   selector: 'app-trilha',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LoaderComponent, SubheaderComponent],
   templateUrl: './trilha.component.html',
   styleUrl: './trilha.component.scss',
 })

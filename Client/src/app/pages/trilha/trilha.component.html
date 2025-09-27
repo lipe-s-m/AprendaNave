@@ -1,23 +1,25 @@
+<header>
+  <app-subheader />
+</header>
+
 <div class="trilha-container" *ngIf="trilha; else notFound">
   <header class="trilha-header">
-    <button class="back" (click)="goBack()">← Voltar</button>
     <div class="trilha-info">
       <h1>{{ trilha.nome }}</h1>
-      <p class="descricao">{{ trilha.descricao }}</p>
     </div>
-    <button class="reset-btn" (click)="resetarDados()">Resetar Dados</button>
+    <!-- <button class="reset-btn" (click)="resetarDados()">Resetar Dados</button> -->
   </header>
 
   <section class="modulos-section">
-    <h2>Módulos ({{ trilha.modulos.length }})</h2>
+    <h2>Módulos</h2>
     <div class="modulos-grid">
       <div class="modulo-card" *ngFor="let modulo of trilha.modulos; let idx = index" (click)="abrirModalModulo(modulo, $event)">
+        <div class="nivel-badge" [ngClass]="getNivelClass(modulo.nivel)">
+          {{ modulo.nivel || 'INICIANTE' }}
+        </div>
         <div class="modulo-number">{{ idx + 1 }}</div>
         <div class="modulo-header">
           <h3 class="modulo-title">{{ modulo.nome }}</h3>
-          <div class="nivel-badge" [ngClass]="getNivelClass(modulo.nivel)">
-            {{ modulo.nivel || 'INICIANTE' }}
-          </div>
         </div>
         <p class="modulo-description">{{ modulo.aulas }} aulas · {{ modulo.duracao }}</p>
         <div class="modulo-status" [class.concluido]="modulo.status === 'CONCLUIDO'" [class.em-andamento]="modulo.status === 'EM_ANDAMENTO'">
@@ -67,3 +69,6 @@
     <button class="back-btn" (click)="goBack()">Voltar para Home</button>
   </div>
 </ng-template>
+<div class="loading" *ngIf="isLoading">
+  <app-loader></app-loader>
+</div>

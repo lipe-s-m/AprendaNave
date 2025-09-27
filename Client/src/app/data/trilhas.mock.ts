@@ -753,13 +753,13 @@ export const TRILHAS_MOCK: Trilha[] = [
           },
           {
             id: 4,
-            titulo: 'Algoritmos: Conceitos Básicos',
+            titulo: '',
             duracao: '03:20',
             concluida: false,
           },
           {
             id: 5,
-            titulo: 'Operadores Aritméticos',
+            titulo: 'Oque é Algoritmo?',
             duracao: '03:10',
             concluida: false,
           },

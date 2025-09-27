@@ -1,3 +1,5 @@
+@use "@angular/material" as mat;
+
 // Variáveis para o tema escuro (padrão)
 :root {
   --background-primary: #0d1117;
@@ -8,32 +10,52 @@
   --text-muted: #8b949e;
   --border-color: rgba(255, 255, 255, 0.1);
   --border-color-light: rgba(255, 255, 255, 0.05);
-  --accent-primary: #4EA8DE;
+  --accent-primary: #4ea8de;
   --accent-secondary: #5965e0;
   --text-on-accent: #ffffff;
-  --success-color: #00875F;
-  --success-color-dark: #00734F;
-  --error-color: #F75A68;
-  --warning-color: #FBA94C;
+  --success-color: #00875f;
+  --success-color-dark: #00734f;
+  --error-color: #f75a68;
+  --warning-color: #fba94c;
+  @include mat.progress-spinner-overrides(
+    (
+      active-indicator-color: #ac87c5,
+    )
+  );
 }
 
 // Tema claro
 .light-theme {
   --background-primary: #ffffff;
+  --background-primary: #bec1f8;
+  --background-primary: #3396d3;
+  --background-primary: #f2f4f7;
+
+  --background-secondary: #ac87c5;
   --background-secondary: #f6f8fa;
+  --background-secondary: #3396d3;
+  --background-secondary: #f2f4f7;
   --background-tertiary: #ffffff;
-  --text-primary: #24292f;
-  --text-secondary: #57606a;
+  --background-quaternary: #f2f4f7;
+
+  --text-primary: #1b1e22;
+  --text-secondary: #1d1a1a;
   --text-muted: #656d76;
   --border-color: rgba(27, 31, 36, 0.15);
   --border-color-light: rgba(27, 31, 36, 0.1);
-  --accent-primary: #c19eda;
-  --accent-secondary: #9972e0;
+  --accent-primary: #30258f;
+  --accent-secondary: #6d94c5;
   --text-on-accent: #ffffff;
-  --success-color: #1a7f37;
-  --success-color-dark: #116329;
+  --success-color: #0b1ec5;
+  --success-color-dark: #040357;
   --error-color: #d1242f;
   --warning-color: #9a6700;
+
+  @include mat.progress-spinner-overrides(
+    (
+      active-indicator-color: #0b1ec5,
+    )
+  );
 }
 
 // Tema escuro (explícito)
@@ -41,6 +63,8 @@
   --background-primary: #0d1117;
   --background-secondary: #161b22;
   --background-tertiary: #21262d;
+  --background-quaternary: #1a1e24;
+
   --text-primary: #e1e1e6;
   --text-secondary: #c9d1d9;
   --text-muted: #8b949e;
@@ -49,10 +73,10 @@
   --accent-primary: #a7c;
   --accent-secondary: #f0dffc;
   --text-on-accent: #ffffff;
-  --success-color: #00875F;
-  --success-color-dark: #00734F;
-  --error-color: #F75A68;
-  --warning-color: #FBA94C;
+  --success-color: #00875f;
+  --success-color-dark: #00734f;
+  --error-color: #f75a68;
+  --warning-color: #fba94c;
 }
 
 // Cores antigas (mantidas para compatibilidade)
