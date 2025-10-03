@@ -1,11 +1,28 @@
+using DotNetEnv;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using server.Domain.DTOs;
+using server.Domain.Interfaces;
+using server.Domain.Services;
+using server.Repository.Database;
+
+Env.Load();
 var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 
-app.MapGet("/", () => "Hello World!");
-app.MapPost("/login", (LoginRequestDTO loginRequestDTO) =>
+builder.Services.AddScoped<IAlunoService, AlunoService>();
+builder.Services.AddDbContext<DbContexto>(options =>
 {
-	if (loginRequestDTO.Email != null && loginRequestDTO.Senha != null)
+	options.UseNpgsql(connectionString);
+});
+
+
+var app = builder.Build();
+app.MapGet("/", () => "Hello World!");
+app.MapPost("/login", ([FromBody] LoginRequestDTO loginRequestDTO, IAlunoService alunoService) =>
+{
+	if (alunoService.Login(loginRequestDTO) != null)
 	{
 		return Results.Ok("Usuario Logado com Sucesso!");
 	}
@@ -27,19 +44,6 @@ app.Run();
 
 
 
-
-
 //classes
-class LoginRequestDTO
-{
-	public string Email { get; set; }
-	public string Senha { get; set; }
-}
 
-class CadastroRequestDTO
-{
-	public string Nome { get; set; }
-	public string Email { get; set; }
-	public string Senha { get; set; }
-	public string SenhaConfirmacao { get; set; }
-}
+
