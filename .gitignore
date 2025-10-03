@@ -18,7 +18,9 @@ pnpm-debug.log*
 
 # IDE e SO
 .vscode/
+.vs/
 .idea/
+.github/
 .DS_Store
 Thumbs.db
 
@@ -29,3 +31,6 @@ coverage/
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+
+# versionamento
+vercel.json
