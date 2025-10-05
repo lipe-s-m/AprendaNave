@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using server.Domain.Interfaces;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace server.Domain.Entities
 {
-	public class Aluno
+	public class Aluno : IAuditableEntity
 	{
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -14,6 +15,7 @@ namespace server.Domain.Entities
 		public string Nome { get; set; } = default!;
 
 		[Required]
+		[EmailAddress]
 		[StringLength(60)]
 		public string Email { get; set; } = default!;
 
@@ -21,9 +23,15 @@ namespace server.Domain.Entities
 		[Required]
 		public string Senha { get; set; } = default!;
 
-		[Required]
 		[StringLength(20)]
-		public string cargo { get; set; } = default!;
+		public string cargo { get; set; } = "Aluno";
+
+		public DateTime CreatedAt { get; set; }
+		public DateTime? LastUpdatedAt { get; set; }
+
+
+		public ICollection<Curso> Cursos = [];
+		public ICollection<AlunoModuloProgresso> AlunoModuloProgresso = [];
 
 	}
 }

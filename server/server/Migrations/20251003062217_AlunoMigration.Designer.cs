@@ -11,14 +11,15 @@ using server.Repository.Database;
 namespace server.Migrations
 {
     [DbContext(typeof(DbContexto))]
-    [Migration("20251003052818_SeedAluno")]
-    partial class SeedAluno
+    [Migration("20251003062217_AlunoMigration")]
+    partial class AlunoMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("public")
                 .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -54,7 +55,7 @@ namespace server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Aluno");
+                    b.ToTable("Alunos", "public");
 
                     b.HasData(
                         new
@@ -65,6 +66,36 @@ namespace server.Migrations
                             Senha = "SenhaUsuarioTeste123",
                             cargo = "Aluno"
                         });
+                });
+
+            modelBuilder.Entity("server.Domain.Entities.Curso", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Logo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Modulos")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Professor")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Cursos", "public");
                 });
 #pragma warning restore 612, 618
         }

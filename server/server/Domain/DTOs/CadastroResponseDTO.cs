@@ -1,12 +1,10 @@
 ﻿namespace server.Domain.DTOs
 {
-	public class CadastroRequestDTO
+	public class CadastroResponseDTO
 	{
-
+		public int id { get; set; } = default!;
 		public string Nome { get; set; } = default!;
 		public string Email { get; set; } = default!;
-		public string Senha { get; set; } = default!;
-		public string SenhaConfirmacao { get; set; } = default!;
 		public string Cargo { get; set; } = default!;
 	}
 }
