@@ -1,18 +1,18 @@
 <div class="container">
-  <h1>Eu quero aprender...</h1>
+  <h1>Você pode aprender:</h1>
 
   <ul>
     <li *ngFor="let trilha of trilhas">
       <img src={{trilha.imagem}} alt="imagem da trilha {{trilha.nome}}">
       <div class="info-text">
         <h3>{{trilha.nome}}</h3>
-        <p>{{trilha.matriculas}} alunos</p>
+        <!-- <p>{{trilha.matriculas}} alunos</p> -->
       </div>
     </li>
   </ul>
 
   <p>Aproveite 100% de nossa plataforma entrando em sua conta</p>
 
-  <app-button buttonText='Entrar na Sua Conta' buttonSize="large" buttonLevel="primary" buttonTheme="dark" buttonType="button" [buttonDisabled]=false (click)="entrarComoUsuario()" />
+  <app-button buttonText='Comece agora!' buttonSize="large" buttonLevel="primary" buttonTheme="dark" buttonType="button" [buttonDisabled]=false (click)="entrarComoUsuario()" />
 
 </div>

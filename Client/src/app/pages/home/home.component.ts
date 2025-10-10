@@ -47,6 +47,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.trilhasSubscription) {
       this.trilhasSubscription.unsubscribe();
     }
+    localStorage.removeItem('trilhas');
   }
 
   loadTrilhas(): void {

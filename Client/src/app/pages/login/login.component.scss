@@ -103,6 +103,22 @@ section {
     }
   }
 
+  .texto-cadastro {
+    font-size: 1.8rem;
+    opacity: 1;
+    color: var(--text-primary);
+    span {
+      opacity: inherit;
+      color: var(--accent-primary);
+      font-weight: 600;
+      cursor: pointer;
+      transition: ease-in-out 0.1s;
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
+
   .outros-meios-login {
     display: flex;
     flex-direction: column;
@@ -114,10 +130,13 @@ section {
   }
 }
 
+.outras-opcoes {
+  display: none;
+}
 .termos {
   font-size: 1.5rem;
   text-align: center;
-  opacity: 0.8;
+  opacity: 1;
   font-weight: 200;
   padding: 1rem;
   color: var(--text-secondary);

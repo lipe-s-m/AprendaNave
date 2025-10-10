@@ -168,7 +168,7 @@ export const TRILHAS_MOCK: Trilha[] = [
     nome: 'Português',
     imagem: 'assets/dicionario.svg',
     matriculas: 24,
-    professor: 'Professora Ana',
+    professor: 'Professora Chavelli',
     descricao:
       'Domine a gramática e a interpretação de textos para uma comunicação mais eficaz.',
     modulos: [
@@ -441,7 +441,7 @@ export const TRILHAS_MOCK: Trilha[] = [
     nome: 'Música',
     imagem: 'assets/notas-musicais.svg',
     matriculas: 11,
-    professor: 'Maestro Silva',
+    professor: 'Professor Felipe',
     descricao:
       'Explore o mundo da música, aprendendo teoria musical e harmonia de forma prática.',
     modulos: [

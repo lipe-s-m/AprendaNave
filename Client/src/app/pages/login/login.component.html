@@ -24,15 +24,19 @@
         </div>
         <app-button [buttonText]="isLoading ? 'Entrando...' : 'Entrar'" buttonSize="large" buttonTheme="dark" buttonType="submit" buttonLevel="primary" [buttonDisabled]="formLogin.invalid || isLoading" />
       </form>
-      <span>
-        <hr>
-        <p>OU</p>
-        <hr>
-      </span>
-      <div class="outros-meios-login">
-        <app-button buttonText="Entrar com Facebook" buttonSize="large" buttonType="submit" buttonBackgroundColor="blue" button />
-        <app-button buttonText="Entrar com google " buttonSize="large" buttonType="submit" buttonBackgroundColor="white" buttonTextColor="black" button />
+      <p class="texto-cadastro">Não tem uma conta? <span (click)="handleChangeForm()">CRIAR CONTA</span></p>
+      <div class="outras-opcoes">
+        <span>
+          <hr>
+          <p>OU</p>
+          <hr>
+        </span>
+        <div class="outros-meios-login">
+          <app-button buttonText="Entrar com Facebook" buttonSize="large" buttonType="submit" buttonBackgroundColor="blue" button />
+          <app-button buttonText="Entrar com google " buttonSize="large" buttonType="submit" buttonBackgroundColor="white" buttonTextColor="black" button />
+        </div>
       </div>
+
     </section>
 
     <!-- cadastro -->
@@ -54,17 +58,25 @@
           </div>
           <app-button [buttonText]="isLoading ? 'Cadastrando...' : 'Cadastrar'" buttonSize="large" buttonTheme="dark" buttonType="submit" buttonLevel="primary" [buttonDisabled]="formSignIn.invalid || isLoading" />
         </form>
-        <span>
-          <hr>
-          <p>OU</p>
-          <hr>
-        </span>
-        <div class="outros-meios-login">
-          <app-button buttonText="Entrar com Facebook" buttonSize="large" buttonType="submit" buttonBackgroundColor="blue" />
-          <app-button buttonText="Entrar com google " buttonSize="large" buttonType="submit" buttonBackgroundColor="white" buttonTextColor="black" />
+        <p class="texto-cadastro">Já tem uma conta? <span (click)="handleChangeForm()">ENTRAR</span></p>
+        <div class="outras-opcoes">
+          <span>
+            <hr>
+            <p>OU</p>
+            <hr>
+          </span>
+          <div class="outros-meios-login">
+            <app-button buttonText="Entrar com Facebook" buttonSize="large" buttonType="submit" buttonBackgroundColor="blue" />
+            <app-button buttonText="Entrar com google " buttonSize="large" buttonType="submit" buttonBackgroundColor="white" buttonTextColor="black" />
+          </div>
         </div>
       </section>
     </ng-template>
     <p class="termos">Ao se cadastrar, você concorda com nossos <u>Termos de Serviço</u> e <u>Política de Privacidade</u>.</p>
   </div>
+
+</div>
+
+<div class="loading" *ngIf="isLoading">
+  <app-loader></app-loader>
 </div>

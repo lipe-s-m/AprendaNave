@@ -14,9 +14,9 @@
     <h2>Módulos</h2>
     <div class="modulos-grid">
       <div class="modulo-card" *ngFor="let modulo of trilha.modulos; let idx = index" (click)="abrirModalModulo(modulo, $event)">
-        <div class="nivel-badge" [ngClass]="getNivelClass(modulo.nivel)">
+        <!-- <div class="nivel-badge" [ngClass]="getNivelClass(modulo.nivel)">
           {{ modulo.nivel || 'INICIANTE' }}
-        </div>
+        </div> -->
         <div class="modulo-number">{{ idx + 1 }}</div>
         <div class="modulo-header">
           <h3 class="modulo-title">{{ modulo.nome }}</h3>

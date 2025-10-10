@@ -17,6 +17,7 @@ import { LoginService } from '../../services/login/login.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { ThemeService } from '../../services/theme/theme.service';
+import { LoaderComponent } from '../../shared/components/loader/loader.component';
 
 @Component({
   selector: 'app-login',
@@ -27,6 +28,7 @@ import { ThemeService } from '../../services/theme/theme.service';
     ReactiveFormsModule,
     CommonModule,
     InputComponent,
+    LoaderComponent,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
@@ -118,6 +120,7 @@ export class LoginComponent implements OnInit {
         nomeDeUsuario: this.formSignIn.get('nomeDeUsuario')?.value || '',
         email: this.formSignIn.get('email')?.value || '',
         senha: this.formSignIn.get('senha')?.value || '',
+        confirmarSenha: this.formSignIn.get('confirmarSenha')?.value || '',
       };
 
       this.loginService.registerUser(userData).subscribe({
