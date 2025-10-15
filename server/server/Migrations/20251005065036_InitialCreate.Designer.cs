@@ -12,8 +12,8 @@ using server.Repository.Database;
 namespace server.Migrations
 {
     [DbContext(typeof(DbContexto))]
-    [Migration("20251005024133_ModulosERelacionamentos")]
-    partial class ModulosERelacionamentos
+    [Migration("20251005065036_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,44 +30,47 @@ namespace server.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int?>("CursoId")
-                        .HasColumnType("integer");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(60)
-                        .HasColumnType("character varying(60)");
+                        .HasColumnType("character varying(60)")
+                        .HasColumnName("email");
 
                     b.Property<DateTime?>("LastUpdatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_updated_at");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("nome");
 
                     b.Property<string>("Senha")
                         .IsRequired()
                         .HasMaxLength(40)
-                        .HasColumnType("character varying(40)");
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("senha");
 
                     b.Property<string>("cargo")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("cargo");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_aluno");
 
-                    b.HasIndex("CursoId");
-
-                    b.ToTable("Alunos", "public");
+                    b.ToTable("aluno", "public");
 
                     b.HasData(
                         new
@@ -84,111 +87,129 @@ namespace server.Migrations
             modelBuilder.Entity("server.Domain.Entities.AlunoModuloProgresso", b =>
                 {
                     b.Property<int>("IdAluno")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id_aluno");
 
                     b.Property<int>("IdModulo")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id_modulo");
 
                     b.Property<int>("AlunoId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("aluno_id");
 
                     b.Property<int>("ModuloId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("modulo_id");
 
                     b.Property<string>("StatusProgresso")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("status_progresso");
 
-                    b.HasKey("IdAluno", "IdModulo");
+                    b.HasKey("IdAluno", "IdModulo")
+                        .HasName("pk_aluno_modulo_progresso");
 
-                    b.HasIndex("AlunoId");
+                    b.HasIndex("AlunoId")
+                        .HasDatabaseName("ix_aluno_modulo_progresso_aluno_id");
 
-                    b.HasIndex("ModuloId");
+                    b.HasIndex("ModuloId")
+                        .HasDatabaseName("ix_aluno_modulo_progresso_modulo_id");
 
-                    b.ToTable("AlunoModuloProgresso", "public");
+                    b.ToTable("aluno_modulo_progresso", "public");
                 });
 
             modelBuilder.Entity("server.Domain.Entities.Curso", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Logo")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("logo");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("nome");
 
                     b.Property<string>("Professor")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("professor");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_curso");
 
-                    b.ToTable("Cursos", "public");
+                    b.ToTable("curso", "public");
                 });
 
             modelBuilder.Entity("server.Domain.Entities.Modulo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("CursoId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("curso_id");
 
                     b.Property<string>("Descricao")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("descricao");
 
                     b.Property<DateTime?>("LastUpdatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_updated_at");
 
                     b.Property<int>("Nivel")
                         .HasMaxLength(25)
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("nivel");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("nome");
 
                     b.Property<int>("Ordem")
                         .HasMaxLength(50)
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("ordem");
 
                     b.Property<int>("QuantidadeAulas")
                         .HasMaxLength(50)
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("quantidade_aulas");
 
                     b.Property<int>("QuantidadeHoras")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("quantidade_horas");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_modulo");
 
-                    b.HasIndex("CursoId");
+                    b.HasIndex("CursoId")
+                        .HasDatabaseName("ix_modulo_curso_id");
 
-                    b.ToTable("Modulo", "public");
-                });
-
-            modelBuilder.Entity("server.Domain.Entities.Aluno", b =>
-                {
-                    b.HasOne("server.Domain.Entities.Curso", null)
-                        .WithMany("Alunos")
-                        .HasForeignKey("CursoId");
+                    b.ToTable("modulo", "public");
                 });
 
             modelBuilder.Entity("server.Domain.Entities.AlunoModuloProgresso", b =>
@@ -197,13 +218,15 @@ namespace server.Migrations
                         .WithMany()
                         .HasForeignKey("AlunoId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_aluno_modulo_progresso_aluno_aluno_id");
 
                     b.HasOne("server.Domain.Entities.Modulo", "Modulo")
                         .WithMany()
                         .HasForeignKey("ModuloId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_aluno_modulo_progresso_modulo_modulo_id");
 
                     b.Navigation("Aluno");
 
@@ -216,15 +239,14 @@ namespace server.Migrations
                         .WithMany("Modulos")
                         .HasForeignKey("CursoId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_modulo_curso_curso_id");
 
                     b.Navigation("Curso");
                 });
 
             modelBuilder.Entity("server.Domain.Entities.Curso", b =>
                 {
-                    b.Navigation("Alunos");
-
                     b.Navigation("Modulos");
                 });
 #pragma warning restore 612, 618

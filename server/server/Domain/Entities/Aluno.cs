@@ -24,14 +24,20 @@ namespace server.Domain.Entities
 		public string Senha { get; set; } = default!;
 
 		[StringLength(20)]
-		public string cargo { get; set; } = "Aluno";
+		public string Cargo { get; set; } = "Aluno";
 
 		public DateTime CreatedAt { get; set; }
 		public DateTime? LastUpdatedAt { get; set; }
 
 
-		public ICollection<Curso> Cursos = [];
 		public ICollection<AlunoModuloProgresso> AlunoModuloProgresso = [];
 
+		public Aluno(string nome, string email, string senha, string cargo)
+		{
+			Nome = nome;
+			Email = email;
+			Senha = senha;
+			Cargo = cargo;
+		}
 	}
 }

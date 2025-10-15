@@ -38,7 +38,7 @@ namespace server.Domain.Services
 			return itensList.ToList();
 		}
 
-		public Curso? GetById(int id)
+		public Curso? GetCursoById(int id)
 		{
 			var res = _context.Cursos.Where(c => c.Id == id).FirstOrDefault();
 			if (res != null)

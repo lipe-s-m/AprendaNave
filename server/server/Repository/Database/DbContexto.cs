@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using server.Domain.Entities;
 using server.Domain.Interfaces;
 
@@ -30,40 +29,38 @@ namespace server.Repository.Database
 			}
 			return base.SaveChangesAsync(cancellationToken);
 		}
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
-		{
-			modelBuilder.Entity<Aluno>().HasData(
-				new Aluno
-				{
-					Id = 1,
-					Nome = "UsuarioTeste1",
-					Email = "UsuarioTeste1@aprendanave.com",
-					Senha = "SenhaUsuarioTeste123",
-					cargo = "Aluno"
-				}
-				);
+		//protected override void OnModelCreating(ModelBuilder modelBuilder)
+		//{
+		//	modelBuilder.Entity<Aluno>().HasData(
+		//		new Aluno(
+		//			"UsuarioTeste1",
+		//			"UsuarioTeste1@aprendanave.com",
+		//			"SenhaUsuarioTeste123",
+		//			"Aluno")
+		//		);
 
-			modelBuilder.Entity<AlunoModuloProgresso>()
-				.HasKey(el => new
-				{ el.IdAluno, el.IdModulo });
+		//	modelBuilder.Entity<AlunoModuloProgresso>()
+		//		.HasKey(el => new
+		//		{ el.IdAluno, el.IdModulo });
 
-			var statusConverter = new EnumToStringConverter<StatusProgressoEnum>();
-			modelBuilder.Entity<AlunoModuloProgresso>()
-				.Property(el => el.StatusProgresso)
-				.HasConversion(statusConverter);
+		//	var statusConverter = new EnumToStringConverter<StatusProgressoEnum>();
+		//	modelBuilder.Entity<AlunoModuloProgresso>()
+		//		.Property(el => el.StatusProgresso)
+		//		.HasConversion(statusConverter);
 
 
 
 
-			modelBuilder.HasDefaultSchema("public");
+		//	modelBuilder.HasDefaultSchema("public");
 
-			base.OnModelCreating(modelBuilder);
-		}
+		//	base.OnModelCreating(modelBuilder);
+		//}
 
 
 
 		public DbSet<Aluno> Alunos => Set<Aluno>();
 		public DbSet<Curso> Cursos => Set<Curso>();
+		public DbSet<Modulo> Modulos => Set<Modulo>();
 
 	}
 }

@@ -7,11 +7,12 @@ namespace server.Domain.Interfaces
 	{
 		LoginResponseDTO? Login(LoginRequestDTO loginRequest);
 
-		CadastroResponseDTO? Cadastro(CadastroRequestDTO cadastroRequest);
-		Task<Aluno?> CreateAluno(Aluno aluno);
+		Task<CadastroResponseDTO?> CreateAluno(CadastroRequestDTO Aluno);
 
 		List<Aluno> GetAllAlunos(int pagina = 1);
 		Aluno? GetById(int id);
-		void DeleteById(Aluno aluno);
+		void DeleteById(Aluno Aluno);
+
+
 	}
 }

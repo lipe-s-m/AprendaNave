@@ -20,7 +20,6 @@ namespace server.Domain.Entities
 		[StringLength(50)]
 		public string Professor { get; set; } = default!;
 
-		public ICollection<Aluno> Alunos { get; set; } = [];
 		public ICollection<Modulo> Modulos { get; set; } = [];
 
 	}

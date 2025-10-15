@@ -1,23 +1,28 @@
-﻿using server.Domain.DTOs;
+﻿using Isopoh.Cryptography.Argon2;
+using server.Domain.DTOs;
 using server.Domain.Entities;
 using server.Domain.Interfaces;
 using server.Repository.Database;
+using System.Diagnostics;
 
 namespace server.Domain.Services
 {
 	public class AlunoService : IAlunoService
 	{
 		private readonly DbContexto _context;
+		private readonly ILogger<AlunoService> _logger;
 
-		public AlunoService(DbContexto context)
+		public AlunoService(DbContexto context, ILogger<AlunoService> logger)
 		{
 			_context = context;
+			_logger = logger;
 		}
 
 		public LoginResponseDTO? Login(LoginRequestDTO loginRequest)
 		{
-			var res = _context.Alunos.Where(a => a.Email == loginRequest.Email && a.Senha == loginRequest.Senha).FirstOrDefault();
-			if (res != null)
+			var res = _context.Alunos.Where(a => a.Email == loginRequest.Email).FirstOrDefault();
+
+			if (res != null && Argon2.Verify(res.Senha, loginRequest.Senha))
 			{
 				return new LoginResponseDTO
 				{
@@ -28,18 +33,25 @@ namespace server.Domain.Services
 			}
 			return null;
 		}
-		public CadastroResponseDTO? Cadastro(CadastroRequestDTO cadastroRequest)
-		{
-			throw new NotImplementedException();
-		}
 
-		public async Task<Aluno?> CreateAluno(Aluno aluno)
+		public async Task<CadastroResponseDTO?> CreateAluno(CadastroRequestDTO cadastroRequestDTO)
 		{
-			if (aluno != null && aluno.Senha.Length > 2)
+			if (cadastroRequestDTO != null && cadastroRequestDTO.Senha.Length > 2 && cadastroRequestDTO.Senha == cadastroRequestDTO.SenhaConfirmacao)
 			{
+				cadastroRequestDTO.Senha = Argon2.Hash(cadastroRequestDTO.Senha);
+				Aluno aluno;
+				aluno = ConvertRequestToAlunoDTO(cadastroRequestDTO);
+				if (string.IsNullOrEmpty(aluno.Cargo))
+				{
+					aluno.Cargo = "Aluno";
+				}
 				_context.Alunos.Add(aluno);
+				var sw = Stopwatch.StartNew();
 				await _context.SaveChangesAsync();
-				return aluno;
+				sw.Stop();
+				_logger.LogInformation($"SaveChanges levou {sw.ElapsedMilliseconds}ms");
+				CadastroResponseDTO cadastroResponseDTO = ConvertAlunoToResponseDTO(aluno);
+				return cadastroResponseDTO;
 			}
 			return null;
 		}
@@ -55,7 +67,7 @@ namespace server.Domain.Services
 		{
 			var query = _context.Alunos.AsQueryable();
 
-			int itensPorPagina = 6;
+			int itensPorPagina = 10;
 
 			var itensList = query.Skip((pagina - 1) * itensPorPagina).Take(itensPorPagina);
 			return itensList.ToList();
@@ -68,5 +80,24 @@ namespace server.Domain.Services
 		}
 
 
+		public static CadastroResponseDTO ConvertAlunoToResponseDTO(Aluno Aluno)
+		{
+			if (Aluno != null)
+			{
+				CadastroResponseDTO AlunoResponseConvertDTO = new CadastroResponseDTO(Aluno.Id, Aluno.Nome, Aluno.Email, Aluno.Cargo);
+				return AlunoResponseConvertDTO;
+			}
+			throw new Exception();
+		}
+
+		public static Aluno ConvertRequestToAlunoDTO(CadastroRequestDTO CadastroRequestDTO)
+		{
+			if (CadastroRequestDTO != null)
+			{
+				Aluno AlunoConvert = new Aluno(CadastroRequestDTO.Nome, CadastroRequestDTO.Email, CadastroRequestDTO.Senha, CadastroRequestDTO.Cargo);
+				return AlunoConvert;
+			}
+			throw new Exception();
+		}
 	}
 }

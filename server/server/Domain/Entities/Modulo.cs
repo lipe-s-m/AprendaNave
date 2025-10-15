@@ -15,7 +15,7 @@ namespace server.Domain.Entities
 		public string Nome { get; set; } = default!;
 
 		[Required]
-		[StringLength(50)]
+		[StringLength(255)]
 		public string Descricao { get; set; } = default!;
 
 		[Required]
