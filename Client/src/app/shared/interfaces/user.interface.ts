@@ -1,22 +1,28 @@
 export interface User {
   id?: number;
-  nomeDeUsuario: string;
+  nome: string;
+  email: string;
+}
+export interface LoginRequestDTO {
   email: string;
   senha: string;
 }
-export interface UserLoginDTO {
+export interface LoginResponseDTO {
+  id: number;
+  nome: string;
   email: string;
-  senha: string;
+  cargo: string;
+}
+export interface CadastroResponseDTO {
+  id: number;
+  nome: string;
+  email: string;
+  cargo: string;
 }
 export interface UserDTO {
   id?: number;
-  nomeDeUsuario: string;
+  nome: string;
   email: string;
   senha: string;
   confirmarSenha: string;
-}
-
-export interface UserResponse {
-  user: User;
-  token: string;
 }

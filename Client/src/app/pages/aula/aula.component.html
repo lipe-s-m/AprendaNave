@@ -47,11 +47,15 @@
         </div>
       </div>
     </div>
+    <div>
+      <app-button (click)="irParaTesteFinal()" buttonText="Realizar teste final!" buttonSize="large" buttonLevel="primary" buttonTextColor="white" buttonTheme="dark" buttonType="button" [buttonDisabled]="!todasAsAulasConcluidas">
+      </app-button>
+    </div>
   </div>
 </div>
 
 <ng-template #notFound>
-  <div class="notfound" *ngIf="!isLoading">
+  <div class=" notfound" *ngIf="!isLoading">
     <h2>{{ error || 'Aula não encontrada' }}</h2>
     <button class="back-btn" (click)="voltarParaModulo()">Voltar para Módulo</button>
   </div>

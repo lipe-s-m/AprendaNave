@@ -8,20 +8,23 @@ import { ToastrService } from 'ngx-toastr';
 import { LoaderComponent } from '../../shared/components/loader/loader.component';
 import { HeaderComponent } from '../../layout/header/header.component';
 import { SubheaderComponent } from '../../shared/components/subheader/subheader.component';
+import { ModuloService } from '../../services/modulo/modulo.service';
+import { ButtonComponent } from '../../shared/components/button/button.component';
 
 @Component({
   selector: 'app-trilha',
   standalone: true,
-  imports: [CommonModule, LoaderComponent, SubheaderComponent],
+  imports: [CommonModule, LoaderComponent, SubheaderComponent, ButtonComponent],
   templateUrl: './trilha.component.html',
   styleUrl: './trilha.component.scss',
 })
 export class TrilhaComponent implements OnInit, OnDestroy {
   trilhaId: number | null = null;
-  trilha: Trilha | null = null;
+  trilha: any = null;
+  nomeCurso: string = '';
   isLoading = true;
   error: string | null = null;
-  moduloSelecionado: Modulo | null = null;
+  moduloSelecionado: any = null;
 
   private subscription: Subscription | null = null;
 
@@ -29,13 +32,18 @@ export class TrilhaComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private trilhaService: TrilhaService,
+    private moduloService: ModuloService,
     private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
     this.subscription = this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
+      const nomeCurso = params.get('nome');
       this.trilhaId = id !== null ? Number(id) : null;
+      if (nomeCurso) {
+        this.nomeCurso = nomeCurso;
+      }
 
       if (this.trilhaId !== null) {
         this.loadTrilha(this.trilhaId);
@@ -56,11 +64,10 @@ export class TrilhaComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.error = null;
 
-    this.trilhaService.getTrilhaById(id).subscribe({
+    this.moduloService.getModulos(id).subscribe({
       next: (trilha) => {
         this.trilha = trilha;
-        console.log('Trilha carregada:', trilha);
-        console.log('Módulos:', trilha.modulos);
+        console.log('Trilha carregada:', this.trilha);
         this.isLoading = false;
       },
       error: (err) => {
@@ -207,8 +214,8 @@ export class TrilhaComponent implements OnInit, OnDestroy {
   getIndexModuloSelecionado(): number {
     if (!this.trilha || !this.moduloSelecionado) return -1;
 
-    return this.trilha.modulos.findIndex(
-      (modulo) => modulo.id === this.moduloSelecionado?.id
+    return this.trilha.findIndex(
+      (modulo: any) => modulo.id === this.moduloSelecionado?.id
     );
   }
 

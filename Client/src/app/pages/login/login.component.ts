@@ -18,6 +18,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { ThemeService } from '../../services/theme/theme.service';
 import { LoaderComponent } from '../../shared/components/loader/loader.component';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -38,7 +39,8 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private loginService: LoginService,
     private toastr: ToastrService,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -89,8 +91,10 @@ export class LoginComponent implements OnInit {
       this.loginService.login(loginData).subscribe({
         next: (response) => {
           this.toastr.success('Login realizado com sucesso!', 'Sucesso');
-          this.loginService.saveUserSession(response.token, response.user);
-          this.router.navigate(['/home']);
+          console.log(response);
+
+          console.log('gg');
+          return this.router.navigate(['/home']);
         },
         error: (error: HttpErrorResponse) => {
           this.isLoading = false;
@@ -117,7 +121,7 @@ export class LoginComponent implements OnInit {
       this.isLoading = true;
 
       const userData = {
-        nomeDeUsuario: this.formSignIn.get('nomeDeUsuario')?.value || '',
+        nome: this.formSignIn.get('nomeDeUsuario')?.value || '',
         email: this.formSignIn.get('email')?.value || '',
         senha: this.formSignIn.get('senha')?.value || '',
         confirmarSenha: this.formSignIn.get('confirmarSenha')?.value || '',

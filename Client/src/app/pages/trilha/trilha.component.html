@@ -5,7 +5,7 @@
 <div class="trilha-container" *ngIf="trilha; else notFound">
   <header class="trilha-header">
     <div class="trilha-info">
-      <h1>{{ trilha.nome }}</h1>
+      <h1>{{ nomeCurso }}</h1>
     </div>
     <!-- <button class="reset-btn" (click)="resetarDados()">Resetar Dados</button> -->
   </header>
@@ -13,7 +13,7 @@
   <section class="modulos-section">
     <h2>Módulos</h2>
     <div class="modulos-grid">
-      <div class="modulo-card" *ngFor="let modulo of trilha.modulos; let idx = index" (click)="abrirModalModulo(modulo, $event)">
+      <div class="modulo-card" *ngFor="let modulo of trilha; let idx = index" (click)="abrirModalModulo(modulo, $event)">
         <!-- <div class="nivel-badge" [ngClass]="getNivelClass(modulo.nivel)">
           {{ modulo.nivel || 'INICIANTE' }}
         </div> -->
@@ -21,14 +21,16 @@
         <div class="modulo-header">
           <h3 class="modulo-title">{{ modulo.nome }}</h3>
         </div>
-        <p class="modulo-description">{{ modulo.aulas }} aulas · {{ modulo.duracao }}</p>
+        <p class="modulo-description">{{ modulo.id }} aulas · {{ modulo.id }}h</p>
         <div class="modulo-status" [class.concluido]="modulo.status === 'CONCLUIDO'" [class.em-andamento]="modulo.status === 'EM_ANDAMENTO'">
-          {{ getStatusText(modulo.status) }}
+          PENDENTE
         </div>
-        <button class="start-btn" (click)="$event.stopPropagation(); iniciarOuContinuarModulo(modulo, $event)">
-          {{ getButtonText(modulo.status) }}
-        </button>
+        <app-button [buttonText]="getButtonText(modulo.status)" buttonTheme="dark" (click)="$event.stopPropagation(); iniciarOuContinuarModulo(modulo, $event)">
+        </app-button>
       </div>
+      <ng-template [ngIf]="trilha.length === 0">
+        <div>Módulos ainda não implementados!</div>
+      </ng-template>
     </div>
   </section>
 
@@ -52,12 +54,12 @@
       </p>
     </div>
     <div class="modal-footer">
-      <button class="modal-btn secondary" (click)="fecharModal()">Cancelar</button>
+      <button class="modal-btn secondary" (click)="fecharModal()">CANCELAR</button>
       <button class="modal-btn primary" *ngIf="moduloSelecionado!.status !== 'CONCLUIDO'" (click)="confirmarIniciarModulo()">
-        {{ moduloSelecionado!.status === 'EM_ANDAMENTO' ? 'Continuar' : 'Iniciar Módulo' }}
+        {{ moduloSelecionado!.status === 'EM_ANDAMENTO' ? 'CONTINUAR' : 'INICIAR' }}
       </button>
       <button class="modal-btn primary" *ngIf="moduloSelecionado!.status === 'CONCLUIDO'" (click)="confirmarIniciarModulo()">
-        Revisar Módulo
+        REVISAR MÓDULO
       </button>
     </div>
   </div>

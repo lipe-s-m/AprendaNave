@@ -5,15 +5,35 @@ import { ModuloComponent } from './pages/modulo/modulo.component';
 import { StartComponent } from './pages/start/start.component';
 import { TrilhaComponent } from './pages/trilha/trilha.component';
 import { AulaComponent } from './pages/aula/aula.component';
-import { Routes } from '@angular/router';
+import { Router, Routes } from '@angular/router';
+import { authGuard } from './guards/auth/auth.guard';
+import { AuthService } from './services/auth/auth.service';
+import { QuizComponent } from './pages/quiz/quiz/quiz.component';
 
 export const routes: Routes = [
   { path: '', component: StartComponent, pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
-  { path: 'hub', component: HubComponent },
-  { path: 'home', component: HomeComponent },
-  { path: 'trilha/:id', component: TrilhaComponent },
-  { path: 'modulo/:trilhaId/:moduloId', component: ModuloComponent },
-  { path: 'aula/:trilhaId/:moduloId/:aulaId', component: AulaComponent },
+  { path: 'hub', component: HubComponent, canActivate: [authGuard] },
+  { path: 'home', component: HomeComponent, canActivate: [authGuard] },
+  {
+    path: 'trilha/:id/:nome',
+    component: TrilhaComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'modulo/:trilhaId/:moduloId',
+    component: ModuloComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'aula/:trilhaId/:moduloId/:aulaId',
+    component: AulaComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'teste-final/:trilhaId/:moduloId',
+    component: QuizComponent,
+    canActivate: [authGuard],
+  },
   { path: '**', redirectTo: '' },
 ];

@@ -30,6 +30,7 @@ export class AulaComponent implements OnInit, OnDestroy {
   aulaAnterior: Aula | null = null;
 
   isLoading = true;
+  todasAsAulasConcluidas = false;
   error: string | null = null;
 
   videoUrl: SafeResourceUrl | null = null;
@@ -104,13 +105,14 @@ export class AulaComponent implements OnInit, OnDestroy {
 
         // Gerar URL do vídeo para a aula (simulação)
         this.gerarVideoUrl();
-
+        //verificar se todas as aulas foram concluidas
         // Encontrar a próxima aula e a aula anterior
         this.definirNavegacaoAulas();
 
         // Marcar a aula como concluída se ainda não estiver
         if (!this.aula.concluida) {
           this.marcarAulaConcluida();
+          this.verificarAulasConcluidas();
         }
 
         this.isLoading = false;
@@ -121,6 +123,25 @@ export class AulaComponent implements OnInit, OnDestroy {
         this.toastr.error(this.error, 'Erro');
       },
     });
+  }
+
+  verificarAulasConcluidas(): void {
+    if (this.todasAsAulasConcluidas) return;
+    console.log(this.aulasList);
+    this.todasAsAulasConcluidas = this.aulasList.every(
+      (aula) => aula.concluida
+    );
+    if (this.todasAsAulasConcluidas) {
+      this.toastr.success(
+        'Parabéns! Você concluiu todas as aulas deste módulo.'
+      );
+    }
+  }
+  irParaTesteFinal(): void {
+    if (this.trilhaId && this.moduloId) {
+      alert('Você será redirecionado para o teste final do módulo.');
+      this.router.navigate(['/teste-final', this.trilhaId, this.moduloId]);
+    }
   }
 
   gerarVideoUrl(): void {

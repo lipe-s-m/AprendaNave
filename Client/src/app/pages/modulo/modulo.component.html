@@ -70,7 +70,16 @@
         <p class="no-aulas" *ngIf="!aulas || aulas.length === 0">Nenhuma aula disponível neste módulo.</p>
       </div>
     </div>
-
+    <!-- Botão para iniciar o teste final -->
+    <div class="modulo-actions">
+      <app-button (click)="irParaTesteFinal()" buttonLevel="secondary" buttonTheme="dark" buttonText="Iniciar Teste Final" [buttonDisabled]="!todasAulasConcluidas()">
+      </app-button>
+    </div>
+    <div class="modulo-actions">
+      <app-button buttonText="Resetar Aulas" buttonLevel="primary" buttonTheme="dark" (click)="resetarAulas()">
+      </app-button>
+    </div>
+    <!--  -->
     <div class="modulo-actions">
       <button class="action-button concluir" (click)="marcarConcluido()" [disabled]="modulo.status === 'CONCLUIDO' || !todasAulasConcluidas()">
         <ng-container *ngIf="modulo.status === 'CONCLUIDO'; else notConcluido">

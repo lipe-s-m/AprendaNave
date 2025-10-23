@@ -7,11 +7,12 @@ import { Observable, Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderComponent } from '../../shared/components/loader/loader.component';
 import { SubheaderComponent } from '../../shared/components/subheader/subheader.component';
+import { ButtonComponent } from '../../shared/components/button/button.component';
 
 @Component({
   selector: 'app-modulo',
   standalone: true,
-  imports: [CommonModule, LoaderComponent, SubheaderComponent],
+  imports: [CommonModule, LoaderComponent, SubheaderComponent, ButtonComponent],
   templateUrl: './modulo.component.html',
   styleUrl: './modulo.component.scss',
 })
@@ -103,7 +104,17 @@ export class ModuloComponent implements OnInit, OnDestroy {
       },
     });
   }
-
+  irParaTesteFinal(): void {
+    if (this.trilhaId && this.moduloId) {
+      alert('Você será redirecionado para o teste final do módulo.');
+      this.router.navigate(['/teste-final', this.trilhaId, this.moduloId]);
+    }
+  }
+  resetarAulas(): void {
+    this.aulas.forEach((aula) => {
+      aula.concluida = false;
+    });
+  }
   marcarConcluido(): void {
     if (this.trilhaId && this.moduloId) {
       // Primeiro, vamos marcar todas as aulas como concluídas

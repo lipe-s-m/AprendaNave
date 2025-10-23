@@ -8,25 +8,25 @@
     <h1>Conheça nossos cursos</h1>
 
     <div class="courses-grid">
-      <div class="course-card" *ngFor="let trilha of trilhas" (click)="goToTrilha(trilha.id)">
-        <span class="tag" *ngIf="trilha.tag">{{ trilha.tag }}</span>
+      <div class="course-card" *ngFor="let curso of cursos" (click)="goToTrilha(curso.id, curso.nome)">
+        <span class="tag" *ngIf="curso.tag">{{ curso.tag }}</span>
 
         <div class="course-icon">
-          <img [src]="trilha.imagem" [alt]="trilha.nome">
+          <img [src]="curso.logo" [alt]="curso.nome">
         </div>
 
         <div class="card-content">
           <span class="title-section">
-            <h3>{{ trilha.nome }}</h3>
-            <div class="modules">{{ trilha.modulos }} módulos</div>
+            <h3>{{ curso.nome }}</h3>
+            <div class="modules">{{ curso.quantidadeModulos }} módulos</div>
           </span>
           <div class="info-row">
             <div class="instructor">
               <img src="assets/logo.svg" alt="Instrutor" class="instructor-avatar">
-              <span>{{ trilha.professor }}</span>
+              <span>{{ curso.professor }}</span>
             </div>
             <div class="enrollments">
-              {{ trilha.matriculas }} alunos
+              {{ curso.id }} alunos
             </div>
           </div>
         </div>
