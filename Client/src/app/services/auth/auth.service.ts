@@ -26,6 +26,8 @@ export class AuthService {
           console.log('Token validado', isAuthenticated);
         }),
         catchError(() => {
+          console.log('Poxa');
+
           this.isAuthSubject.next(false);
           return of(false);
         })

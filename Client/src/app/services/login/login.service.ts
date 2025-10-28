@@ -1,4 +1,4 @@
-import { AuthService } from './../auth/auth.service';
+// import { AuthService } from './../auth/auth.service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -11,6 +11,7 @@ import {
   CadastroResponseDTO,
 } from '../../shared/interfaces/user.interface';
 import { environment } from '../../../environments/environment';
+import { AuthService } from '../auth/auth.service';
 
 const TOKEN_KEY = 'authToken';
 @Injectable({

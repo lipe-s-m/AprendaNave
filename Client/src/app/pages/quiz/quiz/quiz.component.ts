@@ -53,7 +53,6 @@ export class QuizComponent implements OnInit, OnDestroy {
 
     const interval = setInterval(() => {
       console.log(this.contagemRegressiva);
-      console.log(this.initializingGame);
 
       this.contagemRegressiva--;
 

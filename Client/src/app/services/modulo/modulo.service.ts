@@ -13,18 +13,18 @@ export class ModuloService {
   constructor(private http: HttpClient) {}
 
   getModulos(cursoId: number): Observable<IModulo[] | null> {
-    if (this.moduloCache$ === EMPTY) {
-      this.moduloCache$ = this.http
-        .get<IModulo[]>(`${this.apiUrl}/cursos/modulos?cursoId=${cursoId}`)
-        .pipe(
-          tap(() =>
-            console.log(
-              `[Cache]: Requisição HTTP REALIZADA para cursoId ${cursoId}`
-            )
-          ),
-          shareReplay({ bufferSize: 1, refCount: true })
-        );
-    }
+    // if (this.moduloCache$ === EMPTY) {
+    this.moduloCache$ = this.http
+      .get<IModulo[]>(`${this.apiUrl}/cursos/modulos?cursoId=${cursoId}`)
+      .pipe(
+        tap(() =>
+          console.log(
+            `[Cache]: Requisição HTTP REALIZADA para cursoId ${cursoId}`
+          )
+        ),
+        shareReplay({ bufferSize: 1, refCount: true })
+      );
+    // }
     return this.moduloCache$;
   }
   clearCache(): void {

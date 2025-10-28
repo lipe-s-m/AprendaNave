@@ -22,7 +22,6 @@ export class CookieInterceptor implements HttpInterceptor {
         withCredentials: true,
       });
     }
-
     return next.handle(request);
   }
 }
