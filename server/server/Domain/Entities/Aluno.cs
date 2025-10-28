@@ -11,15 +11,15 @@ namespace server.Domain.Entities
 		public int Id { get; set; } = default!;
 
 		[Required]
-		[StringLength(50)]
+		[StringLength(60)]
 		public string Nome { get; set; } = default!;
 
 		[Required]
 		[EmailAddress]
-		[StringLength(60)]
+		[StringLength(100)]
 		public string Email { get; set; } = default!;
 
-		[StringLength(40)]
+		[StringLength(255)]
 		[Required]
 		public string Senha { get; set; } = default!;
 

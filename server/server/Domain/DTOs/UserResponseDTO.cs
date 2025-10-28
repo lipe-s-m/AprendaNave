@@ -9,6 +9,11 @@ namespace server.Domain.DTOs
 		public string Email { get; set; } = default!;
 		public string Cargo { get; set; } = default!;
 		public ICollection<AlunoModuloProgresso> AlunoModuloProgresso = [];
-
+		public UserResponseDTO(string nome, string email, string cargo)
+		{
+			Nome = nome;
+			Email = email;
+			Cargo = cargo;
+		}
 	}
 }

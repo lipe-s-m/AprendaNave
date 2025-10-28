@@ -7,6 +7,16 @@ namespace server.Domain.Services
 	public class ModuloService : IModuloService
 	{
 		private readonly DbContexto _dbContext;
+		public ModuloService(DbContexto dbContext)
+		{
+			_dbContext = dbContext;
+		}
+
+		public bool CompletouModulo(int IdModulo, int IdUser)
+		{
+
+			throw new NotImplementedException();
+		}
 
 		public async Task<Modulo> CreateModulo(Modulo Modulo)
 		{
@@ -39,6 +49,12 @@ namespace server.Domain.Services
 		public Modulo GetModuloById(int Id)
 		{
 			throw new NotImplementedException();
+		}
+		public IEnumerable<Modulo> GetModulosByCurseId(int? Id)
+		{
+			IEnumerable<Modulo> res = _dbContext.Modulos.ToList().Where(m => m.CursoId == Id);
+
+			return res;
 		}
 	}
 }

@@ -6,9 +6,10 @@ namespace server.Domain.Interfaces
 	{
 		List<Modulo> GetAllModulos();
 		Task<Modulo> CreateModulo(Modulo Modulo);
-		Modulo GetModuloById(int Id);
+		Modulo GetModuloById(int IdModulo);
+		IEnumerable<Modulo> GetModulosByCurseId(int? IdModulo);
 		void DeleteModuloById(Modulo Modulo);
-
+		bool CompletouModulo(int idModulo, int IdUser);
 
 	}
 }

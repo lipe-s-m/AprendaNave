@@ -29,38 +29,23 @@ namespace server.Repository.Database
 			}
 			return base.SaveChangesAsync(cancellationToken);
 		}
-		//protected override void OnModelCreating(ModelBuilder modelBuilder)
-		//{
-		//	modelBuilder.Entity<Aluno>().HasData(
-		//		new Aluno(
-		//			"UsuarioTeste1",
-		//			"UsuarioTeste1@aprendanave.com",
-		//			"SenhaUsuarioTeste123",
-		//			"Aluno")
-		//		);
-
-		//	modelBuilder.Entity<AlunoModuloProgresso>()
-		//		.HasKey(el => new
-		//		{ el.IdAluno, el.IdModulo });
-
-		//	var statusConverter = new EnumToStringConverter<StatusProgressoEnum>();
-		//	modelBuilder.Entity<AlunoModuloProgresso>()
-		//		.Property(el => el.StatusProgresso)
-		//		.HasConversion(statusConverter);
-
-
-
-
-		//	modelBuilder.HasDefaultSchema("public");
-
-		//	base.OnModelCreating(modelBuilder);
-		//}
-
-
-
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		{
+			modelBuilder.Entity<AlunoModuloProgresso>()
+				.HasKey(amp => new { amp.IdAluno, amp.IdModulo });
+			modelBuilder.Entity<AlunoModuloProgresso>()
+				.HasOne(amp => amp.Aluno)
+				.WithMany(a => a.AlunoModuloProgresso)
+				.HasForeignKey(amp => amp.IdAluno);
+			modelBuilder.Entity<AlunoModuloProgresso>()
+				.HasOne(amp => amp.Modulo)
+				.WithMany(m => m.AlunoModuloProgressos)
+				.HasForeignKey(amp => amp.IdModulo);
+			base.OnModelCreating(modelBuilder);
+		}
 		public DbSet<Aluno> Alunos => Set<Aluno>();
 		public DbSet<Curso> Cursos => Set<Curso>();
 		public DbSet<Modulo> Modulos => Set<Modulo>();
-
+		public DbSet<AlunoModuloProgresso> Progresso => Set<AlunoModuloProgresso>();
 	}
 }

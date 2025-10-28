@@ -5,7 +5,7 @@ namespace server.Domain.Interfaces
 {
 	public interface IAlunoService
 	{
-		LoginResponseDTO? Login(LoginRequestDTO loginRequest);
+		UserResponseDTO? Login(LoginRequestDTO loginRequest);
 
 		Task<CadastroResponseDTO?> CreateAluno(CadastroRequestDTO Aluno);
 

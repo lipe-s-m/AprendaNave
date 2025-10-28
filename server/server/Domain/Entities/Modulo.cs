@@ -39,6 +39,7 @@ namespace server.Domain.Entities
 
 		//relacionamentos
 		public int CursoId { get; set; }
+		public string? Playlist { get; set; }
 		public Curso Curso { get; set; } = default!;
 		public ICollection<AlunoModuloProgresso> AlunoModuloProgressos = [];
 
