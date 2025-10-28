@@ -95,12 +95,6 @@ export class TrilhaComponent implements OnInit, OnDestroy {
       .atualizarStatusModulo(this.trilhaId, moduloId, novoStatus)
       .subscribe({
         next: (trilha) => {
-          console.log('Trilha atualizada recebida:', trilha);
-          const moduloAtualizado = trilha.modulos.find(
-            (m) => m.id === moduloId
-          );
-          console.log('Módulo após atualização:', moduloAtualizado);
-
           this.trilha = trilha;
 
           let mensagemStatus = '';

@@ -17,12 +17,12 @@
       <app-button buttonText="Voltar" buttonLevel="secondary" buttonTheme="dark" buttonSize="large" />
     </div>
     <div class="game" *ngIf="inGame">
-      <h1>5 x 2 = ?</h1>
-      <div class="options">
-        <app-button buttonText="10" buttonLevel="primary" buttonTheme="dark" buttonSize="large" />
-        <app-button buttonText="15" buttonLevel="primary" buttonTheme="dark" buttonSize="large" />
-        <app-button buttonText="20" buttonLevel="primary" buttonTheme="dark" buttonSize="large" />
-        <app-button buttonText="25" buttonLevel="primary" buttonTheme="dark" buttonSize="large" />
+      <p class="pontos"><strong>{{points}}/10</strong></p>
+      <div class="content-game">
+        <h1>{{number1}} {{this.resultOp()}} {{number2}} = ?</h1>
+        <div class="options">
+          <app-button *ngFor="let q of questions" buttonText="{{q}}" buttonLevel="primary" buttonTheme="dark" buttonSize="large" (click)="checkAnswer(q)" />
+        </div>
       </div>
     </div>
 
@@ -33,5 +33,16 @@
         <p class="contagem-regressiva">{{contagemRegressiva}}</p>
       </div>
     </div>
+    <div class="modal-init-game-background" *ngIf="resetingGame">
+      <div *ngIf="ganhou && !inGame" class="modal-init-game-content">
+        <h2>Parabéns!</h2>
+        <p>Você completou o quiz com sucesso!</p>
+      </div>
+
+      <div *ngIf="!ganhou && !inGame" class="modal-init-game-content">
+        <h2>Que pena!</h2>
+        <p>Você não completou o quiz com sucesso, tente novamente!</p>
+      </div>
+
+    </div>
   </div>
-</div>

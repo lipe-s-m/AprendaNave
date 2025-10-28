@@ -59,14 +59,33 @@
     margin: 2rem auto;
   }
   .game {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     h1 {
       text-align: center;
+    }
+    .content-game {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2.4rem;
+      max-width: 35rem;
     }
     .options {
       display: flex;
       flex-direction: column;
       gap: 1.6rem;
-      width: 80%;
+    }
+    .pontos {
+      font-size: 2rem;
+      color: var(--text-primary);
+      margin-bottom: 1.6rem;
+      text-align: end;
+      align-self: flex-end;
     }
   }
   .content {
