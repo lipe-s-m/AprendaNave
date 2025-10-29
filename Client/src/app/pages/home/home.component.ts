@@ -82,6 +82,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   goToTrilha(id: number, nome: string) {
-    this.router.navigate(['/trilha', id, nome]);
+    sessionStorage.setItem('cursoNome', nome);
+    this.router.navigate(['/trilha', id]);
   }
 }

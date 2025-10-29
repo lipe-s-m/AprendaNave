@@ -1,26 +1,21 @@
 @use "./../../scss/variables";
 
-
 .modulo-status {
-  font-size: 1.4rem;
   padding: 0.5rem 1rem;
   border-radius: 4px;
   background: var(--background-tertiary);
-  color: var(--text-secondary);
   margin-bottom: 1.5rem;
   display: inline-block;
 
+  span {
+    &.concluido {
+      background: var(--success-color);
+      color: white;
+    }
 
-
-  &.concluido {
-    background: var(--success-color);
-    color: white;
-  }
-
-  &.em-andamento {
-    background: #006787;
-    color: rgb(218, 0, 0);
+    &.em-andamento {
+      background: #006787;
+      color: rgb(218, 0, 0);
+    }
   }
 }
-
-

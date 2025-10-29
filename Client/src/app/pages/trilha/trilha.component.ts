@@ -39,7 +39,7 @@ export class TrilhaComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subscription = this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
-      const nomeCurso = params.get('nome');
+      const nomeCurso = sessionStorage.getItem('cursoNome');
       this.trilhaId = id !== null ? Number(id) : null;
       if (nomeCurso) {
         this.nomeCurso = nomeCurso;
@@ -125,9 +125,10 @@ export class TrilhaComponent implements OnInit, OnDestroy {
   }
 
   abrirModalModulo(modulo: Modulo, event?: Event): void {
-    console.log('abrirModalModulo chamado com módulo:', modulo);
-    console.log('Status atual do módulo:', modulo.status);
-    console.log('Evento:', event);
+    if (modulo.id !== 1) {
+      this.toastr.info('Funcionalidade em desenvolvimento', 'Atenção');
+      return;
+    }
 
     try {
       // Verificar se o evento veio de um botão
@@ -160,7 +161,10 @@ export class TrilhaComponent implements OnInit, OnDestroy {
   iniciarOuContinuarModulo(modulo: Modulo, event: Event): void {
     console.log('iniciarOuContinuarModulo chamado com módulo:', modulo);
     event.stopPropagation(); // Impede que o evento propague para o card
-
+    if (modulo.id !== 1) {
+      this.toastr.info('Funcionalidade em desenvolvimento', 'Atenção');
+      return;
+    }
     try {
       if (modulo.status === 'NAO_INICIADO') {
         // Se não iniciado, marca como em andamento e navega para a página do módulo
@@ -178,6 +182,12 @@ export class TrilhaComponent implements OnInit, OnDestroy {
   }
 
   confirmarIniciarModulo(): void {
+    if (this.moduloSelecionado.id !== 1) {
+      this.toastr.info('Funcionalidade em desenvolvimento', 'Atenção');
+      this.fecharModal();
+
+      return;
+    }
     if (this.moduloSelecionado) {
       try {
         console.log(

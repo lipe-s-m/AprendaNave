@@ -23,32 +23,32 @@ export const TRILHAS_MOCK: Trilha[] = [
         aulasList: [
           {
             id: 1,
-            titulo: 'Introdução aos Fundamentos da Matemática',
-            duracao: '25:30',
+            titulo: 'Operações básicas da Matemática',
+            duracao: '12:37',
             concluida: false,
           },
           {
             id: 2,
             titulo: 'Conceitos Básicos de Frações',
-            duracao: '32:15',
+            duracao: '22:15',
             concluida: false,
           },
           {
             id: 3,
             titulo: 'Operações com Números Decimais',
-            duracao: '28:45',
+            duracao: '15:45',
             concluida: false,
           },
           {
             id: 4,
             titulo: 'Exercícios Práticos de Frações e Decimais',
-            duracao: '35:00',
+            duracao: '10:00',
             concluida: false,
           },
           {
             id: 5,
             titulo: 'Avaliação dos Fundamentos',
-            duracao: '29:00',
+            duracao: '07:00',
             concluida: false,
           },
         ],

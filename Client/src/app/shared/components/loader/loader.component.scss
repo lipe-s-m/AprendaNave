@@ -7,7 +7,15 @@
   background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(4px);
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+
+  p {
+    margin-top: 1.6rem;
+    color: var(--text-primary);
+    font-size: 2rem;
+    font-weight: 700z;
+  }
 }

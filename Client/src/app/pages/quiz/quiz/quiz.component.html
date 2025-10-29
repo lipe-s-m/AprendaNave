@@ -14,7 +14,7 @@
         <p style="margin: 0 auto"><strong>Boa sorte!</strong></p>
       </div>
       <app-button buttonText="iniciar" buttonLevel="primary" buttonTheme="dark" buttonSize="large" (click)="handlerInitializingGame()" />
-      <app-button buttonText="Voltar" buttonLevel="secondary" buttonTheme="dark" buttonSize="large" />
+      <app-button buttonText="Voltar" buttonLevel="secondary" buttonTheme="dark" buttonSize="large" (click)="voltarParaTrilha()" />
     </div>
     <div class="game" *ngIf="inGame">
       <p class="pontos"><strong>{{points}}/10</strong></p>
@@ -37,11 +37,14 @@
       <div *ngIf="ganhou && !inGame" class="modal-init-game-content">
         <h2>Parabéns!</h2>
         <p>Você completou o quiz com sucesso!</p>
+        <p class="contagem-regressiva">😃</p>
+
       </div>
 
       <div *ngIf="!ganhou && !inGame" class="modal-init-game-content">
         <h2>Que pena!</h2>
         <p>Você não completou o quiz com sucesso, tente novamente!</p>
+        <p class="contagem-regressiva">😞</p>
       </div>
 
     </div>

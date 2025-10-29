@@ -16,7 +16,7 @@ export const routes: Routes = [
   { path: 'hub', component: HubComponent, canActivate: [authGuard] },
   { path: 'home', component: HomeComponent, canActivate: [authGuard] },
   {
-    path: 'trilha/:id/:nome',
+    path: 'trilha/:id',
     component: TrilhaComponent,
     canActivate: [authGuard],
   },

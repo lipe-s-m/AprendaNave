@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { LoaderComponent } from '../../shared/components/loader/loader.component';
+import { AulaService } from '../../services/aula/aula.service';
 
 @Component({
   selector: 'app-aula',
@@ -35,6 +36,8 @@ export class AulaComponent implements OnInit, OnDestroy {
 
   videoUrl: SafeResourceUrl | null = null;
 
+  videoIds: string[] = [];
+
   private subscription: Subscription | null = null;
 
   constructor(
@@ -42,7 +45,8 @@ export class AulaComponent implements OnInit, OnDestroy {
     private router: Router,
     private trilhaService: TrilhaService,
     private toastr: ToastrService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private aulaService: AulaService
   ) {}
 
   ngOnInit(): void {
@@ -66,6 +70,23 @@ export class AulaComponent implements OnInit, OnDestroy {
         this.isLoading = false;
       }
     });
+    this.videoIds = [
+      'q1oqfO8PgMs', // Rick Astley - Never Gonna Give You Up
+      '-4eukz8miOI', // tommei data sekkai
+      'r8im6qIYCNE', // op13
+      '97hIG-8D-Xo', // yura yura
+
+      'saglKg48Sgk', //  sign
+    ];
+    this.aulaService.initializeAulas(
+      null,
+      this.trilhaId!,
+      this.moduloId!,
+      this.videoIds.length
+    );
+    setTimeout(() => {
+      this.verificarAulasConcluidas();
+    }, 400);
   }
 
   ngOnDestroy(): void {
@@ -96,6 +117,7 @@ export class AulaComponent implements OnInit, OnDestroy {
 
         // Encontrar a aula atual
         this.aula = this.aulasList.find((a) => a.id === aulaId) || null;
+        console.log('add', this.aulasList);
 
         if (!this.aula) {
           this.error = `Aula com ID ${aulaId} não encontrada no módulo`;
@@ -111,8 +133,11 @@ export class AulaComponent implements OnInit, OnDestroy {
 
         // Marcar a aula como concluída se ainda não estiver
         if (!this.aula.concluida) {
-          this.marcarAulaConcluida();
+          this.marcarAulaConcluida(trilhaId, moduloId, aulaId);
+
+          this.aula.concluida = true;
           this.verificarAulasConcluidas();
+          // this.verificarAulasConcluidas(trilhaId, moduloId);
         }
 
         this.isLoading = false;
@@ -126,45 +151,38 @@ export class AulaComponent implements OnInit, OnDestroy {
   }
 
   verificarAulasConcluidas(): void {
-    if (this.todasAsAulasConcluidas) return;
-    console.log(this.aulasList);
-    this.todasAsAulasConcluidas = this.aulasList.every(
-      (aula) => aula.concluida
+    if (this.aulasList.length === 0) {
+      this.todasAsAulasConcluidas = false;
+      return;
+    }
+
+    const moduloCompleto = this.aulasList.every(
+      (aula) => aula.concluida === true
     );
-    if (this.todasAsAulasConcluidas) {
+    if (moduloCompleto) {
       this.toastr.success(
         'Parabéns! Você concluiu todas as aulas deste módulo.'
       );
+      this.todasAsAulasConcluidas = moduloCompleto;
     }
   }
   irParaTesteFinal(): void {
     if (this.trilhaId && this.moduloId) {
-      alert('Você será redirecionado para o teste final do módulo.');
       this.router.navigate(['/teste-final', this.trilhaId, this.moduloId]);
     }
   }
 
   gerarVideoUrl(): void {
     // Lista de IDs de vídeos do YouTube sobre educação
-    const videoIds = [
-      'jNQXAC9IVRw', // "Me at the zoo" (primeiro vídeo do YouTube)
-      'dQw4w9WgXcQ', // Rick Astley - Never Gonna Give You Up
-      'J---aiyznGQ', // Keyboard Cat
-      'QH2-TGUlwu4', // Nyan Cat
-      'EwTZ2xpQwpA', // "Chocolate Rain"
-      '9bZkp7q19f0', // Gangnam Style
-      'z9Uz1icjwrM', // "Despacito"
-      'PeonBmeFR8o', // Matemática - Frações
-      'FTsIGF-vz7s', // Matemática - Geometria
-      'RF4wnAXJfIA', // Português - Gramática
-    ];
 
     // Usar o ID da aula para selecionar um vídeo (de forma circular)
-    const videoIndex = (this.aulaId! - 1) % videoIds.length;
-    const videoId = videoIds[videoIndex];
+    const videoIndex = (this.aulaId! - 1) % this.videoIds.length;
+    const videoId = this.videoIds[videoIndex];
 
     // Gerar URL segura para o iframe
     const url = `https://www.youtube.com/embed/${videoId}?autoplay=0`;
+    console.log(url);
+
     this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
@@ -190,30 +208,14 @@ export class AulaComponent implements OnInit, OnDestroy {
     }
   }
 
-  marcarAulaConcluida(): void {
-    if (!this.trilhaId || !this.moduloId || !this.aulaId) return;
+  marcarAulaConcluida(
+    trilhaId: number,
+    moduloId: number,
+    aulaId: number
+  ): void {
+    if (!trilhaId || !moduloId || !aulaId) return;
 
-    this.trilhaService
-      .atualizarStatusAula(this.trilhaId, this.moduloId, this.aulaId, true)
-      .subscribe({
-        next: (trilhaAtualizada) => {
-          this.trilha = trilhaAtualizada;
-          this.modulo =
-            trilhaAtualizada.modulos.find((m) => m.id === this.moduloId) ||
-            null;
-
-          if (this.modulo) {
-            this.aulasList = this.modulo.aulasList || [];
-            this.aula =
-              this.aulasList.find((a) => a.id === this.aulaId) || null;
-          }
-
-          this.toastr.success('Aula marcada como concluída', 'Sucesso');
-        },
-        error: (err) => {
-          this.toastr.error('Erro ao marcar aula como concluída', 'Erro');
-        },
-      });
+    this.aulaService.marcarAulaComoConcluida(trilhaId, moduloId, aulaId);
   }
 
   irParaProximaAula(): void {

@@ -13,25 +13,23 @@
   <section class="modulos-section">
     <h2>Módulos</h2>
     <div class="modulos-grid">
-      <div class="modulo-card" *ngFor="let modulo of trilha; let idx = index" (click)="abrirModalModulo(modulo, $event)">
-        <!-- <div class="nivel-badge" [ngClass]="getNivelClass(modulo.nivel)">
-          {{ modulo.nivel || 'INICIANTE' }}
-        </div> -->
+      <div class="modulo-card" [class.em-desenvolvimento]="modulo.id !== 1" *ngFor="let modulo of trilha; let idx = index" (click)="abrirModalModulo(modulo, $event)">
+
         <div class="modulo-number">{{ idx + 1 }}</div>
         <div class="modulo-header">
           <h3 class="modulo-title">{{ modulo.nome }}</h3>
         </div>
-        <p class="modulo-description">{{ modulo.id }} aulas · {{ modulo.id }}h</p>
+        <p class="modulo-description">4 aulas · {{ modulo.id }}h</p>
         <div class="modulo-status" [class.concluido]="modulo.status === 'CONCLUIDO'" [class.em-andamento]="modulo.status === 'EM_ANDAMENTO'">
-          PENDENTE
+          <span>PENDENTE</span>
         </div>
-        <app-button [buttonText]="getButtonText(modulo.status)" buttonTheme="dark" (click)="$event.stopPropagation(); iniciarOuContinuarModulo(modulo, $event)">
+        <app-button *ngIf="modulo.id === 1" [buttonText]="getButtonText(modulo.status)" buttonTheme="dark" (click)="$event.stopPropagation(); iniciarOuContinuarModulo(modulo, $event)">
         </app-button>
       </div>
-      <ng-template [ngIf]="trilha.length === 0">
-        <div>Módulos ainda não implementados!</div>
-      </ng-template>
     </div>
+    <ng-template [ngIf]="trilha.length === 0">
+      <div>Módulos ainda não implementados!</div>
+    </ng-template>
   </section>
 
 

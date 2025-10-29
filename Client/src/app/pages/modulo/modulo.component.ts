@@ -52,6 +52,7 @@ export class ModuloComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    localStorage.removeItem('trilhas');
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
@@ -106,7 +107,6 @@ export class ModuloComponent implements OnInit, OnDestroy {
   }
   irParaTesteFinal(): void {
     if (this.trilhaId && this.moduloId) {
-      alert('Você será redirecionado para o teste final do módulo.');
       this.router.navigate(['/teste-final', this.trilhaId, this.moduloId]);
     }
   }

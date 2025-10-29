@@ -26,7 +26,7 @@ export class TrilhaService {
    * Salva o estado atual das trilhas no localStorage
    */
   private salvarTrilhasNoLocalStorage(): void {
-    localStorage.setItem('trilhas', JSON.stringify(this.trilhas));
+    // localStorage.setItem('trilhas', JSON.stringify(this.trilhas));
     console.log('Trilhas salvas no localStorage:', this.trilhas);
   }
 

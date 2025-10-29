@@ -3,7 +3,7 @@ import { Observable, of, Subscription } from 'rxjs';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { SubheaderComponent } from '../../../shared/components/subheader/subheader.component';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IModulo } from '../../../shared/interfaces/curso.model';
 import { AsyncPipe, NgIf, NgForOf, NgFor } from '@angular/common';
 import { CdkAriaLive } from '../../../../../node_modules/@angular/cdk/a11y/index';
@@ -37,7 +37,8 @@ export class QuizComponent implements OnInit, OnDestroy {
   constructor(
     private activatedRoute: ActivatedRoute,
     private quizService: QuizService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -98,21 +99,41 @@ export class QuizComponent implements OnInit, OnDestroy {
     }
     return this.number2;
   }
-  resultNumber() {
-    const opIndex = Math.floor(Math.random() * 4);
-    this.opIndex = opIndex;
+  resultNumber(): void {
+    this.opIndex = Math.floor(Math.random() * 4);
     this.result = this.calcNumber();
-    const index = Math.floor(Math.random() * 4);
-    this.questions[index] = this.result;
-    this.questions.forEach((num, i) => {
-      if (num !== this.result) {
-        let preResult = Math.trunc(this.result / 2) + (i + 1) * 3;
-        if (preResult === this.result) {
-          preResult = preResult - 2;
-        }
-        this.questions[i] = preResult;
+
+    this.questions = [this.result];
+
+    while (this.questions.length < 4) {
+      let incorrectAnswer = this.generateIncorrectAnswer(this.result);
+
+      if (!this.questions.includes(incorrectAnswer)) {
+        this.questions.push(incorrectAnswer);
       }
-    });
+    }
+
+    this.shuffleArray(this.questions);
+  }
+
+  // Sugestão de função para gerar uma resposta incorreta (distrator)
+  private generateIncorrectAnswer(correctAnswer: number): number {
+    const offset = Math.floor(Math.random() * 21) - 10;
+    let incorrect = correctAnswer + offset;
+
+    if (incorrect === correctAnswer) {
+      incorrect += incorrect > 0 ? 1 : -1;
+    }
+
+    return Math.max(0, incorrect);
+  }
+
+  // (Opcional) Função para embaralhar o array
+  private shuffleArray(array: any[]): void {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
   }
   calcNumber(): number {
     switch (this.opIndex) {
@@ -166,8 +187,6 @@ export class QuizComponent implements OnInit, OnDestroy {
       audio.load();
       audio.play();
       this.toastr.error('Resposta Errada!');
-      // if (this.points >= 3) this.points -= 5;
-      // else this.points = 0;
 
       this.nextQuestion();
     }
@@ -181,10 +200,12 @@ export class QuizComponent implements OnInit, OnDestroy {
         this.contagemRegressiva--;
         if (this.points >= 7) {
           this.toastr.success('Parabéns! Você completou o quiz!');
+          this.ganhou = true;
         } else {
           this.toastr.error(
             'Você não atingiu a pontuação necessária. Tente novamente!'
           );
+          this.ganhou = false;
         }
         if (this.contagemRegressiva <= 0) {
           clearInterval(interval);
@@ -198,5 +219,12 @@ export class QuizComponent implements OnInit, OnDestroy {
     this.randNumber2();
     this.resultNumber();
     this.resultOp();
+  }
+  voltarParaTrilha() {
+    if (this.cursoId && this.moduloId) {
+      this.inGame = false;
+      this.toastr.info('Voltando para a trilha...');
+      this.router.navigate(['/trilha', this.cursoId]);
+    }
   }
 }
