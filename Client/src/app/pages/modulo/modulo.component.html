@@ -45,15 +45,17 @@
     </div>
     <!-- Botão para iniciar o teste final -->
     <div class="modulo-actions">
-      <app-button (click)="irParaTesteFinal()" buttonLevel="secondary" buttonTheme="dark" buttonText="Iniciar Teste Final" [buttonDisabled]="!todasAulasConcluidas()">
+      <app-button *ngIf="todasAulasConcluidas()" (click)="irParaTesteFinal()" buttonLevel="secondary" buttonTheme="dark" buttonText="Iniciar Teste Final" [buttonDisabled]="!todasAulasConcluidas()">
+      </app-button>
+      <app-button *ngIf="!todasAulasConcluidas()" (click)="irParaTesteFinal()" buttonLevel="secondary" buttonTheme="dark" buttonText="Assistas as aulas para liberar o quiz" [buttonDisabled]="!todasAulasConcluidas()">
       </app-button>
     </div>
-    <div class="modulo-actions">
+    <!-- <div class="modulo-actions">
       <app-button buttonText="Resetar Aulas" buttonLevel="primary" buttonTheme="dark" (click)="resetarAulas()">
       </app-button>
-    </div>
+    </div> -->
     <!--  -->
-    <div class="modulo-actions">
+    <!-- <div class="modulo-actions">
       <button class="action-button concluir" (click)="marcarConcluido()" [disabled]="modulo.status === 'CONCLUIDO' || !todasAulasConcluidas()">
         <ng-container *ngIf="modulo.status === 'CONCLUIDO'; else notConcluido">
           Módulo Concluído
@@ -63,11 +65,11 @@
             Marcar como Concluído
           </ng-container>
           <ng-template #aulasPendentes>
-            Complete todas as aulas primeiro
+            Complete todas as aulas para liberar o quiz
           </ng-template>
         </ng-template>
       </button>
-    </div>
+    </div> -->
   </div>
 </div>
 

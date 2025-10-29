@@ -75,10 +75,14 @@ export class SubheaderComponent {
     if (this.url.startsWith('/trilha/')) {
       this.router.navigate(['/home']);
     } else if (this.url.startsWith('/modulo/')) {
-      console.log('modulooo');
       const idTrilha = this.url.split('/')[2];
       this.router.navigate(['/trilha', idTrilha]);
+    } else if (this.url.startsWith('/aula/')) {
+      const idTrilha = this.url.split('/')[2];
+      const idModulo = this.url.split('/')[3];
+      this.router.navigate(['/modulo', idTrilha, idModulo]);
     }
+
     return;
   }
   toggleHamburguerMenu() {

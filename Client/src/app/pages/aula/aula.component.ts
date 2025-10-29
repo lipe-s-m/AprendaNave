@@ -9,11 +9,12 @@ import { ToastrService } from 'ngx-toastr';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { LoaderComponent } from '../../shared/components/loader/loader.component';
 import { AulaService } from '../../services/aula/aula.service';
+import { SubheaderComponent } from '../../shared/components/subheader/subheader.component';
 
 @Component({
   selector: 'app-aula',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, LoaderComponent],
+  imports: [CommonModule, ButtonComponent, LoaderComponent, SubheaderComponent],
   templateUrl: './aula.component.html',
   styleUrl: './aula.component.scss',
 })
@@ -117,7 +118,6 @@ export class AulaComponent implements OnInit, OnDestroy {
 
         // Encontrar a aula atual
         this.aula = this.aulasList.find((a) => a.id === aulaId) || null;
-        console.log('add', this.aulasList);
 
         if (!this.aula) {
           this.error = `Aula com ID ${aulaId} não encontrada no módulo`;
@@ -181,7 +181,6 @@ export class AulaComponent implements OnInit, OnDestroy {
 
     // Gerar URL segura para o iframe
     const url = `https://www.youtube.com/embed/${videoId}?autoplay=0`;
-    console.log(url);
 
     this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }

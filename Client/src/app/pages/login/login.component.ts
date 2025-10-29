@@ -91,9 +91,6 @@ export class LoginComponent implements OnInit {
       this.loginService.login(loginData).subscribe({
         next: (response) => {
           this.toastr.success('Login realizado com sucesso!', 'Sucesso');
-          console.log(response);
-
-          console.log('gg');
           return this.router.navigate(['/home']);
         },
         error: (error: HttpErrorResponse) => {

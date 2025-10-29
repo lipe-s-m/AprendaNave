@@ -30,7 +30,6 @@ export class AulaService {
     qtdAulas?: number | null
   ): void {
     if (!aulasAPI) {
-      console.log(qtdAulas);
       for (let index = 0; index < qtdAulas!; index++) {
         const key = this.getAulaKey(idCurso, idModulo, index + 1);
 
@@ -54,12 +53,8 @@ export class AulaService {
     idAula: number
   ): void {
     const key = this.getAulaKey(idCurso, idModulo, idAula);
-    console.log(key);
     if (this.listaAulas[key]) {
       this.listaAulas[key].next(true);
-      console.log(this.listaAulas[key].getValue());
-      console.log(this.listaAulas);
-      console.log(key);
 
       this.verificarTodasAsAulasConcluidas(idCurso, idModulo);
     }

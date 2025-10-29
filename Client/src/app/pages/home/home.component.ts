@@ -33,8 +33,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    console.log('oi');
-
     // Subscreve às mudanças de tema
     this.themeSubscription = this.themeService.theme$.subscribe((theme) => {
       this.isDarkMode = theme === 'dark';
@@ -42,15 +40,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     // Carrega as trilhas
     this.loadCursos();
-
-    this.cursoService.getCursos().subscribe({
-      next: (cursos) => {
-        console.log(cursos);
-      },
-      error: (err) => {
-        console.log(err);
-      },
-    });
   }
 
   ngOnDestroy() {
@@ -71,7 +60,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       next: (cursos) => {
         this.cursos = cursos;
         this.isLoading = false;
-        console.log(this.cursos);
       },
       error: (err) => {
         this.error = 'Erro ao carregar cursos: ' + err.message;

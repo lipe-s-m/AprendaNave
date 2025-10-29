@@ -1,11 +1,11 @@
+<app-subheader />
 <div class="aula-container" *ngIf="aula; else notFound">
   <header class="aula-header">
     <!-- <p class="back" (click)="voltarParaModulo()">x</p> -->
-    <button class="back" (click)="voltarParaModulo()">← Voltar</button>
     <div class="header-info">
       <h1>{{ aula.titulo }}</h1>
       <div class="header-meta">
-        <p class="trilha-nome">{{ trilha?.nome }} > {{ modulo?.nome }}</p>
+        <p class="trilha-nome">{{ trilha?.nome }} -> {{ modulo?.nome }}</p>
 
       </div>
     </div>
@@ -24,9 +24,10 @@
       <app-button buttonText="Próxima Aula" buttonSize="small" buttonLevel="primary" buttonTextColor="white" buttonTheme="dark" buttonType="button" [buttonDisabled]="!proximaAula" (click)="irParaProximaAula()" *ngIf="proximaAula">
       </app-button>
     </div>
+    <hr>
 
     <div class="aulas-section">
-      <h2>Todas as aulas deste módulo</h2>
+      <h2>Todas as aulas deste módulo:</h2>
 
       <div class="aulas-lista">
         <!-- Timeline conectando as aulas -->

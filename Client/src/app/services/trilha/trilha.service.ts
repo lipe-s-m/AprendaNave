@@ -19,7 +19,6 @@ export class TrilhaService {
       ...trilha,
       id: trilha.id,
     }));
-    console.log('Trilhas carregadas:', this.trilhas);
   }
 
   /**
@@ -27,7 +26,6 @@ export class TrilhaService {
    */
   private salvarTrilhasNoLocalStorage(): void {
     // localStorage.setItem('trilhas', JSON.stringify(this.trilhas));
-    console.log('Trilhas salvas no localStorage:', this.trilhas);
   }
 
   /**
@@ -39,7 +37,6 @@ export class TrilhaService {
     if (trilhasSalvas) {
       try {
         this.trilhas = JSON.parse(trilhasSalvas);
-        console.log('Trilhas carregadas do localStorage:', this.trilhas);
       } catch (error) {
         console.error(
           'Erro ao carregar trilhas do localStorage, usando mocks:',
@@ -56,9 +53,7 @@ export class TrilhaService {
    * Reseta as trilhas para o estado inicial dos mocks
    */
   public resetarTrilhas(): void {
-    console.log('Resetando trilhas para o estado inicial dos mocks');
     this.trilhas = JSON.parse(JSON.stringify(TRILHAS_MOCK)); // Cria uma cópia profunda
-    console.log('Trilhas resetadas:', this.trilhas);
     this.salvarTrilhasNoLocalStorage(); // Salva os mocks no localStorage
   }
   getTrilhas(): Observable<Trilha[]> {
@@ -115,11 +110,6 @@ export class TrilhaService {
     moduloId: number,
     status: 'NAO_INICIADO' | 'EM_ANDAMENTO' | 'CONCLUIDO'
   ): Observable<Trilha> {
-    console.log(
-      `Método atualizarStatusModulo chamado para trilha ${trilhaId}, módulo ${moduloId}, novo status: ${status}`
-    );
-    console.log('Trilhas disponíveis:', this.trilhas);
-
     const trilhaIndex = this.trilhas.findIndex((t) => t.id === trilhaId);
 
     if (trilhaIndex === -1) {
@@ -130,7 +120,6 @@ export class TrilhaService {
     }
 
     const trilha = this.trilhas[trilhaIndex];
-    console.log('Trilha encontrada:', trilha);
 
     const moduloIndex = trilha.modulos.findIndex(
       (m: Modulo) => m.id === moduloId
@@ -149,11 +138,8 @@ export class TrilhaService {
     }
 
     // Atualiza o status do módulo
-    console.log(
-      `Atualizando módulo ${moduloId} da trilha ${trilhaId} para status: ${status}`
-    );
+
     trilha.modulos[moduloIndex].status = status;
-    console.log('Módulo após atualização:', trilha.modulos[moduloIndex]);
 
     // Atualiza o array de trilhas
     this.trilhas[trilhaIndex] = trilha;
@@ -179,12 +165,6 @@ export class TrilhaService {
     aulaId: number,
     concluida: boolean
   ): Observable<Trilha> {
-    console.log(
-      `Atualizando status da aula ${aulaId} do módulo ${moduloId} na trilha ${trilhaId} para ${
-        concluida ? 'concluída' : 'não concluída'
-      }`
-    );
-
     const trilhaIndex = this.trilhas.findIndex((t) => t.id === trilhaId);
 
     if (trilhaIndex === -1) {
@@ -219,9 +199,6 @@ export class TrilhaService {
     const aulaIndex = modulo.aulasList.findIndex((a) => a.id === aulaId);
 
     if (aulaIndex === -1) {
-      console.log(
-        `Aula com ID ${aulaId} não encontrada, adicionando ao módulo`
-      );
       // Se a aula não existir ainda, adiciona ao módulo
       modulo.aulasList.push({
         id: aulaId,

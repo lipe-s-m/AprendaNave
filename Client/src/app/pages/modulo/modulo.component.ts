@@ -230,11 +230,6 @@ export class ModuloComponent implements OnInit, OnDestroy {
 
             // Verifica se todas as aulas estão concluídas
             const todasAulasConcluidas = this.aulas.every((a) => a.concluida);
-
-            // Se todas as aulas estiverem concluídas, mostra uma mensagem
-            if (todasAulasConcluidas) {
-              this.toastr.success('Todas as aulas concluídas!', 'Parabéns');
-            }
           },
           error: (err: any) => {
             this.toastr.error('Erro ao atualizar status da aula', 'Erro');

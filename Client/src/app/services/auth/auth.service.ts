@@ -23,11 +23,8 @@ export class AuthService {
         map(() => true),
         tap((isAuthenticated) => {
           this.isAuthSubject.next(isAuthenticated);
-          console.log('Token validado', isAuthenticated);
         }),
         catchError(() => {
-          console.log('Poxa');
-
           this.isAuthSubject.next(false);
           return of(false);
         })

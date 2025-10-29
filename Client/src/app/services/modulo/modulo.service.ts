@@ -29,6 +29,5 @@ export class ModuloService {
   }
   clearCache(): void {
     this.moduloCache$ = EMPTY;
-    console.log('[Cache]: Cache de módulos limpo.');
   }
 }

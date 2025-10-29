@@ -26,6 +26,7 @@ export class QuizComponent implements OnInit, OnDestroy {
   initializingGame: boolean = false;
   resetingGame: boolean = false;
   contagemRegressiva: number = 3;
+  tempoRestante: number = 10;
   number1: number = 0;
   number2: number = 0;
   result: number = 0;
@@ -48,10 +49,8 @@ export class QuizComponent implements OnInit, OnDestroy {
       this.cursoId = params.get('trilhaId');
       this.moduloId = params.get('moduloId');
     });
-    console.log(this.quizService.getQuiz(this.cursoId, this.moduloId));
 
     this.modulo$ = this.quizService.getQuiz(this.cursoId, this.moduloId);
-    console.log(this.opIndex);
 
     this.randNumber1();
     this.randNumber2();
@@ -70,8 +69,6 @@ export class QuizComponent implements OnInit, OnDestroy {
     this.initializingGame = true;
 
     const interval = setInterval(() => {
-      console.log(this.contagemRegressiva);
-
       this.contagemRegressiva--;
 
       if (this.contagemRegressiva === 0) {
@@ -82,6 +79,7 @@ export class QuizComponent implements OnInit, OnDestroy {
         this.resetingGame = false;
         this.points = 0;
         this.questionIndex = 0;
+        this.iniciarContagemTempoRestante();
       }
     }, 1000);
   }
@@ -116,7 +114,6 @@ export class QuizComponent implements OnInit, OnDestroy {
     this.shuffleArray(this.questions);
   }
 
-  // Sugestão de função para gerar uma resposta incorreta (distrator)
   private generateIncorrectAnswer(correctAnswer: number): number {
     const offset = Math.floor(Math.random() * 21) - 10;
     let incorrect = correctAnswer + offset;
@@ -128,7 +125,6 @@ export class QuizComponent implements OnInit, OnDestroy {
     return Math.max(0, incorrect);
   }
 
-  // (Opcional) Função para embaralhar o array
   private shuffleArray(array: any[]): void {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -172,7 +168,7 @@ export class QuizComponent implements OnInit, OnDestroy {
         return 'error';
     }
   }
-  checkAnswer(answer: number) {
+  checkAnswer(answer: number | null) {
     let audio = new Audio();
 
     if (answer && answer === this.result) {
@@ -195,36 +191,60 @@ export class QuizComponent implements OnInit, OnDestroy {
     if (this.questionIndex >= 10) {
       this.resetingGame = true;
       this.inGame = false;
-
-      const interval = setInterval(() => {
-        this.contagemRegressiva--;
-        if (this.points >= 7) {
-          this.toastr.success('Parabéns! Você completou o quiz!');
-          this.ganhou = true;
-        } else {
-          this.toastr.error(
-            'Você não atingiu a pontuação necessária. Tente novamente!'
-          );
-          this.ganhou = false;
-        }
-        if (this.contagemRegressiva <= 0) {
-          clearInterval(interval);
-          this.contagemRegressiva = 3;
-          this.resetingGame = false;
-        }
-      }, 1000);
+      if (this.points >= 7) {
+        this.ganhou = true;
+        this.toastr.success('Parabéns! Você completou o quiz!');
+      } else {
+        this.toastr.error(
+          'Você não atingiu a pontuação necessária. Tente novamente!'
+        );
+        this.ganhou = false;
+      }
     }
     this.questionIndex += 1;
     this.randNumber1();
     this.randNumber2();
     this.resultNumber();
     this.resultOp();
+    this.iniciarContagemTempoRestante();
   }
   voltarParaTrilha() {
     if (this.cursoId && this.moduloId) {
       this.inGame = false;
       this.toastr.info('Voltando para a trilha...');
       this.router.navigate(['/trilha', this.cursoId]);
+    }
+  }
+  moduloConcluido(): void {
+    this.toastr.success('Quiz concluído com sucesso', 'Parabens!');
+    this.router.navigate(['/trilha', this.cursoId]);
+  }
+  refazerQuiz(): void {
+    this.toastr.info('Não desista, tente novamente!');
+    this.inGame = false;
+    this.initializingGame = false;
+    this.resetingGame = false;
+  }
+  iniciarContagemTempoRestante(): void {
+    console.log('fui chamado');
+    const questionIndexAtual = this.questionIndex;
+
+    if (this.inGame) {
+      console.log('ingame');
+
+      this.tempoRestante = 10;
+      const interval = setInterval(() => {
+        this.tempoRestante -= 1;
+        if (this.tempoRestante <= 0) {
+          clearInterval(interval);
+          this.tempoRestante = 10;
+          this.checkAnswer(null);
+        }
+        if (this.questionIndex !== questionIndexAtual) {
+          clearInterval(interval);
+          this.tempoRestante = 10;
+        }
+      }, 1000);
     }
   }
 }

@@ -6,10 +6,10 @@
 
       <div class="content-text">
         <!-- <p>Você está prestes a iniciar o quiz para o módulo "{{modulo.nome}}". Certifique-se de estar preparado antes de começar.</p> -->
-        <p>Caso acerte 75% das questões, você receberá <strong>100 pontos</strong></p>
-        <p>Caso acerte 90% das questões, você receberá <strong>150 pontos</strong></p>
-        <p>Caso acerte 100% das questões, você receberá <strong>200 pontos</strong></p>
-        <p>Caso acerte menos que 75% das questões, você <strong>não receberá pontos</strong>, e poderá repetir o teste</p>
+        <p>Caso acerte 7 questões, você receberá <strong>100 pontos</strong></p>
+        <p>Caso acerte 9 questões, você receberá <strong>150 pontos</strong></p>
+        <p>Caso acerte 10 questões, você receberá <strong>200 pontos</strong></p>
+        <p>Caso acerte menos que 7 questões, você <strong>não receberá pontos</strong>, e poderá repetir o teste</p>
         <hr>
         <p style="margin: 0 auto"><strong>Boa sorte!</strong></p>
       </div>
@@ -17,7 +17,10 @@
       <app-button buttonText="Voltar" buttonLevel="secondary" buttonTheme="dark" buttonSize="large" (click)="voltarParaTrilha()" />
     </div>
     <div class="game" *ngIf="inGame">
-      <p class="pontos"><strong>{{points}}/10</strong></p>
+      <div class="info">
+        <p class="pontos"><strong>{{questionIndex}}/10</strong></p>
+        <p class="tempo-restante"><strong>{{tempoRestante}}</strong></p>
+      </div>
       <div class="content-game">
         <h1>{{number1}} {{this.resultOp()}} {{number2}} = ?</h1>
         <div class="options">
@@ -38,6 +41,7 @@
         <h2>Parabéns!</h2>
         <p>Você completou o quiz com sucesso!</p>
         <p class="contagem-regressiva">😃</p>
+        <app-button buttonText="Concluir" buttonLevel="primary" buttonBackgroundColor="#06923E" buttonTextColor="white" (click)="moduloConcluido()"></app-button>
 
       </div>
 
@@ -45,6 +49,8 @@
         <h2>Que pena!</h2>
         <p>Você não completou o quiz com sucesso, tente novamente!</p>
         <p class="contagem-regressiva">😞</p>
+        <app-button buttonText="tente novamente" buttonLevel="primary" buttonBackgroundColor="#BF092F" buttonTextColor="white" (click)="refazerQuiz()"></app-button>
+
       </div>
 
     </div>

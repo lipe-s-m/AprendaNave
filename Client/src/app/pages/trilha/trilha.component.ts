@@ -67,7 +67,6 @@ export class TrilhaComponent implements OnInit, OnDestroy {
     this.moduloService.getModulos(id).subscribe({
       next: (trilha) => {
         this.trilha = trilha;
-        console.log('Trilha carregada:', this.trilha);
         this.isLoading = false;
       },
       error: (err) => {
@@ -83,13 +82,8 @@ export class TrilhaComponent implements OnInit, OnDestroy {
     novoStatus: 'NAO_INICIADO' | 'EM_ANDAMENTO' | 'CONCLUIDO'
   ): void {
     if (this.trilhaId === null) {
-      console.log(this.trilhaId);
       return;
     }
-
-    console.log(
-      `Tentando atualizar módulo ${moduloId} para status: ${novoStatus}`
-    );
 
     this.trilhaService
       .atualizarStatusModulo(this.trilhaId, moduloId, novoStatus)
@@ -136,17 +130,13 @@ export class TrilhaComponent implements OnInit, OnDestroy {
         event?.target instanceof HTMLElement &&
         (event.target as HTMLElement).tagName === 'BUTTON';
 
-      console.log('O clique foi em um botão?', isButtonClick);
-
       // Se o módulo já está em andamento ou concluído, redireciona direto para a página do módulo
       if (modulo.status === 'EM_ANDAMENTO' || modulo.status === 'CONCLUIDO') {
-        console.log('Módulo já em andamento ou concluído, redirecionando...');
         this.navegarParaModulo(modulo.id);
         return;
       }
 
       // Caso contrário, abrimos o modal para confirmação
-      console.log('Abrindo modal de confirmação...');
       this.moduloSelecionado = modulo;
     } catch (error) {
       console.error('Erro ao abrir modal do módulo:', error);
@@ -159,7 +149,6 @@ export class TrilhaComponent implements OnInit, OnDestroy {
   }
 
   iniciarOuContinuarModulo(modulo: Modulo, event: Event): void {
-    console.log('iniciarOuContinuarModulo chamado com módulo:', modulo);
     event.stopPropagation(); // Impede que o evento propague para o card
     if (modulo.id !== 1) {
       this.toastr.info('Funcionalidade em desenvolvimento', 'Atenção');
@@ -168,11 +157,9 @@ export class TrilhaComponent implements OnInit, OnDestroy {
     try {
       if (modulo.status === 'NAO_INICIADO') {
         // Se não iniciado, marca como em andamento e navega para a página do módulo
-        console.log('abrindo modulo...', modulo.id);
         this.abrirModalModulo(modulo, event);
       } else {
         // Se já em andamento ou concluído, apenas navega para a página do módulo
-        console.log('Navegando para módulo já iniciado...', modulo.id);
         this.navegarParaModulo(modulo.id);
       }
     } catch (error) {
@@ -190,20 +177,13 @@ export class TrilhaComponent implements OnInit, OnDestroy {
     }
     if (this.moduloSelecionado) {
       try {
-        console.log(
-          'confirmarIniciarModulo para módulo:',
-          this.moduloSelecionado
-        );
         const moduloId = this.moduloSelecionado.id;
         this.fecharModal();
 
         // Primeiro fechar o modal para evitar problemas de redirecionamento
         setTimeout(() => {
           // Marcar como em andamento e redirecionar
-          console.log(
-            'Executando atualizarStatusModulo para o módulo:',
-            moduloId
-          );
+
           this.atualizarStatusModulo(moduloId, 'EM_ANDAMENTO');
         }, 100);
       } catch (error) {
