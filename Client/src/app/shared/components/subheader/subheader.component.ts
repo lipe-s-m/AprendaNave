@@ -62,6 +62,7 @@ export class SubheaderComponent {
   goToProfile() {
     this.toastr.info('Funcionalidade de perfil em desenvolvimento', 'Info');
     this.isOpen = false;
+    this.router.navigate(['/perfil']);
   }
 
   logout() {
@@ -81,6 +82,8 @@ export class SubheaderComponent {
       const idTrilha = this.url.split('/')[2];
       const idModulo = this.url.split('/')[3];
       this.router.navigate(['/modulo', idTrilha, idModulo]);
+    } else if (this.url.startsWith('/perfil')) {
+      this.router.navigate(['/home']);
     }
 
     return;

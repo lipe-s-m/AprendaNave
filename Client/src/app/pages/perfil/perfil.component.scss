@@ -1,0 +1,130 @@
+.background {
+  min-height: 100dvh;
+  height: 100%;
+  width: 100%;
+  background-color: var(--background-quinary);
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1.6rem;
+  gap: 4rem;
+
+  section {
+    width: 100%;
+    max-width: 70rem;
+    .title {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: var(--accent-primary);
+      text-transform: capitalize;
+      margin-left: 1.6rem;
+      margin-bottom: 0.4rem;
+    }
+  }
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.6rem;
+    width: 100%;
+    border: 0.3rem rgba(55, 70, 79, 0.685) solid;
+    border-radius: 1.6rem;
+    background-color: var(--background-senary);
+
+    &.perfil {
+      align-items: start;
+      padding: 1.6rem 1.6rem 2.4rem 1.6rem;
+
+      .image {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        max-width: 80rem;
+
+        height: 22rem;
+        border-radius: 1.6rem;
+        background-color: rgb(255, 255, 255);
+        img {
+          height: 90%;
+        }
+      }
+      .info-text {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+    }
+    &.conquistas {
+      align-items: start;
+
+      .lista {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        list-style: none;
+        .card {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1.4rem 1rem;
+          width: 100%;
+          border-bottom: 0.3rem rgba(55, 70, 79, 0.685) solid;
+          gap: 1.6rem;
+          &:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transform: translateY(-2px);
+            cursor: pointer;
+          }
+          .logo {
+            width: 12rem;
+            width: 10rem;
+            img {
+              width: 100%;
+              height: 100%;
+              object-fit: contain;
+            }
+            border-radius: 1.6rem;
+          }
+          .info-text {
+            width: 100%;
+            h1 {
+              color: var(--accent-primary);
+            }
+            p {
+              color: var(--text-primary);
+            }
+            h2 {
+              &.completo {
+                color: var(--success-color);
+              }
+              &.incompleto {
+                color: var(--error-color);
+              }
+            }
+          }
+        }
+        .info {
+          color: var(--text-primary);
+          font-size: 1.8rem;
+          padding: 1rem;
+          font-weight: 700;
+          opacity: 0.8;
+        }
+      }
+      .image {
+        width: 100%;
+        height: 22rem;
+        border-radius: 1.6rem;
+        background-color: rgb(255, 255, 255);
+      }
+    }
+  }
+}

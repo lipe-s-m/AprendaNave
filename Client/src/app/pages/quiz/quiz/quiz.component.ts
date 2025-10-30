@@ -211,8 +211,8 @@ export class QuizComponent implements OnInit, OnDestroy {
   voltarParaTrilha() {
     if (this.cursoId && this.moduloId) {
       this.inGame = false;
-      this.toastr.info('Voltando para a trilha...');
-      this.router.navigate(['/trilha', this.cursoId]);
+      this.toastr.info('Voltando para as aulas...');
+      this.router.navigate(['/modulo', this.cursoId, this.moduloId]);
     }
   }
   moduloConcluido(): void {

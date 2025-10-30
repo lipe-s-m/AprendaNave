@@ -9,12 +9,14 @@ import { Router, Routes } from '@angular/router';
 import { authGuard } from './guards/auth/auth.guard';
 import { AuthService } from './services/auth/auth.service';
 import { QuizComponent } from './pages/quiz/quiz/quiz.component';
+import { PerfilComponent } from './pages/perfil/perfil.component';
 
 export const routes: Routes = [
   { path: '', component: StartComponent, pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'hub', component: HubComponent, canActivate: [authGuard] },
   { path: 'home', component: HomeComponent, canActivate: [authGuard] },
+  { path: 'perfil', component: PerfilComponent, canActivate: [authGuard] },
   {
     path: 'trilha/:id',
     component: TrilhaComponent,
