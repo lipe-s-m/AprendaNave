@@ -27,7 +27,7 @@
   align-self: center;
   width: 100%;
   max-width: 44rem;
-  border: 1px solid var(--border-color);
+  border: 2px solid var(--accent-primary-shadow);
   border-radius: 6px;
   background: var(--background-secondary);
   overflow: hidden;
@@ -54,7 +54,7 @@
   }
 
   .course-icon {
-    background: var(--background-tertiary);
+    background: var(--background-octonary);
     height: 180px;
     display: flex;
     align-items: center;
@@ -70,6 +70,8 @@
 
   .card-content {
     background: var(--background-secondary);
+    background-color: var(--background-senary);
+
     padding: 1.5rem;
     flex: 1;
   }

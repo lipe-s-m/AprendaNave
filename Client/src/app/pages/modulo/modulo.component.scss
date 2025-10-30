@@ -4,7 +4,7 @@
 .modulo-container {
   max-width: 1200px;
   margin: 2rem auto;
-  padding: 2rem;
+  padding: 1rem;
   color: var(--text-primary);
   font-size: 1.6rem;
 }
@@ -30,6 +30,8 @@
   }
 
   .header-info {
+    padding-left: 2rem;
+
     .header-meta {
       display: flex;
       align-items: center;
@@ -55,6 +57,7 @@
   border-radius: 12px;
   padding: 3rem;
   border: 1px solid var(--border-color);
+  width: 98%;
   max-width: 100rem;
   margin: 0 auto;
 }
