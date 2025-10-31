@@ -216,7 +216,27 @@ export class QuizComponent implements OnInit, OnDestroy {
     }
   }
   moduloConcluido(): void {
-    this.toastr.success('Quiz concluído com sucesso', 'Parabens!');
+    this.toastr.success('Quiz concluído com sucesso', 'Concluído!');
+    let pontuacao = 0;
+    switch (this.points) {
+      case 10:
+        console.log('Você recebeu +200 pontos!', 'Parabéns!');
+        pontuacao = 200;
+        break;
+      case 9:
+        console.log('Você recebeu +150 pontos!', 'Parabéns!');
+        pontuacao = 200;
+        break;
+      case 8:
+        console.log('Você recebeu +100 pontos!', 'Parabéns!');
+        pontuacao = 200;
+        break;
+      case 7:
+        console.log('Você recebeu +100 pontos!', 'Parabéns!');
+        pontuacao = 200;
+        break;
+    }
+    localStorage.setItem('pontos', pontuacao.toString());
     this.router.navigate(['/trilha', this.cursoId]);
   }
   refazerQuiz(): void {

@@ -33,24 +33,24 @@ export const TRILHAS_MOCK: Trilha[] = [
             duracao: '22:15',
             concluida: false,
           },
-          {
-            id: 3,
-            titulo: 'Operações com Números Decimais',
-            duracao: '15:45',
-            concluida: false,
-          },
-          {
-            id: 4,
-            titulo: 'Exercícios Práticos de Frações e Decimais',
-            duracao: '10:00',
-            concluida: false,
-          },
-          {
-            id: 5,
-            titulo: 'Avaliação dos Fundamentos',
-            duracao: '07:00',
-            concluida: false,
-          },
+          // {
+          //   id: 3,
+          //   titulo: 'Operações com Números Decimais',
+          //   duracao: '15:45',
+          //   concluida: false,
+          // },
+          // {
+          //   id: 4,
+          //   titulo: 'Exercícios Práticos de Frações e Decimais',
+          //   duracao: '10:00',
+          //   concluida: false,
+          // },
+          // {
+          //   id: 5,
+          //   titulo: 'Avaliação dos Fundamentos',
+          //   duracao: '07:00',
+          //   concluida: false,
+          // },
         ],
       },
       {

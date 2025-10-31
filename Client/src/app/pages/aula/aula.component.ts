@@ -73,11 +73,11 @@ export class AulaComponent implements OnInit, OnDestroy {
     });
     this.videoIds = [
       'q1oqfO8PgMs', // Rick Astley - Never Gonna Give You Up
-      '-4eukz8miOI', // tommei data sekkai
-      'r8im6qIYCNE', // op13
-      '97hIG-8D-Xo', // yura yura
+      'X7EfddJWRkQ', // tommei data sekkai
+      // 'r8im6qIYCNE', // op13
+      // '97hIG-8D-Xo', // yura yura
 
-      'saglKg48Sgk', //  sign
+      // 'saglKg48Sgk', //  sign
     ];
     this.aulaService.initializeAulas(
       null,
