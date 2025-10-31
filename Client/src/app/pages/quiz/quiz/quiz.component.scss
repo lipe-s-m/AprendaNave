@@ -119,6 +119,28 @@
       font-size: 1.6rem;
       line-height: 1.4;
       gap: 1.6rem;
+      .dificuldades {
+        display: flex;
+        gap: 1.6rem;
+        justify-content: center;
+        button {
+          padding: 0.6rem 1.4rem;
+          font-size: 1.6rem;
+          border: 2px solid var(--accent-secondary);
+          border-radius: 0.8rem;
+          background-color: var(--accent-secondary);
+          color: var(--text-on-accent);
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+          &.active {
+            background-color: var(--select-primary);
+            border: 2px solid var(--select-primary);
+          }
+          &:hover {
+            border: 2px solid var(--select-primary);
+          }
+        }
+      }
       p {
         color: var(--text-primary);
       }

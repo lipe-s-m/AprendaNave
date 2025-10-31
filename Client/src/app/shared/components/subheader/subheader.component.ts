@@ -6,11 +6,12 @@ import { ToastrService } from 'ngx-toastr';
 import { ThemeService } from '../../../services/theme/theme.service';
 import { TrilhaService } from '../../../services/trilha/trilha.service';
 import { CommonModule } from '@angular/common';
+import { ButtonComponent } from '../button/button.component';
 
 @Component({
   selector: 'app-subheader',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ButtonComponent],
   templateUrl: './subheader.component.html',
   styleUrl: './subheader.component.scss',
 })
@@ -21,7 +22,7 @@ export class SubheaderComponent {
   error: string | null = null;
   isOpen = false;
   url: string = '';
-
+  showInfoModal = false;
   private themeSubscription?: Subscription;
   private trilhasSubscription?: Subscription;
   private routerSubscription?: Subscription;
@@ -46,6 +47,7 @@ export class SubheaderComponent {
     this.themeSubscription?.unsubscribe();
     this.trilhasSubscription?.unsubscribe();
   }
+
   goToHome() {
     this.router.navigate(['/home']);
   }

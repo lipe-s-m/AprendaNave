@@ -25,7 +25,7 @@ export class TrilhaComponent implements OnInit, OnDestroy {
   isLoading = true;
   error: string | null = null;
   moduloSelecionado: any = null;
-
+  statusModulo: string = 'PENDENTE';
   private subscription: Subscription | null = null;
 
   constructor(

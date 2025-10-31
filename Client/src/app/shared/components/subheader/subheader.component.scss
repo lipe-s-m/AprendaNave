@@ -20,6 +20,27 @@
   max-width: 1450px;
   margin: 0 auto;
   position: relative;
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .info-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none;
+    color: aqua;
+    img {
+      width: 3rem;
+      height: 3rem;
+      &:hover {
+        filter: brightness(0.9);
+        cursor: pointer;
+      }
+    }
+  }
   .hamburger-btn {
     &.hidden {
       display: none;
@@ -150,6 +171,41 @@
         }
       }
     }
+  }
+}
+.overlay-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.info-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2.4rem;
+  padding: 2.4rem;
+  width: 90%;
+  max-width: 40rem;
+  background-color: var(--background-secondary);
+  border-radius: 1.6rem;
+  border: 1px solid var(--border-color);
+  position: absolute;
+
+  z-index: 4;
+
+  .info-title {
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--accent-primary);
+    margin: 0;
+    text-align: center;
+  }
+
+  .info-text {
+    font-size: 1.6rem;
+    color: var(--text-primary);
+    margin: 0;
   }
 }
 

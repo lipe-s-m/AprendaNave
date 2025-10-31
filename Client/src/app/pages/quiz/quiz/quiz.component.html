@@ -5,11 +5,17 @@
     <div class="content" *ngIf="!inGame">
 
       <div class="content-text">
-        <!-- <p>Você está prestes a iniciar o quiz para o módulo "{{modulo.nome}}". Certifique-se de estar preparado antes de começar.</p> -->
-        <p>Caso acerte 7 questões, você receberá <strong>100 pontos</strong></p>
-        <p>Caso acerte 9 questões, você receberá <strong>150 pontos</strong></p>
-        <p>Caso acerte 10 questões, você receberá <strong>200 pontos</strong></p>
-        <p>Caso acerte menos que 7 questões, você <strong>não receberá pontos</strong>, e poderá repetir o teste</p>
+        <p>Caso acerte 7 questões, você receberá <strong>{{1000/getDificuldade()}} Navecoins</strong></p>
+        <p>Caso acerte 9 questões, você receberá <strong>{{1500/getDificuldade()}} Navecoins</strong></p>
+        <p>Caso acerte 10 questões, você receberá <strong>{{2000/getDificuldade()}} Navecoins</strong></p>
+        <p>Caso acerte menos que 7 questões, você <strong>não receberá Navecoins</strong>, e poderá repetir o teste</p>
+        <hr>
+        <div class="dificuldades">
+          <button (click)="setDificuldade('facil')" [class.active]="dificuldade === 'facil'">Fácil</button>
+          <button (click)="setDificuldade('medio')" [class.active]="dificuldade === 'medio'">Médio</button>
+          <button (click)="setDificuldade('dificil')" [class.active]="dificuldade === 'dificil'">Difícil</button>
+        </div>
+        <p>Você terá até <strong>{{getDificuldade()}} segundos</strong> para responder cada questão.</p>
         <hr>
         <p style="margin: 0 auto"><strong>Boa sorte!</strong></p>
       </div>

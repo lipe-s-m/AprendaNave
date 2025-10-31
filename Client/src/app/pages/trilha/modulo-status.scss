@@ -6,8 +6,8 @@
   background: var(--background-tertiary);
   margin-bottom: 1.5rem;
   display: inline-block;
-
   span {
+    color: #ffffffea;
     &.concluido {
       background: var(--success-color);
       color: white;

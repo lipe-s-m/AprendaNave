@@ -65,5 +65,6 @@ export class LoginService {
 
   logout(): void {
     localStorage.removeItem('user');
+    localStorage.removeItem('pontos');
   }
 }

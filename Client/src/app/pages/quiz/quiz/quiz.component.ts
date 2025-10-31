@@ -35,6 +35,8 @@ export class QuizComponent implements OnInit, OnDestroy {
   points: number = 0;
   questionIndex: number = 0;
   ganhou: boolean = false;
+  dificuldade: string = 'medio';
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private quizService: QuizService,
@@ -61,6 +63,21 @@ export class QuizComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+  }
+  getDificuldade(): number {
+    switch (this.dificuldade) {
+      case 'facil':
+        return 20;
+      case 'medio':
+        return 10;
+      case 'dificil':
+        return 5;
+      default:
+        return 10;
+    }
+  }
+  setDificuldade(nivel: string) {
+    this.dificuldade = nivel;
   }
   handlerInitializingGame() {
     if (this.initializingGame) {
@@ -220,22 +237,37 @@ export class QuizComponent implements OnInit, OnDestroy {
     let pontuacao = 0;
     switch (this.points) {
       case 10:
-        console.log('Você recebeu +200 pontos!', 'Parabéns!');
-        pontuacao = 200;
+        pontuacao = 1000 / this.getDificuldade();
+        this.toastr.success(
+          `Você recebeu +${pontuacao} Navecoins!`,
+          'Parabéns!'
+        );
         break;
       case 9:
-        console.log('Você recebeu +150 pontos!', 'Parabéns!');
-        pontuacao = 200;
+        pontuacao = 1500 / this.getDificuldade();
+        this.toastr.success(
+          `Você recebeu +${pontuacao} Navecoins!`,
+          'Parabéns!'
+        );
         break;
       case 8:
-        console.log('Você recebeu +100 pontos!', 'Parabéns!');
-        pontuacao = 200;
+        pontuacao = 1500 / this.getDificuldade();
+        this.toastr.success(
+          `Você recebeu +${pontuacao} Navecoins!`,
+          'Parabéns!'
+        );
         break;
       case 7:
-        console.log('Você recebeu +100 pontos!', 'Parabéns!');
-        pontuacao = 200;
+        pontuacao = 2000 / this.getDificuldade();
+        this.toastr.success(
+          `Você recebeu +${pontuacao} Navecoins!`,
+          'Parabéns!'
+        );
         break;
     }
+    const pontosAtuais = parseInt(localStorage.getItem('pontos') || '0', 10);
+    pontuacao += pontosAtuais;
+
     localStorage.setItem('pontos', pontuacao.toString());
     this.router.navigate(['/trilha', this.cursoId]);
   }
@@ -252,17 +284,17 @@ export class QuizComponent implements OnInit, OnDestroy {
     if (this.inGame) {
       console.log('ingame');
 
-      this.tempoRestante = 10;
+      this.tempoRestante = this.getDificuldade();
       const interval = setInterval(() => {
         this.tempoRestante -= 1;
         if (this.tempoRestante <= 0) {
           clearInterval(interval);
-          this.tempoRestante = 10;
+          this.tempoRestante = this.getDificuldade();
           this.checkAnswer(null);
         }
         if (this.questionIndex !== questionIndexAtual) {
           clearInterval(interval);
-          this.tempoRestante = 10;
+          this.tempoRestante = this.getDificuldade();
         }
       }, 1000);
     }

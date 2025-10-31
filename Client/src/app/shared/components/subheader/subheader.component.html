@@ -5,11 +5,16 @@
     <h2>AprendaNave</h2>
   </div>
   <!-- Hamburger for small screens -->
-  <button class="hamburger-btn" [class.hidden]="isOpen" (click)="toggleHamburguerMenu()" aria-label="Abrir menu" [attr.aria-expanded]="isOpen">
-    <span class="burger-line"></span>
-    <span class="burger-line"></span>
-    <span class="burger-line"></span>
-  </button>
+  <div class="actions">
+    <button class="action-btn info-btn" (click)="showInfoModal = true" title="Info">
+      <img src="assets/info.svg" alt="">
+    </button>
+    <button class="hamburger-btn" [class.hidden]="isOpen" (click)="toggleHamburguerMenu()" aria-label="Abrir menu" [attr.aria-expanded]="isOpen">
+      <span class="burger-line"></span>
+      <span class="burger-line"></span>
+      <span class="burger-line"></span>
+    </button>
+  </div>
 
 
   <div class="user-actions" [class.open-menu]="isOpen">
@@ -21,6 +26,7 @@
         </svg>
       </button>
     </div>
+
     <div class="option">
       <p>Alterar Tema</p>
       <button class="action-btn theme-btn" (click)="toggleTheme()" [title]="isDarkMode ? 'Modo Claro' : 'Modo Escuro'">
@@ -62,3 +68,28 @@
     </div>
   </div>
 </header>
+
+<div class="overlay overlay-info" *ngIf="showInfoModal === true" (click)="showInfoModal = false">
+
+  <div class="info-container">
+
+    <h2 class="info-title">Bem-vindo ao AprendaNave!</h2>
+    <ul>
+      <li>
+        <p class="info-text">Clique no icone ☰ para exibir informações como Perfil, Tema, etc.</p>
+      </li>
+      <li>
+        <p class="info-text">Clique em uma das trilhas para explorar seus conteúdos.</p>
+      </li>
+      <li>
+        <p class="info-text">Dentro de cada módulo, você encontrará aulas e quizzes para testar seus conhecimentos.</p>
+      </li>
+      <li>
+        <p class="info-text">Ao final de cada quiz, você receberá Navecoins (pontos) de acordo com seu desempenho.</p>
+      </li>
+    </ul>
+    <h2 class="info-text">Divirta-se aprendendo e navegando pelo AprendaNave!</h2>
+
+    <app-button buttonText="Fechar" buttonTheme="dark" (click)="showInfoModal = false" aria-label="Fechar informação"></app-button>
+  </div>
+</div>
