@@ -30,7 +30,7 @@ export const TRILHAS_MOCK: Trilha[] = [
           {
             id: 2,
             titulo: 'Conceitos Básicos de Frações',
-            duracao: '22:15',
+            duracao: '6:28',
             concluida: false,
           },
           // {
