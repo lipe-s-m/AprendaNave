@@ -41,6 +41,14 @@ export class SubheaderComponent {
       }
     });
     this.url = this.router.url;
+
+    if (
+      sessionStorage.getItem('exibirTutorial') === 'true' &&
+      this.url.startsWith('/home')
+    ) {
+      this.showInfoModal = true;
+      sessionStorage.setItem('exibirTutorial', 'false');
+    }
   }
   ngOnDestroy(): void {
     this.routerSubscription?.unsubscribe();
@@ -86,6 +94,10 @@ export class SubheaderComponent {
       this.router.navigate(['/modulo', idTrilha, idModulo]);
     } else if (this.url.startsWith('/perfil')) {
       this.router.navigate(['/home']);
+    } else if (this.url.startsWith('/teste-final')) {
+      const idTrilha = this.url.split('/')[2];
+      const idModulo = this.url.split('/')[3];
+      this.router.navigate(['/modulo', idTrilha, idModulo]);
     }
 
     return;

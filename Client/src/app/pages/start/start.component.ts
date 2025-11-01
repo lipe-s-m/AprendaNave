@@ -18,6 +18,10 @@ export class StartComponent implements OnInit {
     if (this.themeService.getCurrentTheme() !== 'dark') {
       this.themeService.setTheme('dark');
     }
+    if (localStorage.getItem('trilhas')) {
+      localStorage.removeItem('trilhas');
+    }
+    sessionStorage.setItem('exibirTutorial', 'true');
   }
 
   entrarComoUsuario() {

@@ -33,6 +33,7 @@ export class QuizComponent implements OnInit, OnDestroy {
   opIndex: number = 0;
   questions: number[] = [0, 0, 0, 0];
   points: number = 0;
+  erros: number = 0;
   questionIndex: number = 0;
   ganhou: boolean = false;
   dificuldade: string = 'medio';
@@ -63,6 +64,7 @@ export class QuizComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+    this.voltarParaTrilha();
   }
   getDificuldade(): number {
     switch (this.dificuldade) {
@@ -199,8 +201,19 @@ export class QuizComponent implements OnInit, OnDestroy {
       audio.src = 'assets/error.mp3';
       audio.load();
       audio.play();
-      this.toastr.error('Resposta Errada!');
+      this.erros += 1;
+      console.log(this.erros);
+      if (this.erros > 3) {
+        this.toastr.error(
+          'Você errou muitas perguntas! Tente novamente.',
+          'Você perdeu!'
+        );
+        this.resetingGame = true;
+        this.inGame = false;
 
+        return;
+      }
+      this.toastr.error('Resposta Errada!');
       this.nextQuestion();
     }
   }
@@ -227,6 +240,7 @@ export class QuizComponent implements OnInit, OnDestroy {
   }
   voltarParaTrilha() {
     if (this.cursoId && this.moduloId) {
+      this.points = 0;
       this.inGame = false;
       this.toastr.info('Voltando para as aulas...');
       this.router.navigate(['/modulo', this.cursoId, this.moduloId]);
@@ -269,13 +283,17 @@ export class QuizComponent implements OnInit, OnDestroy {
     pontuacao += pontosAtuais;
 
     localStorage.setItem('pontos', pontuacao.toString());
+
     this.router.navigate(['/trilha', this.cursoId]);
   }
   refazerQuiz(): void {
-    this.toastr.info('Não desista, tente novamente!');
     this.inGame = false;
     this.initializingGame = false;
     this.resetingGame = false;
+    this.points = 0;
+    this.erros = 0;
+    this.questionIndex = 0;
+    this.ganhou = false;
   }
   iniciarContagemTempoRestante(): void {
     console.log('fui chamado');
@@ -287,7 +305,7 @@ export class QuizComponent implements OnInit, OnDestroy {
       this.tempoRestante = this.getDificuldade();
       const interval = setInterval(() => {
         this.tempoRestante -= 1;
-        if (this.tempoRestante <= 0) {
+        if (this.tempoRestante <= 0 && this.inGame) {
           clearInterval(interval);
           this.tempoRestante = this.getDificuldade();
           this.checkAnswer(null);
