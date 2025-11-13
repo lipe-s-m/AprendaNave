@@ -9,7 +9,7 @@ import { environment } from '../../../environments/environment';
 export class DesafioJccService {
   constructor(private httpClient: HttpClient) {}
 
-  apiUrl: string = environment.apiUrlDev;
+  apiUrl: string = environment.apiUrl;
   getRanking() {
     return this.httpClient.get<Ranking[]>(
       `${this.apiUrl}/desafio/desafio-jcc/ranking`

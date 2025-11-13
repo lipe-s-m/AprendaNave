@@ -1,5 +1,4 @@
 export const environment = {
-  production: true,
-  apiUrl:
-    'https://aprendanaveserver-fbegdjfeb6hpb8an.brazilsouth-01.azurewebsites.net',
+  production: false, // 💡 Deve ser false no arquivo base
+  apiUrl: 'http://localhost:5269',
 };

@@ -6,7 +6,7 @@ import {
   HttpEvent,
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment'; // Ajuste o caminho se necessário
+import { environment } from '../../../environments/environment';
 
 @Injectable()
 export class CookieInterceptor implements HttpInterceptor {
@@ -15,7 +15,7 @@ export class CookieInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     // Apenas modifica requisições para a sua própria API
-    if (request.url.startsWith(environment.apiUrlDev)) {
+    if (request.url.startsWith(environment.apiUrl)) {
       request = request.clone({
         // Adiciona a flag withCredentials a TODAS as requisições da API
         // Isso permite que o navegador anexe e receba cookies

@@ -19,7 +19,7 @@ const TOKEN_KEY = 'authToken';
   providedIn: 'root',
 })
 export class LoginService {
-  private apiUrl = environment.apiUrlDev;
+  private apiUrl = environment.apiUrl;
 
   constructor(
     private http: HttpClient,

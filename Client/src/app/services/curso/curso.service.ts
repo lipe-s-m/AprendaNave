@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class CursoService {
-  private apiUrl = environment.apiUrlDev;
+  private apiUrl = environment.apiUrl;
   constructor(private http: HttpClient) {}
 
   getCursos(): Observable<Curso[]> {

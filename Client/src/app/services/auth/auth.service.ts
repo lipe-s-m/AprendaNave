@@ -9,7 +9,7 @@ import { LoginResponseDTO } from '../../shared/interfaces/user.interface';
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = environment.apiUrlDev;
+  private apiUrl = environment.apiUrl;
   private isAuthSubject = new BehaviorSubject<boolean>(false);
   private isAuth$ = this.isAuthSubject.asObservable();
   constructor(private http: HttpClient) {}

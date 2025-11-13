@@ -8,7 +8,7 @@ import { environment } from '../../../environments/environment';
 })
 export class UserService {
   private readonly user = signal<User | null>(this.loadUserData());
-  private apiUrl: string = environment.apiUrlDev;
+  private apiUrl: string = environment.apiUrl;
   constructor(private http: HttpClient) {}
 
   loadUserData(): User | null {

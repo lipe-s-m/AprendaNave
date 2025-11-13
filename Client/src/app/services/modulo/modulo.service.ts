@@ -8,7 +8,7 @@ import { IModulo } from '../../shared/interfaces/curso.model';
   providedIn: 'root',
 })
 export class ModuloService {
-  private apiUrl = environment.apiUrlDev;
+  private apiUrl = environment.apiUrl;
   private moduloCache$: Observable<IModulo[] | null> = EMPTY;
   constructor(private http: HttpClient) {}
 
