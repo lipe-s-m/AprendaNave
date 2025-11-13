@@ -7,7 +7,7 @@
     "mock-server": "json-server db.json",
     "dev": "start npm run start && start npm run mock-server",
     "build": "npm run vercel-build",
-    "vercel-build": "echo '🔍 API_URL_PROD='$API_URL_PROD && sed -i \"s|http://localhost:5269|${API_URL_PROD}|g\" src/environments/environment.prod.ts && cat src/environments/environment.prod.ts && ng build --configuration production",
+    "vercel-build": "node scripts/replace-env.js && ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
