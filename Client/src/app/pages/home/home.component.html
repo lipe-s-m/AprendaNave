@@ -8,6 +8,29 @@
     <h1>Conheça nossos cursos</h1>
 
     <div class="courses-grid">
+      <div class="course-card" (click)="goToDesafioJCC()">
+        <span class="tag">DESAFIO</span>
+
+        <div class="course-icon challenge-icon">
+          <img src="https://cdn-icons-png.flaticon.com/512/1620/1620512.png" alt="Logo AprendaNave">
+        </div>
+
+        <div class="card-content">
+          <span class="title-section">
+            <h3>Desafio JCC</h3>
+            <div class="modules">4 módulos</div>
+          </span>
+          <div class="info-row">
+            <div class="instructor">
+              <img src="assets/logo.svg" alt="Instrutor" class="instructor-avatar">
+              <span>Boa Sorte</span>
+            </div>
+            <div class="enrollments">
+              20 desafiantes
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="course-card" *ngFor="let curso of cursos" (click)="goToTrilha(curso.id, curso.nome)">
         <span class="tag" *ngIf="curso.tag">{{ curso.tag }}</span>
 

@@ -68,6 +68,13 @@
       height: 80px;
       object-fit: contain;
     }
+    &.challenge-icon {
+      img {
+        width: 115px;
+        height: 115px;
+        object-fit: contain;
+      }
+    }
   }
 
   .card-content {

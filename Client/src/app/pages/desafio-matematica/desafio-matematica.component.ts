@@ -1,30 +1,29 @@
-import { QuizService } from './../../../services/quiz/quiz.service';
-import { Observable, of, Subscription } from 'rxjs';
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { SubheaderComponent } from '../../../shared/components/subheader/subheader.component';
+import { DesafioJccService } from './../../services/desafio-jcc/desafio-jcc.service';
+import { Component, inject, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IModulo } from '../../../shared/interfaces/curso.model';
-import { AsyncPipe, NgIf, NgForOf, NgFor } from '@angular/common';
-import { CdkAriaLive } from '../../../../../node_modules/@angular/cdk/a11y/index';
+import { QuizService } from '../../services/quiz/quiz.service';
 import { ToastrService } from 'ngx-toastr';
-import { UserService } from '../../../services/user/user.service';
+import { Observable, of, Subscription } from 'rxjs';
+import { IModulo } from '../../shared/interfaces/curso.model';
+import { ButtonComponent } from '../../shared/components/button/button.component';
+import { CommonModule } from '@angular/common';
+import { UserService } from '../../services/user/user.service';
+import { User } from '../../shared/interfaces/user.interface';
 
 @Component({
-  selector: 'app-quiz',
+  selector: 'app-desafio-matematica',
   standalone: true,
-  imports: [ButtonComponent, SubheaderComponent, NgIf, AsyncPipe, NgFor],
-
-  templateUrl: './quiz.component.html',
-  styleUrl: './quiz.component.scss',
+  imports: [ButtonComponent, CommonModule],
+  templateUrl: './desafio-matematica.component.html',
+  styleUrl: './desafio-matematica.component.scss',
 })
-export class QuizComponent implements OnInit, OnDestroy {
+export class DesafioMatematicaComponent {
   private subscription: Subscription | null = null;
   cursoId: string | null = null;
   moduloId: string | null = null;
   modulo$: Observable<IModulo | null> = of(null);
   inGame: boolean = false;
-  initializingGame: boolean = false;
+  initializingGame: boolean = true;
   resetingGame: boolean = false;
   contagemRegressiva: number = 3;
   tempoRestante: number = 10;
@@ -38,25 +37,22 @@ export class QuizComponent implements OnInit, OnDestroy {
   questionIndex: number = 0;
   ganhou: boolean = false;
   dificuldade: string = 'medio';
-
+  maiorPontuacaoUser: number = 0;
+  private userService = inject(UserService);
+  userSignal: WritableSignal<User | null>;
   constructor(
     private activatedRoute: ActivatedRoute,
     private quizService: QuizService,
     private toastr: ToastrService,
     private router: Router,
-    private userService: UserService
-  ) {}
+    private desafioJccService: DesafioJccService
+  ) {
+    this.userSignal = this.userService.getUserSignal();
+  }
 
   ngOnInit(): void {
     // Initialize component
-    // Example: Load quiz data based on cursoId
-    this.subscription = this.activatedRoute.paramMap.subscribe((params) => {
-      this.cursoId = params.get('trilhaId');
-      this.moduloId = params.get('moduloId');
-    });
-
-    this.modulo$ = this.quizService.getQuiz(this.cursoId, this.moduloId);
-
+    this.handlerInitializingGame();
     this.randNumber1();
     this.randNumber2();
     this.resultNumber();
@@ -66,27 +62,10 @@ export class QuizComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
-    this.voltarParaTrilha();
+    // this.voltarParaTrilha();
   }
-  getDificuldade(): number {
-    switch (this.dificuldade) {
-      case 'facil':
-        return 20;
-      case 'medio':
-        return 10;
-      case 'dificil':
-        return 5;
-      default:
-        return 10;
-    }
-  }
-  setDificuldade(nivel: string) {
-    this.dificuldade = nivel;
-  }
+
   handlerInitializingGame() {
-    if (this.initializingGame) {
-      return;
-    }
     this.initializingGame = true;
 
     const interval = setInterval(() => {
@@ -191,12 +170,14 @@ export class QuizComponent implements OnInit, OnDestroy {
   }
   checkAnswer(answer: number | null) {
     let audio = new Audio();
+    console.log('resposta', answer);
+    console.log('result', this.result);
+    console.log(answer === this.result);
 
     if (answer != null && answer === this.result) {
       audio.src = 'assets/retro-coin.mp3';
       audio.load();
       audio.play();
-      this.toastr.success('Resposta Correta!');
       this.points += 1;
       this.nextQuestion();
     } else {
@@ -204,35 +185,53 @@ export class QuizComponent implements OnInit, OnDestroy {
       audio.load();
       audio.play();
       this.erros += 1;
-      console.log(this.erros);
-      if (this.erros > 3) {
+      if (this.erros > 0) {
         this.toastr.error(
-          'Você errou muitas perguntas! Tente novamente.',
+          'Tente novamente para melhorar sua colocação!',
           'Você perdeu!'
         );
         this.resetingGame = true;
         this.inGame = false;
+        this.maiorPontuacaoUser = Number(
+          sessionStorage.getItem('maiorPontuacaoDesafioJcc')
+        );
+        console.log(
+          `Maior pontuacao: ${this.maiorPontuacaoUser}, pontuacao atual: ${this.points}`
+        );
 
+        if (
+          this.maiorPontuacaoUser === null ||
+          this.points > this.maiorPontuacaoUser
+        ) {
+          console.log('atualizando pontuacao');
+          this.atualizarPontuacaoNoServidor();
+        }
         return;
       }
-      this.toastr.error('Resposta Errada!');
       this.nextQuestion();
     }
   }
-  nextQuestion() {
-    if (this.questionIndex >= 9) {
-      this.resetingGame = true;
-      this.inGame = false;
-      if (this.points >= 7) {
-        this.ganhou = true;
-        this.toastr.success('Parabéns! Você completou o quiz!');
-      } else {
-        this.toastr.error(
-          'Você não atingiu a pontuação necessária. Tente novamente!'
-        );
-        this.ganhou = false;
-      }
+  atualizarPontuacaoNoServidor(): void {
+    sessionStorage.setItem('maiorPontuacaoDesafioJcc', this.points.toString());
+    const currentUser = this.userSignal();
+    const userName = currentUser?.nome || 'Guest';
+    if (
+      currentUser &&
+      currentUser?.nome !== 'Guest' &&
+      typeof currentUser.id === 'number'
+    ) {
+      this.desafioJccService
+        .updatePontuacao(this.points, currentUser.id, userName)
+        .subscribe({
+          next: (response) => {
+            console.log('Pontuação atualizada no servidor:', response);
+          },
+        });
+    } else {
+      console.warn('User id not available; skipping server update');
     }
+  }
+  nextQuestion() {
     this.questionIndex += 1;
     this.randNumber1();
     this.randNumber2();
@@ -240,70 +239,29 @@ export class QuizComponent implements OnInit, OnDestroy {
     this.resultOp();
     this.iniciarContagemTempoRestante();
   }
-  voltarParaTrilha() {
-    if (this.cursoId && this.moduloId) {
-      this.points = 0;
-      this.inGame = false;
-      this.toastr.info('Voltando para as aulas...');
-      this.router.navigate(['/modulo', this.cursoId, this.moduloId]);
-    }
-  }
-  moduloConcluido(): void {
-    this.toastr.success('Quiz concluído com sucesso', 'Concluído!');
-    let pontuacao = 0;
-    switch (this.points) {
-      case 10:
-        pontuacao = 2000 / this.getDificuldade();
-        this.toastr.success(
-          `Você recebeu +${pontuacao} Navecoins!`,
-          'Parabéns!'
-        );
-        break;
-      case 9:
-        pontuacao = 1500 / this.getDificuldade();
-        this.toastr.success(
-          `Você recebeu +${pontuacao} Navecoins!`,
-          'Parabéns!'
-        );
-        break;
-      case 8:
-        pontuacao = 1500 / this.getDificuldade();
-        this.toastr.success(
-          `Você recebeu +${pontuacao} Navecoins!`,
-          'Parabéns!'
-        );
-        break;
-      case 7:
-        pontuacao = 1000 / this.getDificuldade();
-        this.toastr.success(
-          `Você recebeu +${pontuacao} Navecoins!`,
-          'Parabéns!'
-        );
-        break;
-    }
-    console.log(this.points);
-    console.log(pontuacao);
 
-    this.adicionarPontos(pontuacao);
-
-    this.router.navigate(['/trilha', this.cursoId]);
-  }
   refazerQuiz(): void {
-    this.inGame = false;
     this.initializingGame = false;
     this.resetingGame = false;
     this.points = 0;
     this.erros = 0;
     this.questionIndex = 0;
     this.ganhou = false;
+    this.handlerInitializingGame();
+  }
+  voltarPraHome() {
+    this.router.navigate(['/home']);
+  }
+  getDificuldade(): number {
+    if (this.points <= 5) return 10;
+    if (this.points > 5 && this.points <= 10) return 7;
+    if (this.points > 10 && this.points <= 30) return 5;
+    return 3;
   }
   iniciarContagemTempoRestante(): void {
-    console.log('fui chamado');
     const questionIndexAtual = this.questionIndex;
 
     if (this.inGame) {
-      console.log('ingame');
-
       this.tempoRestante = this.getDificuldade();
       const interval = setInterval(() => {
         this.tempoRestante -= 1;
@@ -318,8 +276,5 @@ export class QuizComponent implements OnInit, OnDestroy {
         }
       }, 1000);
     }
-  }
-  adicionarPontos(pontos: number) {
-    this.userService.setUserPoints(pontos);
   }
 }

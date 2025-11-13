@@ -1,0 +1,40 @@
+<div class="container">
+  <div class="game" *ngIf="inGame">
+    <div class="info">
+      <div class="container-pontos">
+        <p class="pontos">Pontos: <strong>{{points}}</strong></p>
+        <strong>|</strong>
+        <p class="pontos">Recorde: <strong>{{maiorPontuacaoUser}}</strong></p>
+      </div>
+      <p class="tempo-restante"><strong>{{tempoRestante}}</strong></p>
+    </div>
+    <div class="content-game">
+      <h1>{{number1}} {{this.resultOp()}} {{number2}} = ?</h1>
+      <div class="options">
+        <app-button *ngFor="let q of questions" buttonText="{{q}}" buttonLevel="primary" buttonTheme="dark" buttonSize="large" (click)="checkAnswer(q)" />
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-init-game-background" *ngIf="initializingGame">
+    <div class="modal-init-game-content">
+      <h2>Prepare-se!</h2>
+      <p>O quiz começará em:</p>
+      <p class="contagem-regressiva">{{contagemRegressiva}}</p>
+    </div>
+  </div>
+  <div class="modal-init-game-background" *ngIf="resetingGame">
+
+    <div *ngIf="!ganhou && !inGame" class="modal-init-game-content">
+      <h2>Que pena!</h2>
+      <div class="pontuacao">
+        <p>Sua pontuação:</p>
+        <p class="contagem-regressiva">{{this.points}}</p>
+      </div>
+      <p>Não desista, tente novamente para melhorar sua colocação!</p>
+      <app-button buttonText="Tente Novamente" buttonLevel="primary" buttonTheme="dark" (click)="refazerQuiz()"></app-button>
+      <app-button buttonText="Voltar pra Home" buttonLevel="primary" buttonBackgroundColor="#BF092F" buttonTextColor="white" (click)="voltarPraHome()"></app-button>
+    </div>
+
+  </div>
+</div>

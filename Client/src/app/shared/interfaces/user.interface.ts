@@ -2,6 +2,7 @@ export interface User {
   id?: number;
   nome: string;
   email: string;
+  pontos: number;
 }
 export interface LoginRequestDTO {
   email: string;
@@ -12,6 +13,7 @@ export interface LoginResponseDTO {
   nome: string;
   email: string;
   cargo: string;
+  pontos: number;
 }
 export interface CadastroResponseDTO {
   id: number;
@@ -25,4 +27,9 @@ export interface UserDTO {
   email: string;
   senha: string;
   confirmarSenha: string;
+}
+
+export interface Ranking {
+  nomeAluno: string;
+  pontuacaoAluno: number;
 }

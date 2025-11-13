@@ -1,0 +1,27 @@
+<header>
+  <app-subheader></app-subheader>
+</header>
+
+<div class="container">
+  <div class="content">
+
+    <div class="content-info">
+      <h1>Desafio JCC</h1>
+      <hr>
+      <div class="details">
+        <p>Bem-vindo ao Desafio JCC! Prepare-se para testar suas habilidades e conhecimentos adquiridos ao longo dos cursos.</p>
+        <p>Este desafio é composto por 1 quiz de matemática que irá desafiar seu raciocínio rápido. Ao final da minha mostra (12:00hrs) o 1º lugar será recompensado com um brinde!</p>
+      </div>
+      <app-button buttonText="iniciar" buttonTheme="dark" (click)="iniciarDesafio()"></app-button>
+
+    </div>
+    <div class="ranking">
+      <h2>Ranking dos Desafiantes</h2>
+      <ol>
+        <li *ngFor="let participante of ranking" [class.first]="ranking[0] === participante" [class.second]="ranking[1] === participante" [class.third]="ranking[2] === participante" [class.podio]="ranking[0] === participante || ranking[1] === participante || ranking[2] === participante">
+          <span class="nome">{{ participante.nomeAluno }}</span><span class="pontos">{{ participante.pontuacaoAluno }} pontos</span>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>

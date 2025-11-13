@@ -1,22 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import { SubheaderComponent } from '../../shared/components/subheader/subheader.component';
-import { LoginResponseDTO } from '../../shared/interfaces/user.interface';
+import { LoginResponseDTO, User } from '../../shared/interfaces/user.interface';
+import { UserService } from '../../services/user/user.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [SubheaderComponent],
+  imports: [SubheaderComponent, CommonModule],
   templateUrl: './perfil.component.html',
   styleUrl: './perfil.component.scss',
 })
-export class PerfilComponent implements OnInit {
+export class PerfilComponent {
   pontos: string = '0';
-  user: LoginResponseDTO | null = null;
-  ngOnInit(): void {
-    this.user = JSON.parse(localStorage.getItem('user') || 'null');
-    const storedPontos = localStorage.getItem('pontos');
-    if (storedPontos !== null) {
-      this.pontos = storedPontos;
-    }
+  private userService = inject(UserService);
+  userSignal: WritableSignal<User | null>;
+
+  constructor() {
+    this.userSignal = this.userService.getUserSignal();
   }
 }

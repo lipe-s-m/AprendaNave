@@ -12,9 +12,9 @@
         <div class="image">
           <img src="assets/avatar-default.svg" alt="">
         </div>
-        <div class="info-text">
-          <h1>Olá, {{user?.nome}}!</h1>
-          <h2>Navecoins: {{pontos}}</h2>
+        <div class="info-text" *ngIf="userSignal() as user">
+          <h1>Olá, {{user.nome}}!</h1>
+          <h2>Navecoins: {{userSignal()?.pontos}}</h2>
         </div>
       </div>
     </section>

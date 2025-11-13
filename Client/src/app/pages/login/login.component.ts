@@ -161,6 +161,8 @@ export class LoginComponent implements OnInit {
     }
   }
   handleChangeForm() {
+    this.formSignIn.reset();
+    this.formLogin.reset();
     this.signInFormIsActive = !this.signInFormIsActive;
   }
   handleBackToMenu() {

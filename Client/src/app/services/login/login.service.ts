@@ -12,6 +12,7 @@ import {
 } from '../../shared/interfaces/user.interface';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../auth/auth.service';
+import { UserService } from '../user/user.service';
 
 const TOKEN_KEY = 'authToken';
 @Injectable({
@@ -20,7 +21,11 @@ const TOKEN_KEY = 'authToken';
 export class LoginService {
   private apiUrl = environment.apiUrlDev;
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+    private userService: UserService
+  ) {}
 
   registerUser(userData: Omit<UserDTO, 'id'>): Observable<CadastroResponseDTO> {
     let payload = {
@@ -50,21 +55,25 @@ export class LoginService {
       .pipe(
         tap((response) => {
           this.authService.checkAuthState();
+          if (response.pontos === undefined || response.pontos === null) {
+            response.pontos = 0;
+          }
           this.saveUserData({
             id: response.id,
             nome: response.nome,
             email: response.email,
             cargo: response.cargo,
+            pontos: response.pontos,
           });
         })
       );
   }
   saveUserData(user: LoginResponseDTO): void {
-    localStorage.setItem('user', JSON.stringify(user));
+    this.userService.setUser(user);
   }
 
   logout(): void {
-    localStorage.removeItem('user');
+    localStorage.removeItem('userData');
     localStorage.removeItem('pontos');
   }
 }

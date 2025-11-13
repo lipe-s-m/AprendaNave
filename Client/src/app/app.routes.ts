@@ -10,6 +10,8 @@ import { authGuard } from './guards/auth/auth.guard';
 import { AuthService } from './services/auth/auth.service';
 import { QuizComponent } from './pages/quiz/quiz/quiz.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
+import { DesafioJccComponent } from './pages/desafio-jcc/desafio-jcc.component';
+import { DesafioMatematicaComponent } from './pages/desafio-matematica/desafio-matematica.component';
 
 export const routes: Routes = [
   { path: '', component: StartComponent, pathMatch: 'full' },
@@ -17,6 +19,16 @@ export const routes: Routes = [
   { path: 'hub', component: HubComponent, canActivate: [authGuard] },
   { path: 'home', component: HomeComponent, canActivate: [authGuard] },
   { path: 'perfil', component: PerfilComponent, canActivate: [authGuard] },
+  {
+    path: 'desafiojcc',
+    component: DesafioJccComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'desafio-matematica',
+    component: DesafioMatematicaComponent,
+    canActivate: [authGuard],
+  },
   {
     path: 'trilha/:id',
     component: TrilhaComponent,

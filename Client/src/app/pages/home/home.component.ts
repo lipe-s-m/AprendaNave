@@ -73,4 +73,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     sessionStorage.setItem('cursoNome', nome);
     this.router.navigate(['/trilha', id]);
   }
+  goToDesafioJCC() {
+    this.router.navigate(['/desafiojcc']);
+  }
 }
