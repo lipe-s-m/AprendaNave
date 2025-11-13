@@ -9,6 +9,8 @@ import {
   LoginRequestDTO,
   LoginResponseDTO,
   CadastroResponseDTO,
+  GuestRequestDTO,
+  GuestResponseDTO,
 } from '../../shared/interfaces/user.interface';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../auth/auth.service';
@@ -26,6 +28,14 @@ export class LoginService {
     private authService: AuthService,
     private userService: UserService
   ) {}
+
+  createGuestAccount(userData: GuestRequestDTO): Observable<GuestResponseDTO> {
+    let payload = {
+      nome: userData.nome,
+      contato: userData.contato,
+    };
+    return this.http.post<GuestResponseDTO>(`${this.apiUrl}/guests`, payload);
+  }
 
   registerUser(userData: Omit<UserDTO, 'id'>): Observable<CadastroResponseDTO> {
     let payload = {

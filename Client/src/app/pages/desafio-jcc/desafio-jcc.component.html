@@ -2,9 +2,8 @@
   <app-subheader></app-subheader>
 </header>
 
-<div class="container">
+<div class="container" *ngIf="isLogged">
   <div class="content">
-
     <div class="content-info">
       <h1>Desafio JCC</h1>
       <hr>
@@ -24,4 +23,23 @@
       </ol>
     </div>
   </div>
+</div>
+<div class="overlay overlay-info" *ngIf="isLogged === false">
+
+  <div class="info-container">
+
+    <h2 class="info-title">Bem-vindo ao Desafio JCC!</h2>
+    <p>Por favor, insira seu nome de usuário e forma de contato para começar o desafio.</p>
+    <form [formGroup]="formCreateGuestUser">
+      <app-input placeholder="Nome de Usuário..." inputName="nome" inputSize="large" inputType="text" formControlName="nome" />
+      <app-input placeholder="Forma de Contato..." inputName="contato" inputSize="large" inputType="text" formControlName="contato" />
+    </form>
+    <h2 class="info-text">Divirta-se aprendendo e navegando pelo AprendaNave!</h2>
+
+    <app-button buttonText="Começar" buttonTheme="dark" (click)="criarContaVisitante()" aria-label="Fechar informação"></app-button>
+  </div>
+</div>
+
+<div class="loading" *ngIf="isLoading">
+  <app-loader></app-loader>
 </div>

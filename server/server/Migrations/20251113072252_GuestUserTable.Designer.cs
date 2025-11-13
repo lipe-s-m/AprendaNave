@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using server.Repository.Database;
@@ -11,9 +12,11 @@ using server.Repository.Database;
 namespace server.Migrations
 {
     [DbContext(typeof(DbContexto))]
-    partial class DbContextoModelSnapshot : ModelSnapshot
+    [Migration("20251113072252_GuestUserTable")]
+    partial class GuestUserTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -135,11 +138,8 @@ namespace server.Migrations
             modelBuilder.Entity("server.Domain.Entities.DesafioJcc", b =>
                 {
                     b.Property<int>("IdAluno")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasColumnName("id_aluno");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("IdAluno"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -281,6 +281,18 @@ namespace server.Migrations
                     b.Navigation("Aluno");
 
                     b.Navigation("Modulo");
+                });
+
+            modelBuilder.Entity("server.Domain.Entities.DesafioJcc", b =>
+                {
+                    b.HasOne("server.Domain.Entities.Aluno", "Aluno")
+                        .WithMany()
+                        .HasForeignKey("IdAluno")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_desafio_jcc_aluno_id_aluno");
+
+                    b.Navigation("Aluno");
                 });
 
             modelBuilder.Entity("server.Domain.Entities.Modulo", b =>

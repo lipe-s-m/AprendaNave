@@ -42,10 +42,12 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<IAlunoService, AlunoService>();
 builder.Services.AddScoped<ICursoService, CursoService>();
 builder.Services.AddScoped<IModuloService, ModuloService>();
+builder.Services.AddScoped<IDesafioJcc, DesafioJccService>();
+builder.Services.AddScoped<IGuestUser, GuestUserService>();
 builder.Services.AddDbContext<DbContexto>(options =>
 	//options.UseNpgsql(builder.Configuration.GetConnectionString("Host=localhost;Port=5432;Database=aprendanavedb;User Id=postgres;"),
-	//options.UseNpgsql(builder.Configuration.GetConnectionString("LocalConnection"),
-	options.UseNpgsql(builder.Configuration.GetConnectionString("TransationConnection"),
+	options.UseNpgsql(builder.Configuration.GetConnectionString("LocalConnection"),
+	//options.UseNpgsql(builder.Configuration.GetConnectionString("TransationConnection"),
 	npgsqlOptions => npgsqlOptions.EnableRetryOnFailure())
 	.EnableSensitiveDataLogging()
 	.EnableDetailedErrors()
@@ -106,6 +108,17 @@ app.UseCors("CorsPolicyProd");
 app.UseAuthentication();
 app.UseAuthorization();
 
+if (app.Environment.IsDevelopment())
+{
+	// A. APENAS EM DESENVOLVIMENTO: Mostra a página de exceção completa
+	app.UseDeveloperExceptionPage();
+}
+else
+{
+	// B. EM PRODUÇÃO: Redireciona para um endpoint de erro padrão (Ex: /Error)
+	app.UseExceptionHandler("/Error");
+}
+
 app.MapGet("/", () => "Hello World!");
 app.MapGet("/ola", () => "ola World!");
 app.MapPost("/auth/login", ([FromBody] LoginRequestDTO loginRequestDTO, IAlunoService alunoService, TokenService tokenService, HttpContext httpContext) =>
@@ -118,7 +131,8 @@ app.MapPost("/auth/login", ([FromBody] LoginRequestDTO loginRequestDTO, IAlunoSe
 			Id = res.Id,
 			Nome = res.Nome,
 			Email = res.Email,
-			Cargo = res.Cargo
+			Cargo = res.Cargo,
+			Pontos = res.Pontos
 		};
 		var tokenJwt = tokenService.Generate(LoginDto);
 
@@ -241,12 +255,68 @@ app.MapGet("/modulos", (int IdModulo, IModuloService ModuloService, ClaimsPrinci
 	//.RequireAuthorization()
 	;
 
-//app.MapGet("/auth/generate-token", (
-//	TokenService TokenService, LoginResponseDTO loginResponseDTO
-//	) =>
-//{
-//	return TokenService.Generate(loginResponseDTO);
-//});
+app.MapPatch("/users/{idUsuario}/pontos", async (int idUsuario, [FromBody] PontosDTO pontos, IAlunoService alunoService) =>
+{
+	try
+	{
+		var res = await alunoService.AtualizarPontos(idUsuario, pontos.Pontos);
+		return Results.Json(data: res, statusCode: 200);
+
+	}
+	catch (Exception ex)
+	{
+		return Results.Json(data: ex, statusCode: 400);
+	}
+
+});
+app.MapPost("/guests", async ([FromBody] GuestUserRequestDTO guestUserRequestDTO, [FromServices] IGuestUser guestUserService) =>
+{
+	try
+	{
+		var res = await guestUserService.CreateGuestUser(guestUserRequestDTO);
+		return Results.Json(data: res, statusCode: 201);
+	}
+	catch (Exception ex)
+	{
+		return Results.Json(data: ex, statusCode: 400);
+	}
+});
+app.MapGet("/guests", async ([FromServices] IGuestUser guestUserService) =>
+{
+	try
+	{
+		var res = await guestUserService.GetAllGuestUsers();
+		return Results.Json(data: res, statusCode: 200);
+	}
+	catch (Exception ex)
+	{
+		return Results.Json(data: ex, statusCode: 500);
+	}
+});
+app.MapGet("/desafio/desafio-jcc/ranking", async ([FromServices] IDesafioJcc desafioJccService) =>
+{
+	try
+	{
+		var res = await desafioJccService.ObterRankingDesafioJcc();
+		return Results.Json(data: res, statusCode: 200);
+	}
+	catch (Exception ex)
+	{
+		return Results.Json(data: ex, statusCode: 500);
+	}
+});
+app.MapPatch("/desafio/desafio-jcc/pontuacao", async ([FromBody] DesafioJccDTO desafioJccDTO, [FromServices] IDesafioJcc desafioJccService) =>
+{
+	try
+	{
+		var res = await desafioJccService.AtualizarPontuacaoAluno(desafioJccDTO.IdAluno, desafioJccDTO.NomeAluno, desafioJccDTO.PontuacaoAluno);
+		return Results.Json(data: res, statusCode: 200);
+	}
+	catch (Exception ex)
+	{
+		return Results.Json(data: ex, statusCode: 400);
+	}
+});
 
 app.MapGet("/auth/validate-token", (
 	TokenService TokenService, HttpContext httpContext

@@ -44,6 +44,9 @@ namespace server.Repository.Database
 			base.OnModelCreating(modelBuilder);
 		}
 		public DbSet<Aluno> Alunos => Set<Aluno>();
+		public DbSet<DesafioJcc> DesafioJcc => Set<DesafioJcc>();
+		public DbSet<GuestUser> GuestUsers => Set<GuestUser>();
+
 		public DbSet<Curso> Cursos => Set<Curso>();
 		public DbSet<Modulo> Modulos => Set<Modulo>();
 		public DbSet<AlunoModuloProgresso> Progresso => Set<AlunoModuloProgresso>();

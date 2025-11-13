@@ -1,3 +1,4 @@
+import { AuthService } from './../../services/auth/auth.service';
 import { DesafioJccService } from './../../services/desafio-jcc/desafio-jcc.service';
 import { Component, inject, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -40,12 +41,14 @@ export class DesafioMatematicaComponent {
   maiorPontuacaoUser: number = 0;
   private userService = inject(UserService);
   userSignal: WritableSignal<User | null>;
+  currentUser: User | null = null;
   constructor(
     private activatedRoute: ActivatedRoute,
     private quizService: QuizService,
     private toastr: ToastrService,
     private router: Router,
-    private desafioJccService: DesafioJccService
+    private desafioJccService: DesafioJccService,
+    private authService: AuthService
   ) {
     this.userSignal = this.userService.getUserSignal();
   }
@@ -56,13 +59,36 @@ export class DesafioMatematicaComponent {
     this.randNumber1();
     this.randNumber2();
     this.resultNumber();
+
+    this.obterUser();
+    this.authService.isLogged().subscribe({
+      next: (isLogged) => {
+        console.log('Usuário logado:', isLogged);
+      },
+    });
   }
 
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
-    // this.voltarParaTrilha();
+  }
+
+  obterUser(): void {
+    this.authService.isLogged().subscribe({
+      next: (isLogged) => {
+        if (!isLogged) {
+          this.currentUser = JSON.parse(
+            localStorage.getItem('guestUserData') || 'null'
+          );
+        } else {
+          this.currentUser = this.userSignal();
+        }
+        console.log('to login?', isLogged);
+      },
+    });
+
+    console.log('usuer:', this.currentUser);
   }
 
   handlerInitializingGame() {
@@ -212,16 +238,17 @@ export class DesafioMatematicaComponent {
     }
   }
   atualizarPontuacaoNoServidor(): void {
+    console.log('oxi');
+
     sessionStorage.setItem('maiorPontuacaoDesafioJcc', this.points.toString());
-    const currentUser = this.userSignal();
-    const userName = currentUser?.nome || 'Guest';
-    if (
-      currentUser &&
-      currentUser?.nome !== 'Guest' &&
-      typeof currentUser.id === 'number'
-    ) {
+
+    if (this.currentUser && typeof this.currentUser.id === 'number') {
       this.desafioJccService
-        .updatePontuacao(this.points, currentUser.id, userName)
+        .updatePontuacao(
+          this.points,
+          this.currentUser.id,
+          this.currentUser.nome
+        )
         .subscribe({
           next: (response) => {
             console.log('Pontuação atualizada no servidor:', response);
@@ -251,6 +278,9 @@ export class DesafioMatematicaComponent {
   }
   voltarPraHome() {
     this.router.navigate(['/home']);
+  }
+  voltarParaRanking() {
+    this.router.navigate(['/desafiojcc']);
   }
   getDificuldade(): number {
     if (this.points <= 5) return 10;

@@ -22,12 +22,10 @@ export const routes: Routes = [
   {
     path: 'desafiojcc',
     component: DesafioJccComponent,
-    canActivate: [authGuard],
   },
   {
     path: 'desafio-matematica',
     component: DesafioMatematicaComponent,
-    canActivate: [authGuard],
   },
   {
     path: 'trilha/:id',

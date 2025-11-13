@@ -1,6 +1,8 @@
 ﻿using Isopoh.Cryptography.Argon2;
+using Microsoft.EntityFrameworkCore;
 using server.Domain.DTOs;
 using server.Domain.Entities;
+using server.Domain.Exceptions;
 using server.Domain.Interfaces;
 using server.Repository.Database;
 using System.Diagnostics;
@@ -24,7 +26,7 @@ namespace server.Domain.Services
 
 			if (res != null && Argon2.Verify(res.Senha, loginRequest.Senha))
 			{
-				UserResponseDTO UserResponse = new UserResponseDTO(res.Nome, res.Email, res.Cargo);
+				UserResponseDTO UserResponse = new UserResponseDTO(res.Nome, res.Email, res.Cargo, res.Pontos);
 				UserResponse.Id = res.Id;
 				return UserResponse;
 
@@ -97,5 +99,20 @@ namespace server.Domain.Services
 			}
 			throw new Exception();
 		}
+
+		public async Task<int> AtualizarPontos(int idAluno, int pontos)
+		{
+			var aluno = await this._context.Alunos.FirstOrDefaultAsync(a => a.Id == idAluno);
+			if (aluno == null)
+			{
+				throw new AlunoNaoExisteException($"O usuario de id {idAluno} não existe!");
+			}
+
+			aluno.Pontos += pontos;
+			await _context.SaveChangesAsync();
+			return aluno.Pontos;
+		}
+
+
 	}
 }

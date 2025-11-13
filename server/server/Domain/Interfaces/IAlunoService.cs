@@ -12,7 +12,7 @@ namespace server.Domain.Interfaces
 		List<Aluno> GetAllAlunos(int pagina = 1);
 		Aluno? GetById(int id);
 		void DeleteById(Aluno Aluno);
-
+		Task<int> AtualizarPontos(int idAluno, int pontos);
 
 	}
 }

@@ -1,3 +1,4 @@
+import { AuthService } from './../../services/auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { SubheaderComponent } from '../../shared/components/subheader/subheader.component';
@@ -5,19 +6,47 @@ import { ButtonComponent } from '../../shared/components/button/button.component
 import { Router } from '@angular/router';
 import { DesafioJccService } from '../../services/desafio-jcc/desafio-jcc.service';
 import { Ranking } from '../../shared/interfaces/user.interface';
+import { InputComponent } from '../../shared/components/input/input.component';
+import { LoginService } from '../../services/login/login.service';
+import { LoaderComponent } from '../../shared/components/loader/loader.component';
+import {
+  FormControl,
+  FormGroup,
+  Validators,
+  ɵInternalFormsSharedModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 
 @Component({
   selector: 'app-desafio-jcc',
   standalone: true,
-  imports: [CommonModule, SubheaderComponent, ButtonComponent],
+  imports: [
+    CommonModule,
+    SubheaderComponent,
+    ButtonComponent,
+    InputComponent,
+    LoaderComponent,
+    ɵInternalFormsSharedModule,
+    ReactiveFormsModule,
+  ],
   templateUrl: './desafio-jcc.component.html',
-  styleUrl: './desafio-jcc.component.scss',
+  styleUrls: ['./desafio-jcc.component.scss', 'modal-guest.scss'],
 })
 export class DesafioJccComponent implements OnInit {
   ranking: Ranking[] = [];
+  isLogged: boolean = true;
+  isGuest: boolean = false;
+  isLoading: boolean = false;
+  formCreateGuestUser = new FormGroup({
+    nome: new FormControl('', [Validators.required]),
+    contato: new FormControl('', [Validators.required]),
+  });
+  guestUserData: any = null;
   constructor(
     private router: Router,
-    private desafioJccService: DesafioJccService
+    private desafioJccService: DesafioJccService,
+    private authService: AuthService,
+    private loginService: LoginService
   ) {}
   iniciarDesafio(): void {
     console.log('Desafio iniciado!');
@@ -26,7 +55,53 @@ export class DesafioJccComponent implements OnInit {
   ngOnInit() {
     this.desafioJccService.getRanking().subscribe((data) => {
       this.ranking = data;
-      console.log(data);
+      // console.log(data);
     });
+
+    this.obterUser();
+  }
+  obterUser(): void {
+    this.authService.isLogged().subscribe({
+      next: (isLoggedObservable) => {
+        console.log('Usuário logado:', isLoggedObservable);
+        this.isLogged = isLoggedObservable;
+        if (!isLoggedObservable) {
+          this.guestUserData = JSON.parse(
+            localStorage.getItem('guestUserData') || 'null'
+          );
+          this.isLogged = this.guestUserData !== null;
+          console.log(this.guestUserData);
+        }
+      },
+      error: (err) => {
+        console.error('Erro ao verificar status de login:', err);
+      },
+    });
+  }
+  criarContaVisitante(): void {
+    console.log(this.formCreateGuestUser.value);
+
+    this.isLoading = true;
+    this.loginService
+      .createGuestAccount({
+        nome: this.formCreateGuestUser.value.nome || 'Visitante',
+        contato:
+          this.formCreateGuestUser.value.contato || 'visitante@example.com',
+      })
+      .subscribe({
+        next: (response) => {
+          localStorage.setItem('guestUserData', JSON.stringify(response));
+          console.log('Conta visitante criada com sucesso:', response);
+          if (sessionStorage.getItem('maiorPontuacaoDesafioJcc')) {
+            sessionStorage.removeItem('maiorPontuacaoDesafioJcc');
+          }
+          this.isLogged = true;
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Erro ao criar conta visitante:', err);
+          this.isLoading = false;
+        },
+      });
   }
 }

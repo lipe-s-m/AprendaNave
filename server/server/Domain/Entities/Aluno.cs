@@ -26,6 +26,8 @@ namespace server.Domain.Entities
 		[StringLength(20)]
 		public string Cargo { get; set; } = "Aluno";
 
+		public int Pontos { get; set; } = 0;
+
 		public DateTime CreatedAt { get; set; }
 		public DateTime? LastUpdatedAt { get; set; }
 

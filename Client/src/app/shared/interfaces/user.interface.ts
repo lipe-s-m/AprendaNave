@@ -33,3 +33,12 @@ export interface Ranking {
   nomeAluno: string;
   pontuacaoAluno: number;
 }
+export interface GuestRequestDTO {
+  nome: string;
+  contato: string;
+}
+export interface GuestResponseDTO {
+  id: number;
+  nome: string;
+  contato: string;
+}

@@ -18,6 +18,9 @@ export class StartComponent implements OnInit {
     if (this.themeService.getCurrentTheme() !== 'dark') {
       this.themeService.setTheme('dark');
     }
+    if (sessionStorage.getItem('maiorPontuacaoDesafioJcc')) {
+      sessionStorage.removeItem('maiorPontuacaoDesafioJcc');
+    }
     if (localStorage.getItem('trilhas')) {
       localStorage.removeItem('trilhas');
     }
@@ -28,6 +31,6 @@ export class StartComponent implements OnInit {
     this.router.navigate(['/login']);
   }
   entrarComoVisitante() {
-    this.router.navigate(['/hub']);
+    this.router.navigate(['/desafiojcc']);
   }
 }

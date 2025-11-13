@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using server.Repository.Database;
@@ -11,9 +12,11 @@ using server.Repository.Database;
 namespace server.Migrations
 {
     [DbContext(typeof(DbContexto))]
-    partial class DbContextoModelSnapshot : ModelSnapshot
+    [Migration("20251108194717_AddColumnPontos")]
+    partial class AddColumnPontos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -130,71 +133,6 @@ namespace server.Migrations
                         .HasName("pk_curso");
 
                     b.ToTable("curso", (string)null);
-                });
-
-            modelBuilder.Entity("server.Domain.Entities.DesafioJcc", b =>
-                {
-                    b.Property<int>("IdAluno")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id_aluno");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("IdAluno"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTime?>("LastUpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_updated_at");
-
-                    b.Property<string>("NomeAluno")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("nome_aluno");
-
-                    b.Property<int>("Pontos")
-                        .HasColumnType("integer")
-                        .HasColumnName("pontos");
-
-                    b.HasKey("IdAluno")
-                        .HasName("pk_desafio_jcc");
-
-                    b.ToTable("desafio_jcc", (string)null);
-                });
-
-            modelBuilder.Entity("server.Domain.Entities.GuestUser", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Contato")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("contato");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTime?>("LastUpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_updated_at");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("nome");
-
-                    b.HasKey("Id")
-                        .HasName("pk_guest_user");
-
-                    b.ToTable("guest_user", (string)null);
                 });
 
             modelBuilder.Entity("server.Domain.Entities.Modulo", b =>
