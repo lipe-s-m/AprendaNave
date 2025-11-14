@@ -9,6 +9,7 @@ import { LoaderComponent } from '../../shared/components/loader/loader.component
 import { SubheaderComponent } from '../../shared/components/subheader/subheader.component';
 import { CursoService } from '../../services/curso/curso.service';
 import { Curso } from '../../shared/interfaces/curso.model';
+import { DesafioJccService } from '../../services/desafio-jcc/desafio-jcc.service';
 
 @Component({
   selector: 'app-home',
@@ -22,6 +23,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   cursos: Curso[] = [];
   isLoading = true;
   error: string | null = null;
+  qtdDesafiantesJCC: number = 0;
   private themeSubscription?: Subscription;
   private cursoSubscription?: Subscription;
 
@@ -29,7 +31,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     private router: Router,
     private toastr: ToastrService,
     private themeService: ThemeService,
-    private cursoService: CursoService
+    private cursoService: CursoService,
+    private desafioJccService: DesafioJccService
   ) {}
 
   ngOnInit() {
@@ -40,6 +43,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     // Carrega as trilhas
     this.loadCursos();
+    this.loadDesafiantesJCC();
   }
 
   ngOnDestroy() {
@@ -68,7 +72,22 @@ export class HomeComponent implements OnInit, OnDestroy {
       },
     });
   }
-
+  loadDesafiantesJCC(): void {
+    this.isLoading = true;
+    this.desafioJccService.obterTodosDesafiantes().subscribe({
+      next: (desafiantes) => {
+        // Processar os desafiantes conforme necessário
+        this.qtdDesafiantesJCC = desafiantes.length;
+      },
+      error: (err) => {
+        this.error = 'Erro ao carregar desafiantes: ' + err.message;
+        console.log(err);
+      },
+      complete: () => {
+        this.isLoading = false;
+      },
+    });
+  }
   goToTrilha(id: number, nome: string) {
     sessionStorage.setItem('cursoNome', nome);
     this.router.navigate(['/trilha', id]);

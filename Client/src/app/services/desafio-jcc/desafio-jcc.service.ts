@@ -28,4 +28,9 @@ export class DesafioJccService {
       payload
     );
   }
+  obterTodosDesafiantes() {
+    return this.httpClient.get<any[]>(
+      `${this.apiUrl}/desafio/desafio-jcc/desafiantes`
+    );
+  }
 }

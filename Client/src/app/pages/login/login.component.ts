@@ -32,7 +32,7 @@ import { AuthService } from '../../services/auth/auth.service';
     LoaderComponent,
   ],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss',
+  styleUrls: ['./login.component.scss', './modal-welcome.scss'],
 })
 export class LoginComponent implements OnInit {
   constructor(
@@ -50,7 +50,12 @@ export class LoginComponent implements OnInit {
     }
   }
   signInFormIsActive: boolean = false;
+  welcomeModal: boolean = false;
   isLoading: boolean = false;
+  user: {
+    nomeDeUsuario: string;
+    email: string;
+  } = { nomeDeUsuario: '', email: '' };
   formSignIn = new FormGroup(
     {
       nomeDeUsuario: new FormControl('', [
@@ -126,14 +131,9 @@ export class LoginComponent implements OnInit {
 
       this.loginService.registerUser(userData).subscribe({
         next: (response) => {
-          // Show success message
-          this.toastr.success('Cadastro realizado com sucesso!', 'Sucesso');
-
           // Reset form
-          this.formSignIn.reset();
-
-          // Switch to login view
-          this.signInFormIsActive = false;
+          this.welcomeUser();
+          // this.signInFormIsActive = false;
         },
         error: (error: HttpErrorResponse) => {
           this.isLoading = false;
@@ -160,7 +160,49 @@ export class LoginComponent implements OnInit {
       });
     }
   }
+  welcomeUser() {
+    this.user.nomeDeUsuario =
+      this.formSignIn.get('nomeDeUsuario')?.value || 'Usuário';
+
+    this.welcomeModal = true;
+
+    this.toastr.success(`Bem-vindo, ${this.user.nomeDeUsuario}!`, 'Sucesso');
+  }
+  entrarDiretoPraHome() {
+    this.isLoading = true;
+
+    const senha = this.formSignIn.get('senha')?.value || '';
+    const email = this.formSignIn.get('email')?.value || '';
+    const loginData = {
+      email: email,
+      senha: senha,
+    };
+    console.log(loginData);
+
+    this.loginService.login(loginData).subscribe({
+      next: (response) => {
+        this.toastr.success('Login realizado com sucesso!', 'Sucesso');
+        console.log(response);
+
+        return this.router.navigate(['/home']);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.isLoading = false;
+        if (error.status === 401) {
+          this.toastr.error('Email ou senha inválidos', 'Erro');
+        } else {
+          this.toastr.error('Erro ao realizar login', 'Erro');
+          console.error('Login error:', error);
+        }
+      },
+      complete: () => {
+        this.isLoading = false;
+        this.welcomeModal = false;
+      },
+    });
+  }
   handleChangeForm() {
+    this.welcomeModal = false;
     this.formSignIn.reset();
     this.formLogin.reset();
     this.signInFormIsActive = !this.signInFormIsActive;

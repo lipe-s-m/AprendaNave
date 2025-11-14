@@ -77,6 +77,20 @@
 
 </div>
 
+<div class="overlay overlay-info" *ngIf="welcomeModal === true">
+  <div class="info-container">
+
+    <h2 class="info-title">Ola, {{user.nomeDeUsuario}}!</h2>
+    <img src="assets/success.png" class="welcome-image" alt="">
+    <p>Sua conta foi criada com sucesso!</p>
+
+    <h2 class="info-text">Esta pronto para Navegar pelo AprendaNave?</h2>
+
+    <app-button buttonText="entrar" buttonTheme="dark" (click)="entrarDiretoPraHome()" aria-label="Fechar informação"></app-button>
+    <app-button buttonText="Voltar" buttonLevel="secondary" buttonTheme="dark" (click)="handleChangeForm()" aria-label="Fechar informação"></app-button>
+  </div>
+</div>
+
 <div class="loading" *ngIf="isLoading">
   <app-loader></app-loader>
 </div>
