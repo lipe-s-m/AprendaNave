@@ -1,8 +1,0 @@
-{
-  "/auth/login": {
-    "target": "http://localhost:5269",
-    "secure": false,
-    "changeOrigin": true,
-    "cookieDomainRewrite": "localhost"
-  }
-}

@@ -11,7 +11,7 @@
     <div class="content-game">
       <h1>{{number1}} {{this.resultOp()}} {{number2}} = ?</h1>
       <div class="options">
-        <app-button *ngFor="let q of questions" buttonText="{{q}}" buttonLevel="primary" buttonTheme="dark" buttonSize="large" (click)="checkAnswer(q)" />
+        <app-button *ngFor="let q of questions" buttonText="{{q | number:'1.0-3' }}" buttonLevel="primary" buttonTheme="dark" buttonSize="large" (click)="checkAnswer(q)" />
       </div>
     </div>
   </div>

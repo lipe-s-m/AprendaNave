@@ -1,6 +1,6 @@
 import { AuthService } from './../../services/auth/auth.service';
 import { DesafioJccService } from './../../services/desafio-jcc/desafio-jcc.service';
-import { Component, inject, WritableSignal } from '@angular/core';
+import { Component, inject, Input, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QuizService } from '../../services/quiz/quiz.service';
 import { ToastrService } from 'ngx-toastr';
@@ -42,6 +42,8 @@ export class DesafioMatematicaComponent {
   private userService = inject(UserService);
   userSignal: WritableSignal<User | null>;
   currentUser: User | null = null;
+  nomeQuiz: string = 'Desafio Matemática';
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private quizService: QuizService,
@@ -56,8 +58,8 @@ export class DesafioMatematicaComponent {
   ngOnInit(): void {
     // Initialize component
     this.handlerInitializingGame();
-    this.randNumber1();
-    this.randNumber2();
+    this.number1 = this.randNumber1();
+    this.number2 = this.randNumber2();
     this.resultNumber();
 
     this.obterUser();
@@ -110,21 +112,27 @@ export class DesafioMatematicaComponent {
     }, 1000);
   }
   randNumber1(): number {
-    this.number1 = Math.floor(Math.random() * 10);
-    if (this.number1 === 0) {
-      this.number1 = 1;
+    let number1 = 0;
+    if (this.questionIndex < 15) {
+      number1 = Math.floor(Math.random() * 10);
+    } else if (this.questionIndex >= 15 && this.questionIndex < 30) {
+      number1 = Math.floor(Math.random() * 15);
+    } else if (this.questionIndex >= 30 && this.questionIndex < 60) {
+      number1 = Math.floor(Math.random() * 15);
     }
-    return this.number1;
+    return number1;
   }
   randNumber2(): number {
-    this.number2 = Math.floor(Math.random() * 10);
-    if (this.number2 === 0) {
-      this.number2 = 1;
+    let number2 = Math.floor(Math.random() * 10);
+    if (this.questionIndex > 45 && this.questionIndex < 60) {
+      number2 = Math.floor(Math.random() * 12);
+    } else if (this.questionIndex > 60) {
+      number2 = Math.floor(Math.random() * 15);
     }
-    return this.number2;
+    return number2;
   }
   resultNumber(): void {
-    this.opIndex = Math.floor(Math.random() * 4);
+    this.opIndex = this.balancearDificuldade(this.questionIndex);
     this.result = this.calcNumber();
 
     this.questions = [this.result];
@@ -139,7 +147,41 @@ export class DesafioMatematicaComponent {
 
     this.shuffleArray(this.questions);
   }
+  balancearDificuldade(questionIndex: number): number {
+    let opIndex: number = 0;
+    if (questionIndex < 6) return Math.floor(Math.random() * 2);
+    if (questionIndex >= 6 && questionIndex < 10)
+      return Math.floor(Math.random() * 3);
 
+    opIndex = Math.floor(Math.random() * 4);
+    if (questionIndex >= 10 && questionIndex < 20) {
+      console.log('index: ' + opIndex);
+      if (opIndex === 3 && this.number2 !== 0) {
+        console.log('oi');
+
+        while (
+          this.isFloat(this.number1 / this.number2) ||
+          this.number1 % this.number2 !== 0
+        ) {
+          console.log('divisao quebrada');
+          this.number1 = this.randNumber1();
+          this.number2 = this.randNumber2();
+        }
+      }
+    } else if (questionIndex >= 20) {
+      opIndex = Math.floor(Math.random() * 4);
+    }
+
+    return opIndex;
+  }
+  isFloat(x: any): boolean {
+    if (!isNaN(x)) {
+      if (parseInt(x) != parseFloat(x)) {
+        return true;
+      }
+    }
+    return false;
+  }
   private generateIncorrectAnswer(correctAnswer: number): number {
     const offset = Math.floor(Math.random() * 21) - 10;
     let incorrect = correctAnswer + offset;
@@ -166,10 +208,7 @@ export class DesafioMatematicaComponent {
       case 2:
         return this.number1 * this.number2;
       case 3:
-        if (this.number2 !== 0 || this.number1 !== 0) {
-          if (this.number1 < this.number2) {
-            [this.number1, this.number2] = [this.number2, this.number1];
-          }
+        if (this.number2 !== 0) {
           return this.number1 / this.number2;
         } else {
           console.error('Divisão por zero não permitida');
@@ -243,25 +282,27 @@ export class DesafioMatematicaComponent {
     sessionStorage.setItem('maiorPontuacaoDesafioJcc', this.points.toString());
 
     if (this.currentUser && typeof this.currentUser.id === 'number') {
-      this.desafioJccService
-        .updatePontuacao(
-          this.points,
-          this.currentUser.id,
-          this.currentUser.nome
-        )
-        .subscribe({
-          next: (response) => {
-            console.log('Pontuação atualizada no servidor:', response);
-          },
-        });
-    } else {
-      console.warn('User id not available; skipping server update');
+      if (this.nomeQuiz === 'Desafio JCC') {
+        this.desafioJccService
+          .updatePontuacao(
+            this.points,
+            this.currentUser.id,
+            this.currentUser.nome
+          )
+          .subscribe({
+            next: (response) => {
+              console.log('Pontuação atualizada no servidor:', response);
+            },
+          });
+      } else {
+        console.warn('User id not available; skipping server update');
+      }
     }
   }
   nextQuestion() {
     this.questionIndex += 1;
-    this.randNumber1();
-    this.randNumber2();
+    this.number1 = this.randNumber1();
+    this.number2 = this.randNumber2();
     this.resultNumber();
     this.resultOp();
     this.iniciarContagemTempoRestante();
@@ -283,9 +324,11 @@ export class DesafioMatematicaComponent {
     this.router.navigate(['/desafiojcc']);
   }
   getDificuldade(): number {
-    if (this.points <= 5) return 10;
-    if (this.points > 5 && this.points <= 10) return 7;
-    if (this.points > 10 && this.points <= 30) return 5;
+    if (this.points <= 8) return 13;
+    if (this.points > 8 && this.points <= 15) return 10;
+    if (this.points > 15 && this.points <= 25) return 7;
+    if (this.points > 25 && this.points <= 45) return 5;
+    if (this.points > 45 && this.points <= 70) return 4;
     return 3;
   }
   iniciarContagemTempoRestante(): void {
