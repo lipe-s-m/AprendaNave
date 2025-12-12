@@ -95,4 +95,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   goToDesafioJCC() {
     this.router.navigate(['/desafiojcc']);
   }
+  goToAprendaBot() {
+    this.router.navigate(['/aprendabot']);
+  }
 }

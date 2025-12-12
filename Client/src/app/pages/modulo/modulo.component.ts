@@ -8,6 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { LoaderComponent } from '../../shared/components/loader/loader.component';
 import { SubheaderComponent } from '../../shared/components/subheader/subheader.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
+import { ModuloService } from '../../services/modulo/modulo.service';
 
 @Component({
   selector: 'app-modulo',
@@ -31,6 +32,7 @@ export class ModuloComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private trilhaService: TrilhaService,
+    private moduloService: ModuloService,
     private toastr: ToastrService
   ) {}
 
@@ -73,7 +75,12 @@ export class ModuloComponent implements OnInit, OnDestroy {
           this.error = `Módulo com ID ${moduloId} não encontrado na trilha`;
         } else {
           // Carregar as aulas do módulo
-          this.aulas = this.modulo.aulasList || [];
+          // this.aulas = this.modulo.aulasList || [];
+          this.moduloService
+            .getVideosPlaylistUrl('PL2F553EFB76F93B22')
+            .subscribe((videos) => {
+              this.aulas = videos;
+            });
 
           // Atualiza o número de aulas no módulo para refletir o número real de aulas
           this.modulo.aulas = this.aulas.length;
