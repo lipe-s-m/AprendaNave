@@ -1,9 +1,10 @@
 export interface AulaDTO {
-  id: number;
-  titulo: string;
-  duracao?: string;
-  descricao: string;
-  ordem: number;
-  videoYoutubeId: string;
-  moduloId: number;
+  idAula: number;
+  tituloAula: string;
+  videoYoutubeIdAula: string;
+  concluida: boolean;
+  idModulo: number;
+  duracaoAula: number;
+  ordemAula: number;
+  descricaoAula: string;
 }

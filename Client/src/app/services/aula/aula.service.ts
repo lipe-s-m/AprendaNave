@@ -30,7 +30,7 @@ export class AulaService {
 
   constructor(private readonly http: HttpClient) {}
 
-  loadAulas(moduloId: number): Observable<AulaDTO[]> {
+  getAulas(moduloId: number): Observable<AulaDTO[]> {
     if (this.moduloAtual !== moduloId) {
       this.restaurarConclusoesLocais(moduloId);
       this.moduloAtual = moduloId;
@@ -53,7 +53,9 @@ export class AulaService {
         })
       );
   }
-
+  getAulaById(aulaId: number): Observable<AulaDTO> {
+    return this.http.get<AulaDTO>(`${this.apiUrl}/aulas/${aulaId}`);
+  }
   markAulaComoConcluida(aulaId: number): void {
     if (!this.moduloAtual) return;
     const atual = new Set(this.concluidasSignal());
@@ -70,10 +72,6 @@ export class AulaService {
 
   isAulaConcluida(aulaId: number): boolean {
     return this.concluidasSignal().has(aulaId);
-  }
-
-  getAulaById(aulaId: number): AulaDTO | undefined {
-    return this.aulasSignal().find((aula) => aula.id === aulaId);
   }
 
   private restaurarConclusoesLocais(moduloId: number) {

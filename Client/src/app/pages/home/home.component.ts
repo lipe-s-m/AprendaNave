@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -10,6 +10,7 @@ import { SubheaderComponent } from '../../shared/components/subheader/subheader.
 import { DesafioJccService } from '../../services/desafio-jcc/desafio-jcc.service';
 import { Curso } from '../../models/curso.model';
 import { CursoService } from '../../services/curso/curso.service';
+import { NavigationStateService } from '../../services/navigation-state/navigation-state.service';
 
 @Component({
   selector: 'app-home',
@@ -26,6 +27,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   qtdDesafiantesJCC: number = 0;
   private themeSubscription?: Subscription;
   private cursoSubscription?: Subscription;
+  private readonly navState = inject(NavigationStateService);
 
   constructor(
     private router: Router,
@@ -90,6 +92,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
   goToTrilha(id: number, nome: string) {
     sessionStorage.setItem('cursoNome', nome);
+    this.navState.setCurso(id, nome);
     this.router.navigate(['/trilha', id]);
   }
   goToDesafioJCC() {

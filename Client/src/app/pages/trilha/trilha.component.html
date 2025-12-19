@@ -14,7 +14,7 @@
     <h2>Módulos</h2>
     <div class="modulos-grid">
       <!-- <div class="modulo-card" [class.em-desenvolvimento]="modulo.id !== 1" *ngFor="let modulo of trilha; let idx = index" (click)="abrirModalModulo(modulo, $event)"> -->
-      <div class="modulo-card" [class.em-desenvolvimento]="modulo.id !== 1" *ngFor="let modulo of trilha; let idx = index" (click)="$event.stopPropagation(); iniciarOuContinuarModulo(modulo, $event)">
+      <div class="modulo-card" *ngFor="let modulo of trilha; let idx = index" (click)="$event.stopPropagation(); iniciarOuContinuarModulo(modulo, $event)">
 
         <div class="modulo-number">{{ idx + 1 }}</div>
         <div class="modulo-header">
@@ -24,7 +24,7 @@
         <!-- <div class="modulo-status" [class.concluido]="modulo.status === 'CONCLUIDO'" [class.em-andamento]="modulo.status === 'EM_ANDAMENTO'">
           <span>{{statusModulo}}</span>
         </div> -->
-        <app-button *ngIf="modulo.id === 1" [buttonText]="getButtonText(modulo.status)" buttonTheme="dark" (click)="$event.stopPropagation(); iniciarOuContinuarModulo(modulo, $event)">
+        <app-button [buttonText]="getButtonText(modulo.status)" buttonTheme="dark" (click)="$event.stopPropagation(); iniciarOuContinuarModulo(modulo, $event)">
         </app-button>
       </div>
     </div>

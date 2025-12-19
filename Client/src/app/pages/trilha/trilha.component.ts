@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TrilhaService } from '../../services/trilha/trilha.service';
-import { Trilha, Modulo } from '../../models/trilha.model';
+import { Curso, Modulo } from '../../models/curso.model';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderComponent } from '../../shared/components/loader/loader.component';
@@ -23,7 +23,6 @@ export class TrilhaComponent implements OnInit, OnDestroy {
   private readonly navState = inject(NavigationStateService);
 
   trilha: any = null;
-  nomeCurso: string = '';
   isLoading = true;
   error: string | null = null;
   moduloSelecionado: any = null;
@@ -34,12 +33,17 @@ export class TrilhaComponent implements OnInit, OnDestroy {
     return this.navState.cursoId();
   }
 
+  get nomeCurso(): string {
+    return this.navState.nomeCurso() || '';
+  }
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private trilhaService: TrilhaService,
     private moduloService: ModuloService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private navigationStateService: NavigationStateService
   ) {}
 
   ngOnInit(): void {
@@ -48,11 +52,7 @@ export class TrilhaComponent implements OnInit, OnDestroy {
       const nomeCurso = sessionStorage.getItem('cursoNome');
       const cursoIdNum = id !== null ? Number(id) : null;
 
-      this.navState.setCurso(cursoIdNum);
-
-      if (nomeCurso) {
-        this.nomeCurso = nomeCurso;
-      }
+      this.navState.setCurso(cursoIdNum, nomeCurso);
 
       if (cursoIdNum !== null) {
         this.loadTrilha(cursoIdNum);
@@ -76,6 +76,8 @@ export class TrilhaComponent implements OnInit, OnDestroy {
     this.moduloService.getModulos(id).subscribe({
       next: (trilha) => {
         this.trilha = trilha;
+        console.log(trilha);
+
         this.isLoading = false;
       },
       error: (err) => {
@@ -87,7 +89,7 @@ export class TrilhaComponent implements OnInit, OnDestroy {
   }
 
   atualizarStatusModulo(
-    moduloId: number,
+    modulo: Modulo,
     novoStatus: 'NAO_INICIADO' | 'EM_ANDAMENTO' | 'CONCLUIDO'
   ): void {
     if (this.trilhaId === null) {
@@ -95,7 +97,7 @@ export class TrilhaComponent implements OnInit, OnDestroy {
     }
 
     this.trilhaService
-      .atualizarStatusModulo(this.trilhaId, moduloId, novoStatus)
+      .atualizarStatusModulo(this.trilhaId, modulo.id, novoStatus)
       .subscribe({
         next: (trilha) => {
           this.trilha = trilha;
@@ -108,7 +110,7 @@ export class TrilhaComponent implements OnInit, OnDestroy {
             case 'EM_ANDAMENTO':
               mensagemStatus = 'em andamento';
               // Redirecionar para a página do módulo
-              this.navegarParaModulo(moduloId);
+              this.navegarParaModulo(modulo);
               break;
             case 'CONCLUIDO':
               mensagemStatus = 'concluído';
@@ -141,7 +143,7 @@ export class TrilhaComponent implements OnInit, OnDestroy {
 
       // Se o módulo já está em andamento ou concluído, redireciona direto para a página do módulo
       if (modulo.status === 'EM_ANDAMENTO' || modulo.status === 'CONCLUIDO') {
-        this.navegarParaModulo(modulo.id);
+        this.navegarParaModulo(modulo);
         return;
       }
 
@@ -159,17 +161,14 @@ export class TrilhaComponent implements OnInit, OnDestroy {
 
   iniciarOuContinuarModulo(modulo: Modulo, event: Event): void {
     event.stopPropagation(); // Impede que o evento propague para o card
-    if (modulo.id !== 1) {
-      this.toastr.info('Funcionalidade em desenvolvimento', 'Atenção');
-      return;
-    }
+
     try {
       if (modulo.status === 'NAO_INICIADO') {
         // Se não iniciado, marca como em andamento e navega para a página do módulo
         this.abrirModalModulo(modulo, event);
       } else {
         // Se já em andamento ou concluído, apenas navega para a página do módulo
-        this.navegarParaModulo(modulo.id);
+        this.navegarParaModulo(modulo);
       }
     } catch (error) {
       console.error('Erro ao iniciar ou continuar módulo:', error);
@@ -238,9 +237,12 @@ export class TrilhaComponent implements OnInit, OnDestroy {
     }
   }
 
-  navegarParaModulo(moduloId: number): void {
+  navegarParaModulo(modulo: Modulo): void {
     if (this.trilhaId !== null) {
-      this.router.navigate(['/modulo', this.trilhaId, moduloId]);
+      this.navigationStateService.setModulo(modulo.id, modulo.nome);
+
+      console.log(this.navigationStateService.nomeCurso());
+      this.router.navigate(['/modulo', this.trilhaId, modulo.id]);
     }
   }
 
@@ -249,7 +251,7 @@ export class TrilhaComponent implements OnInit, OnDestroy {
   }
 
   resetarDados(): void {
-    this.trilhaService.resetarTrilhas();
+    this.trilhaService.resetarCursos();
     this.toastr.success('Dados resetados com sucesso!', 'Sucesso');
     if (this.trilhaId) {
       this.loadTrilha(this.trilhaId);

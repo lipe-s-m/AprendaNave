@@ -3,10 +3,10 @@
   <header class="aula-header">
     <!-- <p class="back" (click)="voltarParaModulo()">x</p> -->
     <div class="header-info">
-      <h1>{{ aula.titulo }}</h1>
+      <h1>{{ aula.tituloAula }}</h1>
       <div class="header-meta">
         <!-- Substituir trilha?.nome por curso?.nome -->
-        <p class="trilha-nome">{{ curso?.nome }} -> {{ modulo?.nome }}</p>
+        <p class="trilha-nome">{{ cursoNome }} -> {{ moduloNome }}</p>
 
       </div>
     </div>
@@ -35,16 +35,16 @@
         <div class="aulas-timeline"></div>
 
         <!-- Lista de aulas -->
-        <div class="aula-item" *ngFor="let aulaItem of aulasList; let i = index" [ngClass]="{
+        <div class="aula-item" *ngFor="let aulaItem of aulasListOrdenada() ; let i = index" [ngClass]="{
             'aula-concluida': aulaItem.concluida,
-            'aula-atual': aulaItem.id === aula.id
-          }" (click)="aulaItem.id !== aula.id && irParaAula(aulaItem)">
+            'aula-atual': aulaItem.idAula === aula.idAula
+          }" (click)="aulaItem.idAula !== aula.idAula && irParaAula(aulaItem)">
           <div class="aula-play-icon">
-            <i [ngClass]="aulaItem.concluida ? 'fas fa-check' : (aulaItem.id === aula.id ? 'fas fa-play-circle' : 'fas fa-play')"></i>
+            <i [ngClass]="aulaItem.concluida ? 'fas fa-check' : (aulaItem.idAula === aula.idAula ? 'fas fa-play-circle' : 'fas fa-play')"></i>
           </div>
           <div class="aula-info">
-            <h3 class="aula-titulo">{{ aulaItem.titulo }}</h3>
-            <p class="aula-duracao">{{ aulaItem.duracao }}</p>
+            <h3 class="aula-titulo">{{ aulaItem.tituloAula }}</h3>
+            <p class="aula-duracao">{{ aulaItem.duracaoAula }}</p>
           </div>
         </div>
       </div>

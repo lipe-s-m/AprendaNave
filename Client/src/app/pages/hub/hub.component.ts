@@ -14,7 +14,7 @@ import { Subscription } from 'rxjs';
   styleUrl: './hub.component.scss',
 })
 export class HubComponent implements OnInit, OnDestroy {
-  trilhas: any[] = [];
+  cursos: any[] = [];
   isLoading = true;
   error: string | null = null;
   private subscription: Subscription | null = null;
@@ -22,7 +22,7 @@ export class HubComponent implements OnInit, OnDestroy {
   constructor(private router: Router, private trilhaService: TrilhaService) {}
 
   ngOnInit(): void {
-    this.loadTrilhas();
+    this.loadCursos();
   }
 
   ngOnDestroy(): void {
@@ -31,17 +31,17 @@ export class HubComponent implements OnInit, OnDestroy {
     }
   }
 
-  loadTrilhas(): void {
+  loadCursos(): void {
     this.isLoading = true;
     this.error = null;
 
-    this.subscription = this.trilhaService.getTrilhasResumidas().subscribe({
-      next: (trilhas) => {
-        this.trilhas = trilhas;
+    this.subscription = this.trilhaService.getCursosResumidos().subscribe({
+      next: (cursos) => {
+        this.cursos = cursos;
         this.isLoading = false;
       },
       error: (err) => {
-        this.error = 'Erro ao carregar trilhas: ' + err.message;
+        this.error = 'Erro ao carregar cursos: ' + err.message;
         this.isLoading = false;
       },
     });

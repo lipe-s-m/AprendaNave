@@ -2,11 +2,11 @@
   <h1>Você pode aprender:</h1>
 
   <ul>
-    <li *ngFor="let trilha of trilhas">
-      <img src={{trilha.imagem}} alt="imagem da trilha {{trilha.nome}}">
+    <li *ngFor="let curso of cursos">
+      <img src={{curso.imagem}} alt="imagem da trilha {{curso.nome}}">
       <div class="info-text">
-        <h3>{{trilha.nome}}</h3>
-        <!-- <p>{{trilha.matriculas}} alunos</p> -->
+        <h3>{{curso.nome}}</h3>
+        <!-- <p>{{curso.matriculas}} alunos</p> -->
       </div>
     </li>
   </ul>

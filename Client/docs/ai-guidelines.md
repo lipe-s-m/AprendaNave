@@ -2,7 +2,7 @@
 
 ## Objetivo do Projeto
 
-Criar uma plataforma web de trilhas de aprendizado gamificado voltada para jovens.
+Criar uma plataforma web de cursos de aprendizado gamificado voltada para jovens.
 
 ## Regras Gerais
 
@@ -10,6 +10,7 @@ Criar uma plataforma web de trilhas de aprendizado gamificado voltada para joven
 - A interface DEVE ser simples, clara e orientada a gamificação.
 - Referência conceitual: Duolingo (apenas como inspiração, não copiar layouts).
 - Sempre Responda em português
+- "Cursos" são as "trilhas", em alguns lugares o nome muda porém tudo é curso
 
 ## Frontend (Angular)
 

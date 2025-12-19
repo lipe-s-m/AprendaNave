@@ -11,11 +11,13 @@ import { AuthService } from './services/auth/auth.service';
 import { QuizComponent } from './pages/quiz/quiz/quiz.component';
 import { AprendabotComponent } from './pages/aprendabot/aprendabot.component';
 import { DesafioJccComponent } from './pages/desafio-jcc/desafio-jcc.component';
+import { PerfilComponent } from './pages/perfil/perfil.component';
 
 export const routes: Routes = [
   { path: '', component: StartComponent, pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'hub', component: HubComponent, canActivate: [authGuard] },
+  { path: 'perfil', component: PerfilComponent, canActivate: [authGuard] },
   { path: 'home', component: HomeComponent, canActivate: [authGuard] },
   {
     path: 'trilha/:id',
@@ -28,7 +30,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
-    path: 'aula/:trilhaId/:moduloId/:aulaId',
+    path: 'aula/:cursoId/:moduloId/:aulaId',
     component: AulaComponent,
     canActivate: [authGuard],
   },

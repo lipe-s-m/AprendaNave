@@ -1,8 +1,8 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnDestroy, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TrilhaService } from '../../services/trilha/trilha.service';
-import { Trilha, Modulo } from '../../models/trilha.model';
+import { Curso, Modulo } from '../../models/curso.model';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderComponent } from '../../shared/components/loader/loader.component';
@@ -21,19 +21,10 @@ type AulaViewModel = AulaDTO & { concluida: boolean };
   templateUrl: './modulo.component.html',
   styleUrl: './modulo.component.scss',
 })
-export class ModuloComponent implements OnInit, OnDestroy {
+export class ModuloComponent implements OnDestroy {
   private readonly navState = inject(NavigationStateService);
 
-  trilha: Trilha | null = null;
-  modulo: Modulo | null = null;
-  isLoading = true;
-  error: string | null = null;
-  aulas: AulaViewModel[] = [];
-
-  private subscription: Subscription | null = null;
-  private aulasSubscription: Subscription | null = null;
-
-  get trilhaId(): number | null {
+  get cursoId(): number | null {
     return this.navState.cursoId();
   }
 
@@ -41,8 +32,24 @@ export class ModuloComponent implements OnInit, OnDestroy {
     return this.navState.moduloId();
   }
 
+  get nomeCurso(): string {
+    return this.navState.nomeCurso() || '';
+  }
+
+  get nomeModulo(): string {
+    return this.navState.nomeModulo() || '';
+  }
+
+  curso: Curso | null = null;
+  modulo: Modulo | null = null;
+  isLoading = true;
+  error: string | null = null;
+  aulas: AulaViewModel[] = [];
+  private loadedModuloId: number | null = null;
+
+  private aulasSubscription: Subscription | null = null;
+  private route = inject(ActivatedRoute);
   constructor(
-    private route: ActivatedRoute,
     private router: Router,
     private trilhaService: TrilhaService,
     private aulaService: AulaService,
@@ -50,59 +57,40 @@ export class ModuloComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.subscription = this.route.paramMap.subscribe((params) => {
-      const trilhaId = params.get('trilhaId');
-      const moduloId = params.get('moduloId');
+    let cursoId = this.navState.cursoId();
+    let moduloId = this.navState.moduloId();
+    if (!cursoId || !moduloId) {
+      const cid = this.route.snapshot.paramMap.get('trilhaId');
+      const mid = this.route.snapshot.paramMap.get('moduloId');
 
-      const cursoIdNum = trilhaId !== null ? Number(trilhaId) : null;
-      const moduloIdNum = moduloId !== null ? Number(moduloId) : null;
+      console.log(cid);
+      if (cid && mid) {
+        cursoId = parseInt(cid, 10);
+        moduloId = parseInt(mid, 10);
 
-      this.navState.setCurso(cursoIdNum);
-      this.navState.setModulo(moduloIdNum);
+        // Atualiza o service para que outros componentes também saibam dos IDs
+        console.log(`${cursoId} e ${moduloId}`);
 
-      if (cursoIdNum !== null && moduloIdNum !== null) {
-        this.loadTrilhaEModulo(cursoIdNum, moduloIdNum);
-      } else {
-        this.error = 'ID de trilha ou módulo inválido';
-        this.isLoading = false;
+        this.navState.updateIdContexto(cursoId, moduloId, null);
       }
-    });
+    }
+    if (this.loadedModuloId === moduloId) {
+      return;
+    }
+
+    this.error = null;
+    this.loadedModuloId = moduloId;
+    moduloId ? this.carregarAulas(moduloId) : null;
   }
 
   ngOnDestroy(): void {
     localStorage.removeItem('trilhas');
-    this.subscription?.unsubscribe();
     this.aulasSubscription?.unsubscribe();
   }
 
-  loadTrilhaEModulo(trilhaId: number, moduloId: number): void {
-    this.isLoading = true;
-    this.error = null;
-
-    this.trilhaService.getTrilhaById(trilhaId).subscribe({
-      next: (trilha) => {
-        this.trilha = trilha;
-
-        // Encontrar o módulo correspondente
-        this.modulo = trilha.modulos.find((m) => m.id === moduloId) || null;
-
-        if (!this.modulo) {
-          this.error = `Módulo com ID ${moduloId} não encontrado na trilha`;
-          this.isLoading = false;
-        } else {
-          this.carregarAulas(this.modulo.id);
-        }
-      },
-      error: (err) => {
-        this.error = 'Erro ao carregar a trilha: ' + err.message;
-        this.isLoading = false;
-        this.toastr.error(this.error, 'Erro');
-      },
-    });
-  }
   irParaTesteFinal(): void {
-    if (this.trilhaId && this.moduloId) {
-      this.router.navigate(['/teste-final', this.trilhaId, this.moduloId]);
+    if (this.cursoId && this.moduloId) {
+      this.router.navigate(['/teste-final', this.cursoId, this.moduloId]);
     }
   }
   resetarAulas(): void {
@@ -110,8 +98,8 @@ export class ModuloComponent implements OnInit, OnDestroy {
     this.sincronizarConclusoesLocais();
   }
   marcarConcluido(): void {
-    if (this.trilhaId && this.moduloId) {
-      this.aulas.forEach((aula) => this.marcarConclusaoLocal(aula.id));
+    if (this.cursoId && this.moduloId) {
+      this.aulas.forEach((aula) => this.marcarConclusaoLocal(aula.idAula));
       this.sincronizarConclusoesLocais();
       this.atualizarStatusModulo();
     }
@@ -119,17 +107,17 @@ export class ModuloComponent implements OnInit, OnDestroy {
 
   private atualizarStatusModulo(): void {
     this.trilhaService
-      .atualizarStatusModulo(this.trilhaId!, this.moduloId!, 'CONCLUIDO')
+      .atualizarStatusModulo(this.cursoId!, this.moduloId!, 'CONCLUIDO')
       .subscribe({
-        next: (trilha) => {
-          this.trilha = trilha;
+        next: (curso) => {
+          this.curso = curso;
           this.modulo =
-            trilha.modulos.find((m) => m.id === this.moduloId) || null;
+            curso.modulos.find((c: Modulo) => c.id === this.moduloId) || null;
           this.toastr.success('Módulo concluído com sucesso!', 'Parabéns');
 
           // Navegar de volta para a trilha após 2 segundos
           setTimeout(() => {
-            this.router.navigate(['/trilha', this.trilhaId]);
+            this.router.navigate(['/trilha', this.cursoId]);
           }, 2000);
         },
         error: (err) => {
@@ -139,8 +127,8 @@ export class ModuloComponent implements OnInit, OnDestroy {
   }
 
   voltarParaTrilha(): void {
-    if (this.trilhaId) {
-      this.router.navigate(['/trilha', this.trilhaId]);
+    if (this.cursoId) {
+      this.router.navigate(['/trilha', this.cursoId]);
     }
   }
 
@@ -166,29 +154,31 @@ export class ModuloComponent implements OnInit, OnDestroy {
   }
 
   iniciarAula(aula: AulaViewModel): void {
-    if (!this.trilhaId || !this.moduloId) return;
+    if (!this.cursoId || !this.moduloId) return;
 
     // Navegar para a página da aula
-    this.router.navigate(['/aula', this.trilhaId, this.moduloId, aula.id]);
+    this.navState.updateIdContexto(this.cursoId, this.moduloId, aula.idAula);
+    this.router.navigate(['/aula', this.cursoId, this.moduloId, aula.idAula]);
 
-    this.marcarConclusaoLocal(aula.id);
+    this.marcarConclusaoLocal(aula.idAula);
     this.sincronizarConclusoesLocais();
   }
 
   private carregarAulas(moduloId: number): void {
+    console.log('tester');
+
     this.isLoading = true;
     this.aulasSubscription?.unsubscribe();
-    this.aulasSubscription = this.aulaService.loadAulas(moduloId).subscribe({
+    this.aulasSubscription = this.aulaService.getAulas(moduloId).subscribe({
       next: (aulas) => {
-        this.aulas = aulas.map((aula) => ({
-          ...aula,
-          concluida: this.aulaService.isAulaConcluida(aula.id),
-        }));
-
-        if (this.modulo) {
-          this.modulo.aulas = this.aulas.length;
-        }
-
+        this.aulas = aulas
+          .sort((a, b) => a.ordemAula - b.ordemAula)
+          .map((aula) => ({
+            ...aula,
+            concluida: this.aulaService.isAulaConcluida(aula.idAula),
+          }));
+        console.log(aulas);
+        this.navState.setAulas(this.aulas);
         this.aplicarRegraStatusModulo();
         this.sincronizarConclusoesLocais();
         this.isLoading = false;
@@ -207,14 +197,14 @@ export class ModuloComponent implements OnInit, OnDestroy {
     }
 
     if (this.modulo.status === 'CONCLUIDO') {
-      this.aulas.forEach((aula) => this.marcarConclusaoLocal(aula.id));
+      this.aulas.forEach((aula) => this.marcarConclusaoLocal(aula.idAula));
     } else if (
       this.modulo.status === 'EM_ANDAMENTO' &&
       !this.aulas.some((aula) => aula.concluida)
     ) {
       const primeiraAula = this.aulas[0];
       if (primeiraAula) {
-        this.marcarConclusaoLocal(primeiraAula.id);
+        this.marcarConclusaoLocal(primeiraAula.idAula);
       }
     }
   }
@@ -228,7 +218,7 @@ export class ModuloComponent implements OnInit, OnDestroy {
   private sincronizarConclusoesLocais(): void {
     this.aulas = this.aulas.map((aula) => ({
       ...aula,
-      concluida: this.aulaService.isAulaConcluida(aula.id),
+      concluida: this.aulaService.isAulaConcluida(aula.idAula),
     }));
   }
 }

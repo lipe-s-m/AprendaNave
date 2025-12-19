@@ -1,98 +1,97 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
-import { Modulo, Trilha } from '../../models/trilha.model';
-import { TRILHAS_MOCK } from '../../data/trilhas.mock';
+import { Modulo, Curso } from '../../models/curso.model';
+import { AulaDTO } from '../../shared/interfaces/aulas';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TrilhaService {
   // Array privado para armazenar as trilhas com os status atualizados
-  private trilhas: Trilha[] = [];
+  private cursos: Curso[] = [];
 
   constructor() {
-    // Carregar trilhas do localStorage ou usar o mock
-    this.carregarTrilhasDoLocalStorage();
+    // Carregar cursos do localStorage ou usar o mock
+    this.carregarCursosDoLocalStorage();
 
-    this.trilhas = this.trilhas.map((trilha) => ({
-      ...trilha,
-      id: trilha.id,
+    this.cursos = this.cursos.map((curso) => ({
+      ...curso,
+      id: curso.id,
     }));
   }
 
   /**
-   * Salva o estado atual das trilhas no localStorage
+   * Salva o estado atual dos cursos no localStorage
    */
-  private salvarTrilhasNoLocalStorage(): void {
-    // localStorage.setItem('trilhas', JSON.stringify(this.trilhas));
+  private salvarCursosNoLocalStorage(): void {
+    // localStorage.setItem('cursos', JSON.stringify(this.cursos));
   }
 
   /**
-   * Carrega as trilhas do localStorage se disponíveis, caso contrário usa os mocks
+   * Carrega os cursos do localStorage se disponíveis, caso contrário usa os mocks
    */
-  private carregarTrilhasDoLocalStorage(): void {
-    const trilhasSalvas = localStorage.getItem('trilhas');
+  private carregarCursosDoLocalStorage(): void {
+    const cursosSalvos = localStorage.getItem('cursos');
 
-    if (trilhasSalvas) {
+    if (cursosSalvos) {
       try {
-        this.trilhas = JSON.parse(trilhasSalvas);
+        this.cursos = JSON.parse(cursosSalvos);
       } catch (error) {
         console.error(
-          'Erro ao carregar trilhas do localStorage, usando mocks:',
+          'Erro ao carregar cursos do localStorage, usando mocks:',
           error
         );
-        this.resetarTrilhas();
+        this.resetarCursos();
       }
     } else {
-      this.resetarTrilhas();
+      this.resetarCursos();
     }
   }
 
   /**
-   * Reseta as trilhas para o estado inicial dos mocks
+   * Reseta os cursos para o estado inicial dos mocks
    */
-  public resetarTrilhas(): void {
-    this.trilhas = JSON.parse(JSON.stringify(TRILHAS_MOCK)); // Cria uma cópia profunda
-    this.salvarTrilhasNoLocalStorage(); // Salva os mocks no localStorage
+  public resetarCursos(): void {
+    this.cursos = JSON.parse(JSON.stringify([])); // Cria uma cópia profunda
+    this.salvarCursosNoLocalStorage(); // Salva os mocks no localStorage
   }
-  getTrilhas(): Observable<Trilha[]> {
+  getCursos(): Observable<Curso[]> {
     // Simula uma chamada de API com delay
 
-    return of(this.trilhas).pipe(delay(300));
+    return of(this.cursos).pipe(delay(300));
   }
 
   /**
-   * Obter uma trilha específica pelo ID
-   * @param id ID da trilha
-   * @returns Observable com a trilha ou erro se não encontrada
+   * Obter um curso específico pelo ID
+   * @param id ID do curso
+   * @returns Observable com o curso ou erro se não encontrado
    */
-  getTrilhaById(id: number): Observable<Trilha> {
-    const trilha = this.trilhas.find((t) => t.id === id);
+  getCursoById(id: number): Observable<Curso> {
+    const curso = this.cursos.find((t) => t.id === id);
 
-    if (trilha) {
+    if (curso) {
       // Simula uma chamada de API com delay
-      return of(trilha).pipe(delay(300));
+      return of(curso).pipe(delay(300));
     }
 
-    return throwError(() => new Error(`Trilha com ID ${id} não encontrada`));
+    return throwError(() => new Error(`Curso com ID ${id} não encontrado`));
   }
 
   /**
-   * Obter dados resumidos de todas as trilhas (para listagens)
-   * @returns Observable com a lista resumida de trilhas
+   * Obter dados resumidos de todos os cursos (para listagens)
+   * @returns Observable com a lista resumida de cursos
    */
-  getTrilhasResumidas(): Observable<any[]> {
-    return this.getTrilhas().pipe(
-      map((trilhas) =>
-        trilhas.map((trilha) => ({
-          id: trilha.id,
-          nome: trilha.nome,
-          imagem: trilha.imagem,
-          matriculas: trilha.matriculas,
-          professor: trilha.professor,
-          tag: trilha.tag,
-          modulos: trilha.modulos.length,
+  getCursosResumidos(): Observable<any[]> {
+    return this.getCursos().pipe(
+      map((cursos) =>
+        cursos.map((curso) => ({
+          id: curso.id,
+          nome: curso.nome,
+          imagem: curso.logo,
+          professor: curso.professor,
+          tag: curso.tag,
+          modulos: curso.modulos.length,
         }))
       )
     );
@@ -100,111 +99,118 @@ export class TrilhaService {
 
   /**
    * Atualizar status de um módulo
-   * @param trilhaId ID da trilha
+   * @param cursoId ID do curso
    * @param moduloId ID do módulo
    * @param status Novo status do módulo ('NAO_INICIADO', 'EM_ANDAMENTO', 'CONCLUIDO')
-   * @returns Observable com a trilha atualizada
+   * @returns Observable com o curso atualizado
    */
   atualizarStatusModulo(
-    trilhaId: number,
+    cursoId: number,
     moduloId: number,
     status: 'NAO_INICIADO' | 'EM_ANDAMENTO' | 'CONCLUIDO'
-  ): Observable<Trilha> {
-    const trilhaIndex = this.trilhas.findIndex((t) => t.id === trilhaId);
+  ): Observable<Curso> {
+    const cursoIndex = this.cursos.findIndex((c) => c.id === cursoId);
 
-    if (trilhaIndex === -1) {
-      console.error(`Trilha com ID ${trilhaId} não encontrada`);
+    if (cursoIndex === -1) {
+      console.error(`Curso com ID ${cursoId} não encontrado`);
       return throwError(
-        () => new Error(`Trilha com ID ${trilhaId} não encontrada`)
+        () => new Error(`Curso com ID ${cursoId} não encontrado`)
       );
     }
 
-    const trilha = this.trilhas[trilhaIndex];
+    const curso = this.cursos[cursoIndex];
 
-    const moduloIndex = trilha.modulos.findIndex(
+    const moduloIndex = curso.modulos.findIndex(
       (m: Modulo) => m.id === moduloId
     );
 
     if (moduloIndex === -1) {
       console.error(
-        `Módulo com ID ${moduloId} não encontrado na trilha ${trilhaId}`
+        `Módulo com ID ${moduloId} não encontrado no curso ${cursoId}`
       );
       return throwError(
         () =>
           new Error(
-            `Módulo com ID ${moduloId} não encontrado na trilha ${trilhaId}`
+            `Módulo com ID ${moduloId} não encontrado no curso ${cursoId}`
           )
       );
     }
 
     // Atualiza o status do módulo
+    curso.modulos[moduloIndex].status = status;
 
-    trilha.modulos[moduloIndex].status = status;
-
-    // Atualiza o array de trilhas
-    this.trilhas[trilhaIndex] = trilha;
+    // Atualiza o array de cursos
+    this.cursos[cursoIndex] = curso;
 
     // Salva as alterações no localStorage
-    this.salvarTrilhasNoLocalStorage();
+    this.salvarCursosNoLocalStorage();
 
     // Simula uma chamada de API com delay
-    return of(trilha).pipe(delay(300));
+    return of(curso).pipe(delay(300));
   }
 
   /**
    * Atualizar status de uma aula
-   * @param trilhaId ID da trilha
+   * @param cursoId ID do curso
    * @param moduloId ID do módulo
    * @param aulaId ID da aula
    * @param concluida Status de conclusão da aula
-   * @returns Observable com a trilha atualizada
+   * @returns Observable com o curso atualizado
    */
   atualizarStatusAula(
-    trilhaId: number,
+    cursoId: number,
     moduloId: number,
     aulaId: number,
     concluida: boolean
-  ): Observable<Trilha> {
-    const trilhaIndex = this.trilhas.findIndex((t) => t.id === trilhaId);
+  ): Observable<Curso> {
+    const cursoIndex = this.cursos.findIndex((c) => c.id === cursoId);
 
-    if (trilhaIndex === -1) {
-      console.error(`Trilha com ID ${trilhaId} não encontrada`);
+    if (cursoIndex === -1) {
+      console.error(`Curso com ID ${cursoId} não encontrado`);
       return throwError(
-        () => new Error(`Trilha com ID ${trilhaId} não encontrada`)
+        () => new Error(`Curso com ID ${cursoId} não encontrado`)
       );
     }
 
-    const trilha = this.trilhas[trilhaIndex];
-    const moduloIndex = trilha.modulos.findIndex((m) => m.id === moduloId);
+    const curso = this.cursos[cursoIndex];
+    const moduloIndex = curso.modulos.findIndex(
+      (m: Modulo) => m.id === moduloId
+    );
 
     if (moduloIndex === -1) {
       console.error(
-        `Módulo com ID ${moduloId} não encontrado na trilha ${trilhaId}`
+        `Módulo com ID ${moduloId} não encontrado no curso ${cursoId}`
       );
       return throwError(
         () =>
           new Error(
-            `Módulo com ID ${moduloId} não encontrado na trilha ${trilhaId}`
+            `Módulo com ID ${moduloId} não encontrado no curso ${cursoId}`
           )
       );
     }
 
-    const modulo = trilha.modulos[moduloIndex];
+    const modulo = curso.modulos[moduloIndex];
 
     // Inicializa aulasList se ainda não existir
     if (!modulo.aulasList) {
       modulo.aulasList = [];
     }
 
-    const aulaIndex = modulo.aulasList.findIndex((a) => a.id === aulaId);
+    const aulaIndex = modulo.aulasList.findIndex(
+      (a: AulaDTO) => a.idAula === aulaId
+    );
 
     if (aulaIndex === -1) {
       // Se a aula não existir ainda, adiciona ao módulo
       modulo.aulasList.push({
-        id: aulaId,
-        titulo: `Aula ${aulaId}`,
-        duracao: '00:00',
+        idAula: aulaId,
+        tituloAula: `Aula ${aulaId}`,
+        duracaoAula: 0,
         concluida: concluida,
+        videoYoutubeIdAula: '',
+        idModulo: moduloId,
+        ordemAula: 0,
+        descricaoAula: '',
       });
     } else {
       // Atualiza o status da aula
@@ -212,17 +218,19 @@ export class TrilhaService {
     }
 
     // Se todas as aulas estiverem concluídas, marca o módulo como concluído
-    const todasAulasConcluidas = modulo.aulasList.every((a) => a.concluida);
+    const todasAulasConcluidas = modulo.aulasList.every(
+      (a: AulaDTO) => a.concluida
+    );
     if (todasAulasConcluidas && modulo.aulasList.length > 0) {
       modulo.status = 'CONCLUIDO';
-    } else if (modulo.aulasList.some((a) => a.concluida)) {
+    } else if (modulo.aulasList.some((a: AulaDTO) => a.concluida)) {
       modulo.status = 'EM_ANDAMENTO';
     }
 
     // Salva as alterações no localStorage
-    this.salvarTrilhasNoLocalStorage();
+    this.salvarCursosNoLocalStorage();
 
     // Simula uma chamada de API com delay
-    return of(trilha).pipe(delay(300));
+    return of(curso).pipe(delay(300));
   }
 }

@@ -1,4 +1,13 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  inject,
+  computed,
+  Signal,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CursoService } from '../../services/curso/curso.service';
@@ -29,7 +38,10 @@ export class AulaComponent implements OnInit, OnDestroy {
   modulo: Modulo | null = null;
   aula: AulaDisplay | null = null;
 
-  aulasList: AulaDisplay[] = [];
+  aulasList: WritableSignal<AulaDisplay[]> = signal<AulaDisplay[]>([]);
+  aulasListOrdenada: Signal<AulaDisplay[]> = computed(() => {
+    return [...this.aulasList()].sort((a, b) => a.ordemAula - b.ordemAula);
+  });
   proximaAula: AulaDisplay | null = null;
   aulaAnterior: AulaDisplay | null = null;
 
@@ -44,9 +56,14 @@ export class AulaComponent implements OnInit, OnDestroy {
   get cursoId(): number | null {
     return this.navState.cursoId();
   }
-
+  get cursoNome(): string | null {
+    return this.navState.nomeCurso();
+  }
   get moduloId(): number | null {
     return this.navState.moduloId();
+  }
+  get moduloNome(): string | null {
+    return this.navState.nomeModulo();
   }
 
   get aulaId(): number | null {
@@ -60,25 +77,55 @@ export class AulaComponent implements OnInit, OnDestroy {
     private toastr: ToastrService,
     private sanitizer: DomSanitizer,
     private aulaService: AulaService
-  ) {}
+  ) {
+    console.log(this.cursoNome);
+  }
 
   ngOnInit(): void {
     this.subscription = this.route.paramMap.subscribe((params) => {
-      const cursoId = params.get('cursoId');
-      const moduloId = params.get('moduloId');
-      const aulaId = params.get('aulaId');
+      let cursoId = this.navState.cursoId();
+      let moduloId = this.navState.moduloId();
+      let aulaId = this.navState.aulaId();
+
+      if (!cursoId || !moduloId || !aulaId) {
+        const cid = params.get('cursoId');
+        const mid = params.get('moduloId');
+        const aid = params.get('aulaId');
+
+        if (cid && mid && aid) {
+          cursoId = Number(cid);
+          moduloId = Number(mid);
+          aulaId = Number(aid);
+        }
+      }
 
       const cursoIdNum = cursoId !== null ? Number(cursoId) : null;
       const moduloIdNum = moduloId !== null ? Number(moduloId) : null;
       const aulaIdNum = aulaId !== null ? Number(aulaId) : null;
 
-      this.navState.setContexto(cursoIdNum, moduloIdNum, aulaIdNum);
+      this.navState.updateIdContexto(cursoIdNum, moduloIdNum, aulaIdNum);
+      console.log(cursoIdNum, moduloIdNum, aulaIdNum);
 
       if (cursoIdNum !== null && moduloIdNum !== null && aulaIdNum !== null) {
-        this.loadAula(cursoIdNum, moduloIdNum, aulaIdNum);
-      } else {
-        this.error = 'ID de curso, módulo ou aula inválido';
-        this.isLoading = false;
+        if (this.aulasList.length === 0) {
+          this.aulaService.getAulas(moduloIdNum).subscribe({
+            next: (aulas) => {
+              this.aulasList.set(aulas);
+
+              this.navState.setAulas(this.aulasList());
+              this.loadAula(aulaIdNum);
+            },
+            error: (err) => {
+              this.error = 'Erro ao carregar aulas: ' + err.message;
+              this.isLoading = false;
+              this.toastr.error(this.error, 'Erro');
+            },
+          });
+          this.loadAula(aulaIdNum);
+        } else {
+          this.error = 'ID de curso, módulo ou aula inválido';
+          this.isLoading = false;
+        }
       }
     });
   }
@@ -89,48 +136,30 @@ export class AulaComponent implements OnInit, OnDestroy {
     }
   }
 
-  loadAula(cursoId: number, moduloId: number, aulaId: number): void {
+  loadAula(aulaId: number): void {
     this.isLoading = true;
     this.error = null;
 
-    this.cursoService.getCursoById(cursoId).subscribe({
-      next: (curso) => {
-        this.curso = curso;
-
-        // Encontrar o módulo correspondente
-        this.modulo = curso.modulos.find((m) => m.id === moduloId) || null;
-
-        if (!this.modulo) {
-          this.error = `Módulo com ID ${moduloId} não encontrado no curso`;
-          this.isLoading = false;
-          return;
-        }
-
-        // Carregar as aulas do módulo
-        this.aulasList = (this.modulo.aulasList || []) as AulaDisplay[];
-
-        // Encontrar a aula atual
-        this.aula = this.aulasList.find((a) => a.id === aulaId) || null;
-
-        if (!this.aula) {
-          this.error = `Aula com ID ${aulaId} não encontrada no módulo`;
-          this.isLoading = false;
-          return;
-        }
-
-        // Gerar URL do vídeo para a aula (simulação)
-        this.gerarVideoUrl();
+    this.aulaService.getAulaById(aulaId).subscribe({
+      next: (aula) => {
         // Verificar se todas as aulas foram concluídas
         // Encontrar a próxima aula e a aula anterior
+        this.aula = aula;
+        console.log(aula);
+
+        this.gerarVideoUrl(this.aula.videoYoutubeIdAula);
+        this.aulasList.set(this.navState.aulas() || []);
+        console.log(this.aulasList());
+
         this.definirNavegacaoAulas();
 
         // Marcar a aula como concluída se ainda não estiver
-        if (!this.aula.concluida) {
-          this.marcarAulaConcluida(cursoId, moduloId, aulaId);
+        // if (!this.aula.concluida) {
+        //   // this.marcarAulaConcluida(aulaId);
 
-          this.aula.concluida = true;
-          this.verificarAulasConcluidas();
-        }
+        //   this.aula.concluida = true;
+        //   this.verificarAulasConcluidas();
+        // }
 
         this.isLoading = false;
       },
@@ -148,7 +177,7 @@ export class AulaComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const moduloCompleto = this.aulasList.every(
+    const moduloCompleto = this.aulasList().every(
       (aula) => aula.concluida === true
     );
     if (moduloCompleto) {
@@ -165,31 +194,28 @@ export class AulaComponent implements OnInit, OnDestroy {
     }
   }
 
-  gerarVideoUrl(): void {
-    const aula = this.aulaService.getAulaById(this.aulaId!);
-    if (aula?.videoYoutubeId) {
-      const url = `https://www.youtube.com/embed/${aula.videoYoutubeId}?autoplay=0`;
-      this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-    }
+  gerarVideoUrl(aulaIdYoutube: string): void {
+    const url = `https://www.youtube.com/embed/${aulaIdYoutube}?autoplay=0`;
+    this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
   definirNavegacaoAulas(): void {
     if (!this.aula || !this.aulasList.length) return;
 
-    const currentIndex = this.aulasList.findIndex(
-      (a) => a.id === this.aula!.id
+    const currentIndex = this.aulasList().findIndex(
+      (a) => a.idAula === this.aula!.idAula
     );
 
     // Próxima aula
-    if (currentIndex < this.aulasList.length - 1) {
-      this.proximaAula = this.aulasList[currentIndex + 1];
+    if (currentIndex < this.aulasList().length - 1) {
+      this.proximaAula = this.aulasList()[currentIndex + 1];
     } else {
       this.proximaAula = null;
     }
 
     // Aula anterior
     if (currentIndex > 0) {
-      this.aulaAnterior = this.aulasList[currentIndex - 1];
+      this.aulaAnterior = this.aulasList()[currentIndex - 1];
     } else {
       this.aulaAnterior = null;
     }
@@ -207,7 +233,7 @@ export class AulaComponent implements OnInit, OnDestroy {
         '/aula',
         this.cursoId,
         this.moduloId,
-        this.proximaAula.id,
+        this.proximaAula.idAula,
       ]);
     }
   }
@@ -218,14 +244,15 @@ export class AulaComponent implements OnInit, OnDestroy {
         '/aula',
         this.cursoId,
         this.moduloId,
-        this.aulaAnterior.id,
+        this.aulaAnterior.idAula,
       ]);
     }
   }
 
   irParaAula(aula: Aula): void {
     if (this.cursoId && this.moduloId) {
-      this.router.navigate(['/aula', this.cursoId, this.moduloId, aula.id]);
+      this.navState.setAula(aula.idAula);
+      this.router.navigate(['/aula', this.cursoId, this.moduloId, aula.idAula]);
     }
   }
 
