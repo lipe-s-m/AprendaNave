@@ -53,7 +53,6 @@ namespace server.Domain.Services
 		public IEnumerable<Modulo> GetModulosByCurseId(int? Id)
 		{
 			IEnumerable<Modulo> res = _dbContext.Modulos.ToList().Where(m => m.CursoId == Id);
-
 			return res;
 		}
 	}

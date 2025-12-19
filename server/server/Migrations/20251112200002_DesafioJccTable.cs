@@ -24,7 +24,7 @@ namespace server.Migrations
 				 {
 					 table.PrimaryKey("pk_desafio_jcc", x => x.id_aluno);
 					 table.ForeignKey(
-							  name: "fk_desafio_jcc_aluno_id_aluno",
+							  name: "id_aluno",
 							  column: x => x.id_aluno,
 							  principalTable: "aluno",
 							  principalColumn: "id",

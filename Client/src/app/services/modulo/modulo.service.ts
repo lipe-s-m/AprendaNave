@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { EMPTY, Observable, shareReplay, tap } from 'rxjs';
+import { EMPTY, map, Observable, shareReplay, tap } from 'rxjs';
 import { IModulo } from '../../shared/interfaces/curso.model';
 
 @Injectable({
@@ -26,6 +26,25 @@ export class ModuloService {
       );
     // }
     return this.moduloCache$;
+  }
+
+  getModuloById(cursoId: number, moduloId: number): Observable<IModulo | null> {
+    return this.getModulos(cursoId).pipe(
+      map((modulos) =>
+        modulos
+          ? modulos.find((modulo) => modulo.id === moduloId) ?? null
+          : null
+      )
+    );
+  }
+
+  updateModuloStatus(
+    moduloId: number,
+    status: 'NAO_INICIADO' | 'EM_ANDAMENTO' | 'CONCLUIDO'
+  ): Observable<IModulo> {
+    return this.http.patch<IModulo>(`${this.apiUrl}/modulos/${moduloId}`, {
+      status,
+    });
   }
   clearCache(): void {
     this.moduloCache$ = EMPTY;

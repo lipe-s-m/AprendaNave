@@ -7,3 +7,11 @@ export interface IModulo {
   descricao?: string;
   nivel?: 'INICIANTE' | 'INTERMEDIÁRIO' | 'AVANÇADO';
 }
+
+export interface IPlaylistVideos {
+  videoId: string;
+  titulo: string;
+  descricao: string;
+  posicao: number;
+  thumbnailUrl: string;
+}

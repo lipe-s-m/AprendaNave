@@ -5,7 +5,6 @@ using server.Domain.Entities;
 using server.Domain.Exceptions;
 using server.Domain.Interfaces;
 using server.Repository.Database;
-using System.Diagnostics;
 
 namespace server.Domain.Services
 {
@@ -24,6 +23,9 @@ namespace server.Domain.Services
 		{
 			var res = _context.Alunos.Where(a => a.Email == loginRequest.Email).FirstOrDefault();
 
+			if (res == null) return null;
+
+			//if (res != null)
 			if (res != null && Argon2.Verify(res.Senha, loginRequest.Senha))
 			{
 				UserResponseDTO UserResponse = new UserResponseDTO(res.Nome, res.Email, res.Cargo, res.Pontos);
@@ -38,6 +40,8 @@ namespace server.Domain.Services
 		{
 			if (cadastroRequestDTO != null && cadastroRequestDTO.Senha.Length > 2 && cadastroRequestDTO.Senha == cadastroRequestDTO.SenhaConfirmacao)
 			{
+				//cadastroRequestDTO.Senha = "senha123";
+
 				cadastroRequestDTO.Senha = Argon2.Hash(cadastroRequestDTO.Senha);
 				Aluno aluno;
 				aluno = ConvertRequestToAlunoDTO(cadastroRequestDTO);
@@ -46,10 +50,7 @@ namespace server.Domain.Services
 					aluno.Cargo = "Aluno";
 				}
 				_context.Alunos.Add(aluno);
-				var sw = Stopwatch.StartNew();
 				await _context.SaveChangesAsync();
-				sw.Stop();
-				_logger.LogInformation($"SaveChanges levou {sw.ElapsedMilliseconds}ms");
 				CadastroResponseDTO cadastroResponseDTO = ConvertAlunoToResponseDTO(aluno);
 				return cadastroResponseDTO;
 			}

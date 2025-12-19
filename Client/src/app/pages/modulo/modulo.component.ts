@@ -1,13 +1,18 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TrilhaService } from '../../services/trilha/trilha.service';
-import { Trilha, Modulo, Aula } from '../../models/trilha.model';
-import { Observable, Subscription } from 'rxjs';
+import { Trilha, Modulo } from '../../models/trilha.model';
+import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderComponent } from '../../shared/components/loader/loader.component';
 import { SubheaderComponent } from '../../shared/components/subheader/subheader.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
+import { AulaService } from '../../services/aula/aula.service';
+import { AulaDTO } from '../../shared/interfaces/aulas';
+import { NavigationStateService } from '../../services/navigation-state/navigation-state.service';
+
+type AulaViewModel = AulaDTO & { concluida: boolean };
 
 @Component({
   selector: 'app-modulo',
@@ -17,20 +22,30 @@ import { ButtonComponent } from '../../shared/components/button/button.component
   styleUrl: './modulo.component.scss',
 })
 export class ModuloComponent implements OnInit, OnDestroy {
-  trilhaId: number | null = null;
-  moduloId: number | null = null;
+  private readonly navState = inject(NavigationStateService);
+
   trilha: Trilha | null = null;
   modulo: Modulo | null = null;
   isLoading = true;
   error: string | null = null;
-  aulas: any[] = [];
+  aulas: AulaViewModel[] = [];
 
   private subscription: Subscription | null = null;
+  private aulasSubscription: Subscription | null = null;
+
+  get trilhaId(): number | null {
+    return this.navState.cursoId();
+  }
+
+  get moduloId(): number | null {
+    return this.navState.moduloId();
+  }
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private trilhaService: TrilhaService,
+    private aulaService: AulaService,
     private toastr: ToastrService
   ) {}
 
@@ -39,11 +54,14 @@ export class ModuloComponent implements OnInit, OnDestroy {
       const trilhaId = params.get('trilhaId');
       const moduloId = params.get('moduloId');
 
-      this.trilhaId = trilhaId !== null ? Number(trilhaId) : null;
-      this.moduloId = moduloId !== null ? Number(moduloId) : null;
+      const cursoIdNum = trilhaId !== null ? Number(trilhaId) : null;
+      const moduloIdNum = moduloId !== null ? Number(moduloId) : null;
 
-      if (this.trilhaId !== null && this.moduloId !== null) {
-        this.loadTrilhaEModulo(this.trilhaId, this.moduloId);
+      this.navState.setCurso(cursoIdNum);
+      this.navState.setModulo(moduloIdNum);
+
+      if (cursoIdNum !== null && moduloIdNum !== null) {
+        this.loadTrilhaEModulo(cursoIdNum, moduloIdNum);
       } else {
         this.error = 'ID de trilha ou módulo inválido';
         this.isLoading = false;
@@ -53,9 +71,8 @@ export class ModuloComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     localStorage.removeItem('trilhas');
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    this.subscription?.unsubscribe();
+    this.aulasSubscription?.unsubscribe();
   }
 
   loadTrilhaEModulo(trilhaId: number, moduloId: number): void {
@@ -71,32 +88,10 @@ export class ModuloComponent implements OnInit, OnDestroy {
 
         if (!this.modulo) {
           this.error = `Módulo com ID ${moduloId} não encontrado na trilha`;
+          this.isLoading = false;
         } else {
-          // Carregar as aulas do módulo
-          this.aulas = this.modulo.aulasList || [];
-
-          // Atualiza o número de aulas no módulo para refletir o número real de aulas
-          this.modulo.aulas = this.aulas.length;
-
-          // Se o módulo estiver marcado como concluído, marque todas as aulas como concluídas
-          if (this.modulo.status === 'CONCLUIDO') {
-            this.aulas.forEach((aula) => {
-              aula.concluida = true;
-            });
-          }
-          // Se o módulo estiver em andamento mas nenhuma aula estiver concluída,
-          // marque pelo menos a primeira aula como concluída
-          else if (
-            this.modulo.status === 'EM_ANDAMENTO' &&
-            !this.aulas.some((a) => a.concluida)
-          ) {
-            if (this.aulas.length > 0) {
-              this.aulas[0].concluida = true;
-            }
-          }
+          this.carregarAulas(this.modulo.id);
         }
-
-        this.isLoading = false;
       },
       error: (err) => {
         this.error = 'Erro ao carregar a trilha: ' + err.message;
@@ -111,51 +106,14 @@ export class ModuloComponent implements OnInit, OnDestroy {
     }
   }
   resetarAulas(): void {
-    this.aulas.forEach((aula) => {
-      aula.concluida = false;
-    });
+    this.aulaService.resetConclusoes();
+    this.sincronizarConclusoesLocais();
   }
   marcarConcluido(): void {
     if (this.trilhaId && this.moduloId) {
-      // Primeiro, vamos marcar todas as aulas como concluídas
-      const promises: Observable<Trilha>[] = [];
-
-      // Para cada aula não concluída, criamos uma Promise para atualizá-la
-      this.aulas.forEach((aula) => {
-        if (!aula.concluida) {
-          promises.push(
-            this.trilhaService.atualizarStatusAula(
-              this.trilhaId!,
-              this.moduloId!,
-              aula.id,
-              true
-            )
-          );
-        }
-      });
-
-      // Se não houver aulas para concluir, ou após todas as atualizações,
-      // marcamos o módulo como concluído
-      if (promises.length === 0) {
-        this.atualizarStatusModulo();
-      } else {
-        // Utilizamos o último Observable para atualizar o módulo após todas as aulas serem atualizadas
-        promises[promises.length - 1].subscribe({
-          next: () => {
-            // Marcar todas as aulas como concluídas na interface
-            this.aulas.forEach((aula) => {
-              aula.concluida = true;
-            });
-
-            // Agora atualizamos o status do módulo
-            this.atualizarStatusModulo();
-          },
-          error: (err: any) => {
-            this.toastr.error('Erro ao concluir as aulas', 'Erro');
-            console.error('Erro ao concluir as aulas:', err);
-          },
-        });
-      }
+      this.aulas.forEach((aula) => this.marcarConclusaoLocal(aula.id));
+      this.sincronizarConclusoesLocais();
+      this.atualizarStatusModulo();
     }
   }
 
@@ -200,42 +158,77 @@ export class ModuloComponent implements OnInit, OnDestroy {
   }
 
   todasAulasConcluidas(): boolean {
-    return this.aulas.every((aula) => aula.concluida === true);
+    return this.aulaService.progresso().todasConcluidas;
   }
 
   podeConcluirModulo(): boolean {
     return this.modulo?.status !== 'CONCLUIDO' && this.todasAulasConcluidas();
   }
 
-  iniciarAula(aula: any): void {
+  iniciarAula(aula: AulaViewModel): void {
     if (!this.trilhaId || !this.moduloId) return;
 
     // Navegar para a página da aula
     this.router.navigate(['/aula', this.trilhaId, this.moduloId, aula.id]);
 
-    // Marca a aula como concluída
-    aula.concluida = true;
+    this.marcarConclusaoLocal(aula.id);
+    this.sincronizarConclusoesLocais();
+  }
 
-    // Atualiza o estado no localStorage
-    if (this.trilha && this.modulo) {
-      this.trilhaService
-        .atualizarStatusAula(this.trilhaId, this.moduloId, aula.id, true)
-        .subscribe({
-          next: (trilhaAtualizada) => {
-            // Atualiza a trilha e o módulo com os dados atualizados
-            this.trilha = trilhaAtualizada;
-            this.modulo =
-              trilhaAtualizada.modulos.find((m) => m.id === this.moduloId) ||
-              null;
+  private carregarAulas(moduloId: number): void {
+    this.isLoading = true;
+    this.aulasSubscription?.unsubscribe();
+    this.aulasSubscription = this.aulaService.loadAulas(moduloId).subscribe({
+      next: (aulas) => {
+        this.aulas = aulas.map((aula) => ({
+          ...aula,
+          concluida: this.aulaService.isAulaConcluida(aula.id),
+        }));
 
-            // Verifica se todas as aulas estão concluídas
-            const todasAulasConcluidas = this.aulas.every((a) => a.concluida);
-          },
-          error: (err: any) => {
-            this.toastr.error('Erro ao atualizar status da aula', 'Erro');
-            console.error('Erro ao atualizar status da aula:', err);
-          },
-        });
+        if (this.modulo) {
+          this.modulo.aulas = this.aulas.length;
+        }
+
+        this.aplicarRegraStatusModulo();
+        this.sincronizarConclusoesLocais();
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.error = 'Erro ao carregar aulas: ' + err.message;
+        this.isLoading = false;
+        this.toastr.error(this.error, 'Erro');
+      },
+    });
+  }
+
+  private aplicarRegraStatusModulo(): void {
+    if (!this.modulo) {
+      return;
     }
+
+    if (this.modulo.status === 'CONCLUIDO') {
+      this.aulas.forEach((aula) => this.marcarConclusaoLocal(aula.id));
+    } else if (
+      this.modulo.status === 'EM_ANDAMENTO' &&
+      !this.aulas.some((aula) => aula.concluida)
+    ) {
+      const primeiraAula = this.aulas[0];
+      if (primeiraAula) {
+        this.marcarConclusaoLocal(primeiraAula.id);
+      }
+    }
+  }
+
+  private marcarConclusaoLocal(aulaId: number): void {
+    if (!this.aulaService.isAulaConcluida(aulaId)) {
+      this.aulaService.markAulaComoConcluida(aulaId);
+    }
+  }
+
+  private sincronizarConclusoesLocais(): void {
+    this.aulas = this.aulas.map((aula) => ({
+      ...aula,
+      concluida: this.aulaService.isAulaConcluida(aula.id),
+    }));
   }
 }

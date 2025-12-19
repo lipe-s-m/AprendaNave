@@ -2,17 +2,35 @@
   <app-subheader />
 </header>
 <div class="home-container">
-
-
   <main class="home-content">
     <h1>Conheça nossos cursos</h1>
 
     <div class="courses-grid">
+      <div class="course-card" (click)="goToAprendaBot()">
+        <span class="tag">TUTOR IA</span>
+
+        <div class="course-icon challenge-icon">
+          <img src="https://i.ibb.co/XrhcPQt3/4712010.png" alt="Logo AprendaNave" />
+        </div>
+
+        <div class="card-content">
+          <span class="title-section">
+            <h3>AprendaBot</h3>
+            <div class="modules">Seu Tutor IA</div>
+          </span>
+          <div class="info-row">
+            <div class="instructor">
+              <img src="assets/logo.svg" alt="Instrutor" class="instructor-avatar" />
+              <span>Tire suas dúvidas com o AprendaBot!</span>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="course-card" (click)="goToDesafioJCC()">
         <span class="tag">DESAFIO</span>
 
         <div class="course-icon challenge-icon">
-          <img src="https://cdn-icons-png.flaticon.com/512/1620/1620512.png" alt="Logo AprendaNave">
+          <img src="https://cdn-icons-png.flaticon.com/512/1620/1620512.png" alt="Logo AprendaNave" />
         </div>
 
         <div class="card-content">
@@ -22,12 +40,10 @@
           </span>
           <div class="info-row">
             <div class="instructor">
-              <img src="assets/logo.svg" alt="Instrutor" class="instructor-avatar">
+              <img src="assets/logo.svg" alt="Instrutor" class="instructor-avatar" />
               <span>Boa Sorte</span>
             </div>
-            <div class="enrollments">
-              {{ qtdDesafiantesJCC }} desafiantes
-            </div>
+            <div class="enrollments">{{ qtdDesafiantesJCC }} desafiantes</div>
           </div>
         </div>
       </div>
@@ -35,7 +51,7 @@
         <span class="tag" *ngIf="curso.tag">{{ curso.tag }}</span>
 
         <div class="course-icon">
-          <img [src]="curso.logo" [alt]="curso.nome">
+          <img [src]="curso.logo" [alt]="curso.nome" />
         </div>
 
         <div class="card-content">
@@ -45,12 +61,10 @@
           </span>
           <div class="info-row">
             <div class="instructor">
-              <img src="assets/logo.svg" alt="Instrutor" class="instructor-avatar">
+              <img src="assets/logo.svg" alt="Instrutor" class="instructor-avatar" />
               <span>{{ curso.professor }}</span>
             </div>
-            <div class="enrollments">
-              {{ curso.id }} alunos
-            </div>
+            <div class="enrollments">{{ curso.id }} alunos</div>
           </div>
         </div>
       </div>

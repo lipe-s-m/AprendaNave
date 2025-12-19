@@ -26,7 +26,7 @@ namespace server.Domain.Services
 			}
 			//se os params estiverem ok
 			{
-				var response = await dbContexto.DesafioJcc.FindAsync(idAluno);
+				var response = await dbContexto.DesafioJcc.Where(d => d.IdAluno == idAluno && d.NomeAluno == nomeAluno).FirstOrDefaultAsync();
 				//criar novo registro se não existir
 				if (response == null)
 				{

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace server.Domain.Entities
 {
-	public class DesafioJcc : IAuditableEntity
+	public class Ranking : IAuditableEntity
 	{
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -16,6 +16,10 @@ namespace server.Domain.Entities
 		[Required]
 		public string NomeAluno { get; set; }
 
+		public Aluno Aluno { get; set; }
+
+		[Required]
+		public string Modalidade { get; set; }
 
 		[Required]
 		public int Pontos { get; set; }

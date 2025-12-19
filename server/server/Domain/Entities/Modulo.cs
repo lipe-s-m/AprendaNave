@@ -37,11 +37,11 @@ namespace server.Domain.Entities
 		public DateTime CreatedAt { get; set; }
 		public DateTime? LastUpdatedAt { get; set; }
 
-		//relacionamentos
-		public int CursoId { get; set; }
-
 		[Column("playlist")]
 		public string? Playlist { get; set; }
+
+		//relacionamentos
+		public int CursoId { get; set; }
 		public Curso Curso { get; set; } = default!;
 		public ICollection<AlunoModuloProgresso> AlunoModuloProgressos = [];
 

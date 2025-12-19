@@ -8,7 +8,6 @@ using server.Domain.Interfaces;
 using server.Domain.Services;
 using server.Repository.Database;
 using server.Settings;
-using System.Security.Claims;
 using System.Text;
 
 Env.Load();
@@ -43,11 +42,14 @@ builder.Services.AddScoped<IAlunoService, AlunoService>();
 builder.Services.AddScoped<ICursoService, CursoService>();
 builder.Services.AddScoped<IModuloService, ModuloService>();
 builder.Services.AddScoped<IDesafioJcc, DesafioJccService>();
+builder.Services.AddScoped<IRanking, RankingService>();
 builder.Services.AddScoped<IGuestUser, GuestUserService>();
+builder.Services.AddScoped<IAulaService, AulaService>();
 builder.Services.AddDbContext<DbContexto>(options =>
 	//options.UseNpgsql(builder.Configuration.GetConnectionString("Host=localhost;Port=5432;Database=aprendanavedb;User Id=postgres;"),
-	options.UseNpgsql(builder.Configuration.GetConnectionString("LocalConnection"),
-	//options.UseNpgsql(builder.Configuration.GetConnectionString("TransationConnection"),
+	//options.UseNpgsql(builder.Configuration.GetConnectionString("LocalConnection"),
+	//options.UseNpgsql(builder.Configuration.GetConnectionString("LocalDockerConnection"),
+	options.UseNpgsql(builder.Configuration.GetConnectionString("TransationConnection"),
 	npgsqlOptions => npgsqlOptions.EnableRetryOnFailure())
 	.EnableSensitiveDataLogging()
 	.EnableDetailedErrors()
@@ -124,6 +126,10 @@ app.MapGet("/ola", () => "ola World!");
 app.MapPost("/auth/login", ([FromBody] LoginRequestDTO loginRequestDTO, IAlunoService alunoService, TokenService tokenService, HttpContext httpContext) =>
 {
 	var res = alunoService.Login(loginRequestDTO);
+	if (res == null)
+	{
+		return Results.Json(data: "Email ou Senha incorretos!", statusCode: 401);
+	}
 	if (res != null)
 	{
 		LoginResponseDTO LoginDto = new LoginResponseDTO
@@ -149,7 +155,8 @@ app.MapPost("/auth/login", ([FromBody] LoginRequestDTO loginRequestDTO, IAlunoSe
 
 	return Results.Json(data: "Email ou Senha incorretos!", statusCode: 401);
 
-});
+})
+	.WithTags("Auth");
 
 app.MapPost("/users", async ([FromBody] CadastroRequestDTO aluno, IAlunoService alunoService) =>
 {
@@ -159,7 +166,7 @@ app.MapPost("/users", async ([FromBody] CadastroRequestDTO aluno, IAlunoService 
 		return Results.Created($"/alunos/{novoAluno.Id}", novoAluno);
 	}
 	return Results.BadRequest("Falha na criação do aluno (ex: senha muito curta).");
-});
+}).WithTags("Usuários");
 
 app.MapGet("/users", (IAlunoService alunoService) =>
 {
@@ -169,7 +176,7 @@ app.MapGet("/users", (IAlunoService alunoService) =>
 		return Results.Json(data: res, statusCode: 200);
 	}
 	return Results.Json(data: null, statusCode: 500);
-});
+}).WithTags("Usuários");
 
 app.MapGet("/cursos", (ICursoService cursoService) =>
 {
@@ -190,7 +197,7 @@ app.MapGet("/cursos", (ICursoService cursoService) =>
 						title: "Ocorreu um erro interno no servidor."
 				  );
 	}
-});
+}).WithTags("Cursos");
 app.MapGet("/cursos/modulos", (
 	[FromQuery] int? cursoId,
 	IModuloService moduloService
@@ -231,29 +238,37 @@ app.MapGet("/cursos/modulos", (
 	}
 	return Results.Json(null, statusCode: 500);
 })
-	//.RequireAuthorization()
-	;
-
-app.MapGet("/modulos", (int IdModulo, IModuloService ModuloService, ClaimsPrincipal user) =>
+	//.RequireAuthorization(),
+	.WithTags("Módulos");
+app.MapGet("/modulos/{moduloId}/aulas", (int moduloId, IAulaService aulaService) =>
 {
 	try
 	{
-		var IdUser = user.FindFirst("id")?.Value;
-		if (string.IsNullOrEmpty(IdUser))
-		{
-			return Results.Forbid();
-		}
-		bool compleat = ModuloService.CompletouModulo(IdModulo, int.Parse(IdUser));
-		var res = ModuloService.GetAllModulos();
+		var res = aulaService.getAllAulasByModuloId(moduloId);
+		if (res == null) return Results.Json(data: "Módulo não encontrado ou sem aulas.", statusCode: 404);
+
+		return Results.Json(data: res, statusCode: 200);
+
+	}
+	catch (Exception ex)
+	{
+		return Results.Json(data: ex, statusCode: 500);
+	}
+}).WithTags("Aulas");
+app.MapGet("/aulas/{aulaId}", (int aulaId, IAulaService aulaService) =>
+{
+	try
+	{
+		var res = aulaService.getAulaById(aulaId);
+		if (res == null) return Results.Json(data: "aula não encontrada", statusCode: 404);
 		return Results.Json(data: res, statusCode: 200);
 	}
 	catch (Exception ex)
 	{
 		return Results.Json(data: ex, statusCode: 500);
 	}
-})
-	//.RequireAuthorization()
-	;
+}).WithTags("Aulas");
+
 
 app.MapPatch("/users/{idUsuario}/pontos", async (int idUsuario, [FromBody] PontosDTO pontos, IAlunoService alunoService) =>
 {
@@ -268,7 +283,7 @@ app.MapPatch("/users/{idUsuario}/pontos", async (int idUsuario, [FromBody] Ponto
 		return Results.Json(data: ex, statusCode: 400);
 	}
 
-});
+}).WithTags("Usuários");
 app.MapPost("/guests", async ([FromBody] GuestUserRequestDTO guestUserRequestDTO, [FromServices] IGuestUser guestUserService) =>
 {
 	try
@@ -280,7 +295,7 @@ app.MapPost("/guests", async ([FromBody] GuestUserRequestDTO guestUserRequestDTO
 	{
 		return Results.Json(data: ex, statusCode: 400);
 	}
-});
+}).WithTags("Visitantes");
 app.MapGet("/guests", async ([FromServices] IGuestUser guestUserService) =>
 {
 	try
@@ -292,7 +307,7 @@ app.MapGet("/guests", async ([FromServices] IGuestUser guestUserService) =>
 	{
 		return Results.Json(data: ex, statusCode: 500);
 	}
-});
+}).WithTags("Visitantes");
 app.MapGet("/desafio/desafio-jcc/ranking", async ([FromServices] IDesafioJcc desafioJccService) =>
 {
 	try
@@ -304,7 +319,19 @@ app.MapGet("/desafio/desafio-jcc/ranking", async ([FromServices] IDesafioJcc des
 	{
 		return Results.Json(data: ex, statusCode: 500);
 	}
-});
+}).WithTags("DesafioJCC");
+app.MapGet("desafio/desafio-jcc/desafiantes", async ([FromServices] IDesafioJcc desafioJccService) =>
+{
+	try
+	{
+		var res = await desafioJccService.ObterTodosAlunosComPontuacao();
+		return Results.Json(data: res, statusCode: 200);
+	}
+	catch (Exception ex)
+	{
+		return Results.Json(data: ex, statusCode: 500);
+	}
+}).WithTags("DesafioJCC");
 app.MapPatch("/desafio/desafio-jcc/pontuacao", async ([FromBody] DesafioJccDTO desafioJccDTO, [FromServices] IDesafioJcc desafioJccService) =>
 {
 	try
@@ -316,7 +343,44 @@ app.MapPatch("/desafio/desafio-jcc/pontuacao", async ([FromBody] DesafioJccDTO d
 	{
 		return Results.Json(data: ex, statusCode: 400);
 	}
-});
+}).WithTags("DesafioJCC");
+
+app.MapGet("/rankings/modalidade/ranking", async ([FromQuery] string modalidade, [FromServices] IRanking rankingService) =>
+{
+	try
+	{
+		var res = await rankingService.ObterRankingPorModalidade(modalidade);
+		return Results.Json(data: res, statusCode: 200);
+	}
+	catch (Exception ex)
+	{
+		return Results.Json(data: ex, statusCode: 500);
+	}
+}).WithTags("Ranking");
+app.MapGet("/rankings/desafiantes", async ([FromQuery] string modalidade, [FromServices] IRanking rankingService) =>
+{
+	try
+	{
+		var res = await rankingService.ObterTodosAlunosComPontuacao(modalidade);
+		return Results.Json(data: res, statusCode: 200);
+	}
+	catch (Exception ex)
+	{
+		return Results.Json(data: ex, statusCode: 500);
+	}
+}).WithTags("Ranking");
+app.MapPatch("/rankings/pontuacao", async ([FromBody] RankingDTO rankingDTO, [FromServices] IRanking rankingService) =>
+{
+	try
+	{
+		var res = await rankingService.AtualizarPontuacaoAluno(rankingDTO.IdAluno, rankingDTO.NomeAluno, rankingDTO.PontuacaoAluno, rankingDTO.Modalidade);
+		return Results.Json(data: res, statusCode: 200);
+	}
+	catch (Exception ex)
+	{
+		return Results.Json(data: ex, statusCode: 400);
+	}
+}).WithTags("Ranking");
 
 app.MapGet("/auth/validate-token", (
 	TokenService TokenService, HttpContext httpContext
@@ -327,7 +391,7 @@ app.MapGet("/auth/validate-token", (
 		return Results.Ok(); // 200 OK
 	}
 	return Results.Unauthorized(); // 401 Unauthorized
-});
+}).WithTags("Auth");
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {

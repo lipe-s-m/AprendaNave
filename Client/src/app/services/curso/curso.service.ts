@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { Curso } from '../../shared/interfaces/curso.model';
+import { Curso } from '../../models/curso.model';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -13,5 +13,9 @@ export class CursoService {
 
   getCursos(): Observable<Curso[]> {
     return this.http.get<Curso[]>(`${this.apiUrl}/cursos`);
+  }
+
+  getCursoById(cursoId: number): Observable<Curso> {
+    return this.http.get<Curso>(`${this.apiUrl}/cursos/${cursoId}`);
   }
 }

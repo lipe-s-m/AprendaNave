@@ -257,7 +257,7 @@ namespace server.Migrations
                         .HasForeignKey("IdAluno")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_desafio_jcc_aluno_id_aluno");
+                        .HasConstraintName("id_aluno");
 
                     b.Navigation("Aluno");
                 });

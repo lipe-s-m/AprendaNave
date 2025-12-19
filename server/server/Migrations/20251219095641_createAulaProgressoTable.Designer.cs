@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using server.Repository.Database;
@@ -11,9 +12,11 @@ using server.Repository.Database;
 namespace server.Migrations
 {
     [DbContext(typeof(DbContexto))]
-    partial class DbContextoModelSnapshot : ModelSnapshot
+    [Migration("20251219095641_createAulaProgressoTable")]
+    partial class createAulaProgressoTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -258,7 +261,7 @@ namespace server.Migrations
                         .HasColumnName("pontos");
 
                     b.HasKey("Id")
-                        .HasName("desafio_jcc_pkey");
+                        .HasName("pk_desafio_jcc");
 
                     b.ToTable("desafio_jcc", (string)null);
                 });

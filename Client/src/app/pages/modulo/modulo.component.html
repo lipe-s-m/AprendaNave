@@ -34,7 +34,8 @@
             <i [ngClass]="aula.concluida ? 'fas fa-check' : 'fas fa-play'"></i>
           </div>
           <div class="aula-info">
-            <h3 class="aula-titulo">{{ aula.titulo }}</h3>
+
+            <h3 class="aula-titulo">{{ aula.titulo | titlecase }}</h3>
             <p class="aula-duracao">{{ aula.duracao }}</p>
           </div>
         </div>

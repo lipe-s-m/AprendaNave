@@ -44,11 +44,14 @@ namespace server.Repository.Database
 			base.OnModelCreating(modelBuilder);
 		}
 		public DbSet<Aluno> Alunos => Set<Aluno>();
+		public DbSet<Ranking> Rankings => Set<Ranking>();
 		public DbSet<DesafioJcc> DesafioJcc => Set<DesafioJcc>();
 		public DbSet<GuestUser> GuestUsers => Set<GuestUser>();
 
 		public DbSet<Curso> Cursos => Set<Curso>();
 		public DbSet<Modulo> Modulos => Set<Modulo>();
+		public DbSet<Aula> Aulas => Set<Aula>();
 		public DbSet<AlunoModuloProgresso> Progresso => Set<AlunoModuloProgresso>();
+		public DbSet<AlunoAulaProgresso> AulaProgresso => Set<AlunoAulaProgresso>();
 	}
 }

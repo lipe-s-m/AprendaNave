@@ -1,82 +1,104 @@
-import { Injectable, OnInit } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, computed, signal } from '@angular/core';
+import { catchError, Observable, tap, throwError } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { AulaDTO } from '../../shared/interfaces/aulas';
 
-interface AulasCompletionState {
-  // A chave é a string combinada, o valor é o Subject que armazena o status
-  [key: string]: BehaviorSubject<boolean>;
-}
 @Injectable({
   providedIn: 'root',
 })
 export class AulaService {
-  constructor() {}
+  private readonly apiUrl = environment.apiUrl;
+  private readonly aulasSignal = signal<AulaDTO[]>([]);
+  private readonly loadingSignal = signal<boolean>(false);
+  private readonly errorSignal = signal<string | null>(null);
+  private readonly concluidasSignal = signal<Set<number>>(new Set());
+  private moduloAtual: number | null = null;
 
-  todasAsAulasConcluidas$: BehaviorSubject<boolean>[][] = [];
-  private listaAulas: AulasCompletionState = {};
+  readonly aulas = computed(() => this.aulasSignal());
+  readonly isLoading = computed(() => this.loadingSignal());
+  readonly error = computed(() => this.errorSignal());
+  readonly progresso = computed(() => {
+    const aulas = this.aulasSignal();
+    const concluidas = this.concluidasSignal();
+    return {
+      total: aulas.length,
+      concluidas: concluidas.size,
+      todasConcluidas: aulas.length > 0 && concluidas.size === aulas.length,
+    };
+  });
 
-  private moduloCompletoSubject = new BehaviorSubject<{
-    cursoId: number;
-    moduloId: number;
-  } | null>(null);
-  moduloCompleto$ = this.moduloCompletoSubject.asObservable();
+  constructor(private readonly http: HttpClient) {}
 
-  getAulaKey(idCurso: number, idModulo: number, idAula: number): string {
-    return `${idCurso}-${idModulo}-${idAula}`;
+  loadAulas(moduloId: number): Observable<AulaDTO[]> {
+    if (this.moduloAtual !== moduloId) {
+      this.restaurarConclusoesLocais(moduloId);
+      this.moduloAtual = moduloId;
+    }
+
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+
+    return this.http
+      .get<AulaDTO[]>(`${this.apiUrl}/modulos/${moduloId}/aulas`)
+      .pipe(
+        tap((aulas) => {
+          this.aulasSignal.set(aulas);
+          this.loadingSignal.set(false);
+        }),
+        catchError((error) => {
+          this.loadingSignal.set(false);
+          this.errorSignal.set('Não foi possível carregar as aulas.');
+          return throwError(() => error);
+        })
+      );
   }
-  initializeAulas(
-    aulasAPI: any[] | null,
-    idCurso: number,
-    idModulo: number,
-    qtdAulas?: number | null
-  ): void {
-    if (!aulasAPI) {
-      for (let index = 0; index < qtdAulas!; index++) {
-        const key = this.getAulaKey(idCurso, idModulo, index + 1);
 
-        this.listaAulas[key];
+  markAulaComoConcluida(aulaId: number): void {
+    if (!this.moduloAtual) return;
+    const atual = new Set(this.concluidasSignal());
+    atual.add(aulaId);
+    this.concluidasSignal.set(atual);
+    this.persistirConclusoesLocais(this.moduloAtual, atual);
+  }
 
-        this.listaAulas[key] = new BehaviorSubject<boolean>(false);
-      }
+  resetConclusoes(): void {
+    if (!this.moduloAtual) return;
+    this.concluidasSignal.set(new Set());
+    localStorage.removeItem(this.getStorageKey(this.moduloAtual));
+  }
+
+  isAulaConcluida(aulaId: number): boolean {
+    return this.concluidasSignal().has(aulaId);
+  }
+
+  getAulaById(aulaId: number): AulaDTO | undefined {
+    return this.aulasSignal().find((aula) => aula.id === aulaId);
+  }
+
+  private restaurarConclusoesLocais(moduloId: number) {
+    const stored = localStorage.getItem(this.getStorageKey(moduloId));
+    if (!stored) {
+      this.concluidasSignal.set(new Set());
       return;
     }
-    aulasAPI.forEach((aula) => {
-      const key = this.getAulaKey(idCurso, idModulo, aula.id);
-      if (!this.listaAulas[key]) {
-        this.listaAulas[key] = new BehaviorSubject<boolean>(false);
-      }
-    });
-  }
 
-  marcarAulaComoConcluida(
-    idCurso: number,
-    idModulo: number,
-    idAula: number
-  ): void {
-    const key = this.getAulaKey(idCurso, idModulo, idAula);
-    if (this.listaAulas[key]) {
-      this.listaAulas[key].next(true);
-
-      this.verificarTodasAsAulasConcluidas(idCurso, idModulo);
+    try {
+      const parsed: number[] = JSON.parse(stored);
+      this.concluidasSignal.set(new Set(parsed));
+    } catch {
+      this.concluidasSignal.set(new Set());
     }
   }
 
-  verificarTodasAsAulasConcluidas(idCurso: number, idModulo: number): void {
-    let aulasConcluidas = true;
-    let aulasDoModuloEncontradas = false;
+  private persistirConclusoesLocais(moduloId: number, concluidas: Set<number>) {
+    localStorage.setItem(
+      this.getStorageKey(moduloId),
+      JSON.stringify(Array.from(concluidas))
+    );
+  }
 
-    const moduloKey = `${idCurso}-${idModulo}`;
-    for (const key in this.listaAulas) {
-      if (key.startsWith(moduloKey)) {
-        aulasDoModuloEncontradas = true;
-        const aulaStatus = this.listaAulas[key].getValue();
-        if (aulaStatus === false) {
-          aulasConcluidas = false;
-          break;
-        }
-      }
-    }
-    if (aulasConcluidas && aulasDoModuloEncontradas) {
-      this.moduloCompletoSubject.next({ cursoId: idCurso, moduloId: idModulo });
-    }
+  private getStorageKey(moduloId: number): string {
+    return `aulas-concluidas-${moduloId}`;
   }
 }

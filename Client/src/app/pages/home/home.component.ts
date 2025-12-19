@@ -7,9 +7,9 @@ import { Subscription } from 'rxjs';
 import { TrilhaService } from '../../services/trilha/trilha.service';
 import { LoaderComponent } from '../../shared/components/loader/loader.component';
 import { SubheaderComponent } from '../../shared/components/subheader/subheader.component';
-import { CursoService } from '../../services/curso/curso.service';
-import { Curso } from '../../shared/interfaces/curso.model';
 import { DesafioJccService } from '../../services/desafio-jcc/desafio-jcc.service';
+import { Curso } from '../../models/curso.model';
+import { CursoService } from '../../services/curso/curso.service';
 
 @Component({
   selector: 'app-home',
@@ -94,5 +94,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
   goToDesafioJCC() {
     this.router.navigate(['/desafiojcc']);
+  }
+  goToAprendaBot() {
+    this.router.navigate(['/aprendabot']);
   }
 }

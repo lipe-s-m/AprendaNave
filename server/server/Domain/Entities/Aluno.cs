@@ -1,6 +1,7 @@
 ﻿using server.Domain.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace server.Domain.Entities
 {
@@ -17,14 +18,16 @@ namespace server.Domain.Entities
 		[Required]
 		[EmailAddress]
 		[StringLength(100)]
+		[AllowNull]
 		public string Email { get; set; } = default!;
 
 		[StringLength(255)]
 		[Required]
+		[AllowNull]
 		public string Senha { get; set; } = default!;
 
 		[StringLength(20)]
-		public string Cargo { get; set; } = "Aluno";
+		public string Cargo { get; set; } = "Visitante";
 
 		public int Pontos { get; set; } = 0;
 
@@ -41,5 +44,7 @@ namespace server.Domain.Entities
 			Senha = senha;
 			Cargo = cargo;
 		}
+
+		public List<Ranking> Rankings { get; set; } = [];
 	}
 }

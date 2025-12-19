@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TrilhaService } from '../../services/trilha/trilha.service';
@@ -10,6 +10,7 @@ import { HeaderComponent } from '../../layout/header/header.component';
 import { SubheaderComponent } from '../../shared/components/subheader/subheader.component';
 import { ModuloService } from '../../services/modulo/modulo.service';
 import { ButtonComponent } from '../../shared/components/button/button.component';
+import { NavigationStateService } from '../../services/navigation-state/navigation-state.service';
 
 @Component({
   selector: 'app-trilha',
@@ -19,7 +20,8 @@ import { ButtonComponent } from '../../shared/components/button/button.component
   styleUrl: './trilha.component.scss',
 })
 export class TrilhaComponent implements OnInit, OnDestroy {
-  trilhaId: number | null = null;
+  private readonly navState = inject(NavigationStateService);
+
   trilha: any = null;
   nomeCurso: string = '';
   isLoading = true;
@@ -27,6 +29,10 @@ export class TrilhaComponent implements OnInit, OnDestroy {
   moduloSelecionado: any = null;
   statusModulo: string = 'PENDENTE';
   private subscription: Subscription | null = null;
+
+  get trilhaId(): number | null {
+    return this.navState.cursoId();
+  }
 
   constructor(
     private route: ActivatedRoute,
@@ -40,13 +46,16 @@ export class TrilhaComponent implements OnInit, OnDestroy {
     this.subscription = this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
       const nomeCurso = sessionStorage.getItem('cursoNome');
-      this.trilhaId = id !== null ? Number(id) : null;
+      const cursoIdNum = id !== null ? Number(id) : null;
+
+      this.navState.setCurso(cursoIdNum);
+
       if (nomeCurso) {
         this.nomeCurso = nomeCurso;
       }
 
-      if (this.trilhaId !== null) {
-        this.loadTrilha(this.trilhaId);
+      if (cursoIdNum !== null) {
+        this.loadTrilha(cursoIdNum);
       } else {
         this.error = 'ID de trilha inválido';
         this.isLoading = false;

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using server.Repository.Database;
@@ -11,9 +12,11 @@ using server.Repository.Database;
 namespace server.Migrations
 {
     [DbContext(typeof(DbContexto))]
-    partial class DbContextoModelSnapshot : ModelSnapshot
+    [Migration("20251218065004_AulasDb")]
+    partial class AulasDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,54 +74,6 @@ namespace server.Migrations
                         .HasName("pk_aluno");
 
                     b.ToTable("aluno", (string)null);
-                });
-
-            modelBuilder.Entity("server.Domain.Entities.AlunoAulaProgresso", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AlunoId")
-                        .HasColumnType("integer")
-                        .HasColumnName("aluno_id");
-
-                    b.Property<int>("AulaId")
-                        .HasColumnType("integer")
-                        .HasColumnName("aula_id");
-
-                    b.Property<int>("IdAluno")
-                        .HasColumnType("integer")
-                        .HasColumnName("id_aluno");
-
-                    b.Property<int>("IdAula")
-                        .HasColumnType("integer")
-                        .HasColumnName("id_aula");
-
-                    b.Property<int>("IdModulo")
-                        .HasColumnType("integer")
-                        .HasColumnName("id_modulo");
-
-                    b.Property<int>("ModuloId")
-                        .HasColumnType("integer")
-                        .HasColumnName("modulo_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_aluno_aula_progresso");
-
-                    b.HasIndex("AlunoId")
-                        .HasDatabaseName("ix_aluno_aula_progresso_aluno_id");
-
-                    b.HasIndex("AulaId")
-                        .HasDatabaseName("ix_aluno_aula_progresso_aula_id");
-
-                    b.HasIndex("ModuloId")
-                        .HasDatabaseName("ix_aluno_aula_progresso_modulo_id");
-
-                    b.ToTable("aluno_aula_progresso", (string)null);
                 });
 
             modelBuilder.Entity("server.Domain.Entities.AlunoModuloProgresso", b =>
@@ -258,7 +213,7 @@ namespace server.Migrations
                         .HasColumnName("pontos");
 
                     b.HasKey("Id")
-                        .HasName("desafio_jcc_pkey");
+                        .HasName("pk_desafio_jcc");
 
                     b.ToTable("desafio_jcc", (string)null);
                 });
@@ -407,36 +362,6 @@ namespace server.Migrations
                         .HasDatabaseName("ix_ranking_aluno_id");
 
                     b.ToTable("ranking", (string)null);
-                });
-
-            modelBuilder.Entity("server.Domain.Entities.AlunoAulaProgresso", b =>
-                {
-                    b.HasOne("server.Domain.Entities.Aluno", "Aluno")
-                        .WithMany()
-                        .HasForeignKey("AlunoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_aluno_aula_progresso_aluno_aluno_id");
-
-                    b.HasOne("server.Domain.Entities.Aula", "Aula")
-                        .WithMany()
-                        .HasForeignKey("AulaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_aluno_aula_progresso_aula_aula_id");
-
-                    b.HasOne("server.Domain.Entities.Modulo", "Modulo")
-                        .WithMany()
-                        .HasForeignKey("ModuloId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_aluno_aula_progresso_modulo_modulo_id");
-
-                    b.Navigation("Aluno");
-
-                    b.Navigation("Aula");
-
-                    b.Navigation("Modulo");
                 });
 
             modelBuilder.Entity("server.Domain.Entities.AlunoModuloProgresso", b =>

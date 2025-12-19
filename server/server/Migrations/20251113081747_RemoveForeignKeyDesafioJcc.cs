@@ -11,9 +11,7 @@ namespace server.Migrations
 		/// <inheritdoc />
 		protected override void Up(MigrationBuilder migrationBuilder)
 		{
-			migrationBuilder.DropForeignKey(
-				 name: "fk_desafio_jcc_aluno_id_aluno",
-				 table: "desafio_jcc");
+
 
 			migrationBuilder.AlterColumn<int>(
 				 name: "id_aluno",
@@ -37,13 +35,7 @@ namespace server.Migrations
 				 oldType: "integer")
 				 .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-			migrationBuilder.AddForeignKey(
-				 name: "fk_desafio_jcc_aluno_id_aluno",
-				 table: "desafio_jcc",
-				 column: "id_aluno",
-				 principalTable: "aluno",
-				 principalColumn: "id",
-				 onDelete: ReferentialAction.Cascade);
+
 		}
 	}
 }
