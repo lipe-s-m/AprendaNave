@@ -6,6 +6,7 @@ interface NavigationState {
   moduloId: number | null;
   aulaId: number | null;
   nomeCurso: string | null;
+  descricaoCurso: string | null;
   nomeModulo: string | null;
   aulas: AulaDTO[] | null;
 }
@@ -19,6 +20,7 @@ export class NavigationStateService {
     moduloId: null,
     aulaId: null,
     nomeCurso: null,
+    descricaoCurso: null,
     nomeModulo: null,
     aulas: null,
   });
@@ -27,6 +29,7 @@ export class NavigationStateService {
   readonly moduloId = computed(() => this.state().moduloId);
   readonly aulaId = computed(() => this.state().aulaId);
   readonly nomeCurso = computed(() => this.state().nomeCurso);
+  readonly descricaoCurso = computed(() => this.state().descricaoCurso);
   readonly nomeModulo = computed(() => this.state().nomeModulo);
   readonly aulas = computed(() => this.state().aulas);
 
@@ -37,6 +40,7 @@ export class NavigationStateService {
       moduloId: s.moduloId,
       aulaId: s.aulaId,
       nomeCurso: s.nomeCurso,
+      descricaoCurso: s.descricaoCurso,
       nomeModulo: s.nomeModulo,
       aulas: s.aulas,
       temCurso: s.cursoId !== null,
@@ -56,7 +60,12 @@ export class NavigationStateService {
       aulaId: null,
     }));
   }
-
+  setDescricaoCurso(descricaoCurso: string | null = null): void {
+    this.state.update((s) => ({
+      ...s,
+      descricaoCurso,
+    }));
+  }
   setModulo(moduloId: number | null, nomeModulo: string | null = null): void {
     this.state.update((s) => ({
       ...s,
@@ -99,6 +108,7 @@ export class NavigationStateService {
       moduloId: null,
       aulaId: null,
       nomeCurso: null,
+      descricaoCurso: null,
       nomeModulo: null,
       aulas: null,
     });

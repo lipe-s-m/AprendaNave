@@ -225,7 +225,6 @@ export class QuizComponent implements OnInit, OnDestroy {
       this.inGame = false;
       if (this.points >= 7) {
         this.ganhou = true;
-        this.toastr.success('Parabéns! Você completou o quiz!');
       } else {
         this.toastr.error(
           'Você não atingiu a pontuação necessária. Tente novamente!'
@@ -249,7 +248,6 @@ export class QuizComponent implements OnInit, OnDestroy {
     }
   }
   moduloConcluido(): void {
-    this.toastr.success('Quiz concluído com sucesso', 'Concluído!');
     let pontuacao = 0;
     switch (this.points) {
       case 10:

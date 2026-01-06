@@ -12,6 +12,7 @@ import { QuizComponent } from './pages/quiz/quiz/quiz.component';
 import { AprendabotComponent } from './pages/aprendabot/aprendabot.component';
 import { DesafioJccComponent } from './pages/desafio-jcc/desafio-jcc.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
+import { DesafioMatematicaComponent } from './pages/desafio-matematica/desafio-matematica.component';
 
 export const routes: Routes = [
   { path: '', component: StartComponent, pathMatch: 'full' },
@@ -42,6 +43,10 @@ export const routes: Routes = [
   {
     path: 'desafiojcc',
     component: DesafioJccComponent,
+  },
+  {
+    path: 'desafio-matematica',
+    component: DesafioMatematicaComponent,
   },
   {
     path: 'aprendabot',

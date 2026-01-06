@@ -35,6 +35,9 @@ export class ModuloComponent implements OnDestroy {
   get nomeCurso(): string {
     return this.navState.nomeCurso() || '';
   }
+  get descricaoCurso(): string {
+    return this.navState.descricaoCurso() || '';
+  }
 
   get nomeModulo(): string {
     return this.navState.nomeModulo() || '';

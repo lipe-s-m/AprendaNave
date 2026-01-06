@@ -240,7 +240,7 @@ export class TrilhaComponent implements OnInit, OnDestroy {
   navegarParaModulo(modulo: Modulo): void {
     if (this.trilhaId !== null) {
       this.navigationStateService.setModulo(modulo.id, modulo.nome);
-
+      this.navigationStateService.setDescricaoCurso(modulo.descricao);
       console.log(this.navigationStateService.nomeCurso());
       this.router.navigate(['/modulo', this.trilhaId, modulo.id]);
     }

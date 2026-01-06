@@ -61,6 +61,7 @@ export class DesafioMatematicaComponent {
     this.number1 = this.randNumber1();
     this.number2 = this.randNumber2();
     this.resultNumber();
+    console.log(this.nomeQuiz);
 
     this.obterUser();
     this.authService.isLogged().subscribe({
@@ -277,12 +278,13 @@ export class DesafioMatematicaComponent {
     }
   }
   atualizarPontuacaoNoServidor(): void {
-    console.log('oxi');
-
     sessionStorage.setItem('maiorPontuacaoDesafioJcc', this.points.toString());
 
     if (this.currentUser && typeof this.currentUser.id === 'number') {
-      if (this.nomeQuiz === 'Desafio JCC') {
+      console.log(this.currentUser.id);
+
+      if (this.nomeQuiz === 'Desafio Matemática') {
+        console.log('Entrei aq');
         this.desafioJccService
           .updatePontuacao(
             this.points,
