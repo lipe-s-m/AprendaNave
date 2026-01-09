@@ -17,9 +17,12 @@ namespace server.Domain.Entities
 		public string Descricao { get; set; } = default!;
 
 		[Required]
+		[Range(1, int.MaxValue, ErrorMessage = "A ordem deve ser maior ou igual a 1")]
 		public int Ordem { get; set; }
 
 		public int? Duracao { get; set; } = default!;
+
+		public StatusAprovacao Status { get; set; } = StatusAprovacao.Pendente;
 
 		[Required]
 		public string VideoYoutubeId { get; set; } = default!;

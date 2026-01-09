@@ -22,7 +22,7 @@ namespace server.Migrations
 				 },
 				 constraints: table =>
 				 {
-					 table.PrimaryKey("pk_desafio_jcc", x => x.id_aluno);
+					 table.PrimaryKey("desafio_jcc_pkey", x => x.id_aluno);
 					 table.ForeignKey(
 							  name: "id_aluno",
 							  column: x => x.id_aluno,

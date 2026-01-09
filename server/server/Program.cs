@@ -6,6 +6,9 @@ using Microsoft.IdentityModel.Tokens;
 using server.Domain.DTOs;
 using server.Domain.Interfaces;
 using server.Domain.Services;
+using server.Endpoints.Aulas;
+using server.Endpoints.Cursos;
+using server.Endpoints.Modulos;
 using server.Repository.Database;
 using server.Settings;
 using System.Text;
@@ -38,6 +41,7 @@ builder.Services.AddCors(options =>
 				.AllowCredentials()
 	 );
 });
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAlunoService, AlunoService>();
 builder.Services.AddScoped<ICursoService, CursoService>();
 builder.Services.AddScoped<IModuloService, ModuloService>();
@@ -45,6 +49,7 @@ builder.Services.AddScoped<IDesafioJcc, DesafioJccService>();
 builder.Services.AddScoped<IRanking, RankingService>();
 builder.Services.AddScoped<IGuestUser, GuestUserService>();
 builder.Services.AddScoped<IAulaService, AulaService>();
+builder.Services.AddScoped<ICurrentUser, CurrentUserService>();
 builder.Services.AddDbContext<DbContexto>(options =>
 	//options.UseNpgsql(builder.Configuration.GetConnectionString("Host=localhost;Port=5432;Database=aprendanavedb;User Id=postgres;"),
 	//options.UseNpgsql(builder.Configuration.GetConnectionString("LocalConnection"),
@@ -105,21 +110,29 @@ builder.Services.AddAuthorization();
 
 
 var app = builder.Build();
+if (app.Environment.IsDevelopment())
+{
+	app.UseDeveloperExceptionPage();
+}
+else
+{
+	app.UseExceptionHandler(appBuilder =>
+	{
+		appBuilder.Run(async context =>
+		{
+			context.Response.StatusCode = 500;
+			await context.Response.WriteAsJsonAsync(new
+			{
+				error = "Erro interno no servidor"
+			});
+		});
+	});
+}
 app.UseCors("CorsPolicy");
 app.UseCors("CorsPolicyProd");
 app.UseAuthentication();
 app.UseAuthorization();
 
-if (app.Environment.IsDevelopment())
-{
-	// A. APENAS EM DESENVOLVIMENTO: Mostra a página de exceção completa
-	app.UseDeveloperExceptionPage();
-}
-else
-{
-	// B. EM PRODUÇÃO: Redireciona para um endpoint de erro padrão (Ex: /Error)
-	app.UseExceptionHandler("/Error");
-}
 
 app.MapGet("/", () => "Hello World!");
 app.MapGet("/ola", () => "ola World!");
@@ -178,96 +191,9 @@ app.MapGet("/users", (IAlunoService alunoService) =>
 	return Results.Json(data: null, statusCode: 500);
 }).WithTags("Usuários");
 
-app.MapGet("/cursos", (ICursoService cursoService) =>
-{
-	try
-	{
-		var res = cursoService.GetAllCursos();
-		if (res != null)
-		{
-			return Results.Ok(res);
-		}
-		return Results.NotFound(new { message = "Nenhum curso encontrado." });
-	}
-	catch (Exception ex)
-	{
-		return Results.Problem(
-						detail: ex.Message, // Em produção, você pode querer logar isso e não enviar.
-						statusCode: 500,
-						title: "Ocorreu um erro interno no servidor."
-				  );
-	}
-}).WithTags("Cursos");
-app.MapGet("/cursos/modulos", (
-	[FromQuery] int? cursoId,
-	IModuloService moduloService
-	) =>
-{
-	if (cursoId != null)
-	{
-		try
-		{
-			var res = moduloService.GetModulosByCurseId(cursoId);
-
-			if (res != null)
-			{
-				return Results.Json(res, statusCode: 200);
-			}
-		}
-		catch (Exception ex)
-		{
-			var error = new ErrorResponse(400, ex.Message);
-			return Results.Json(error, statusCode: 400);
-		}
-	}
-	//se nao for filtrar por curso
-	try
-	{
-
-		var res = moduloService.GetAllModulos();
-		if (res != null)
-		{
-			return Results.Json(res, statusCode: 200);
-		}
-
-	}
-	catch (Exception ex)
-	{
-		var error = new ErrorResponse(400, ex.Message);
-		return Results.Json(error, statusCode: 400);
-	}
-	return Results.Json(null, statusCode: 500);
-})
-	//.RequireAuthorization(),
-	.WithTags("Módulos");
-app.MapGet("/modulos/{moduloId}/aulas", (int moduloId, IAulaService aulaService) =>
-{
-	try
-	{
-		var res = aulaService.getAllAulasByModuloId(moduloId);
-		if (res == null) return Results.Json(data: "Módulo não encontrado ou sem aulas.", statusCode: 404);
-
-		return Results.Json(data: res, statusCode: 200);
-
-	}
-	catch (Exception ex)
-	{
-		return Results.Json(data: ex, statusCode: 500);
-	}
-}).WithTags("Aulas");
-app.MapGet("/aulas/{aulaId}", (int aulaId, IAulaService aulaService) =>
-{
-	try
-	{
-		var res = aulaService.getAulaById(aulaId);
-		if (res == null) return Results.Json(data: "aula não encontrada", statusCode: 404);
-		return Results.Json(data: res, statusCode: 200);
-	}
-	catch (Exception ex)
-	{
-		return Results.Json(data: ex, statusCode: 500);
-	}
-}).WithTags("Aulas");
+app.MapCursosEndpoints();
+app.MapModulosEndpoints();
+app.MapAulasEndpoints();
 
 
 app.MapPatch("/users/{idUsuario}/pontos", async (int idUsuario, [FromBody] PontosDTO pontos, IAlunoService alunoService) =>

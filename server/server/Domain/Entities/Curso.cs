@@ -18,10 +18,13 @@ namespace server.Domain.Entities
 
 		[Required]
 		[StringLength(50)]
-		public string Professor { get; set; } = default!;
+		public string AutorNome { get; set; } = default!;
 
-		public string? descricao { get; set; } = default!;
+		[Required]
+		public int AutorId { get; set; } = default!;
+
+		public string Descricao { get; set; } = default!;
+		public StatusAprovacao Status { get; set; } = StatusAprovacao.Pendente;
 		public ICollection<Modulo> Modulos { get; set; } = [];
-
 	}
 }

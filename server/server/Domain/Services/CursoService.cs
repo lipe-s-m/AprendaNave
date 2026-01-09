@@ -1,4 +1,6 @@
-﻿using server.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using server.Domain.DTOs;
+using server.Domain.Entities;
 using server.Domain.Interfaces;
 using server.Repository.Database;
 
@@ -14,8 +16,17 @@ namespace server.Domain.Services
 
 
 		//requisicoes
-		public Curso CreateCurso(Curso curso)
+		public Curso CreateCurso(CursoRequestDTO cursoRequest, int userId)
 		{
+			var curso = new Curso
+			{
+				Nome = cursoRequest.Nome,
+				AutorNome = cursoRequest.AutorNome,
+				AutorId = userId,
+				Logo = cursoRequest.Logo,
+				Descricao = cursoRequest.Descricao
+			};
+
 			_context.Add(curso);
 			_context.SaveChanges();
 
@@ -28,9 +39,9 @@ namespace server.Domain.Services
 			_context.SaveChanges();
 		}
 
-		public List<Curso> GetAllCursos(int pagina = 1)
+		public List<Curso> GetCursosAprovados(int pagina = 1)
 		{
-			var query = _context.Cursos.AsQueryable();
+			var query = _context.Cursos.Where(c => c.Status == StatusAprovacao.Aprovado).AsQueryable();
 
 			int itensPorPagina = 6;
 
@@ -46,6 +57,13 @@ namespace server.Domain.Services
 				return res;
 			}
 			return null;
+		}
+
+		public async Task<IEnumerable<CursoResponseDTO>> getCursosByUserId(int userId)
+		{
+			var cursosResponse = await _context.Cursos.Where(c => c.AutorId == userId).Select(c => new CursoResponseDTO(c)).ToListAsync();
+
+			return cursosResponse;
 		}
 	}
 }

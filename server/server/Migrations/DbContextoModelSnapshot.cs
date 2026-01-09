@@ -171,6 +171,11 @@ namespace server.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("ordem");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
+
                     b.Property<string>("Titulo")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -200,6 +205,21 @@ namespace server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("AutorId")
+                        .HasColumnType("integer")
+                        .HasColumnName("autor_id");
+
+                    b.Property<string>("AutorNome")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("autor_nome");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("descricao");
+
                     b.Property<string>("Logo")
                         .IsRequired()
                         .HasColumnType("text")
@@ -211,15 +231,10 @@ namespace server.Migrations
                         .HasColumnType("character varying(50)")
                         .HasColumnName("nome");
 
-                    b.Property<string>("Professor")
+                    b.Property<string>("Status")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("professor");
-
-                    b.Property<string>("descricao")
                         .HasColumnType("text")
-                        .HasColumnName("descricao");
+                        .HasColumnName("status");
 
                     b.HasKey("Id")
                         .HasName("pk_curso");
@@ -258,7 +273,7 @@ namespace server.Migrations
                         .HasColumnName("pontos");
 
                     b.HasKey("Id")
-                        .HasName("desafio_jcc_pkey");
+                        .HasName("pk_desafio_jcc");
 
                     b.ToTable("desafio_jcc", (string)null);
                 });
@@ -351,6 +366,11 @@ namespace server.Migrations
                     b.Property<int>("QuantidadeHoras")
                         .HasColumnType("integer")
                         .HasColumnName("quantidade_horas");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
 
                     b.HasKey("Id")
                         .HasName("pk_modulo");

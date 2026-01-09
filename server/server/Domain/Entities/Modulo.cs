@@ -34,11 +34,14 @@ namespace server.Domain.Entities
 		[Required]
 		public int QuantidadeHoras { get; set; } = default!;
 
+		[Column("playlist")]
+		public string? Playlist { get; set; }
+
+		public StatusAprovacao Status { get; set; } = StatusAprovacao.Pendente;
+
 		public DateTime CreatedAt { get; set; }
 		public DateTime? LastUpdatedAt { get; set; }
 
-		[Column("playlist")]
-		public string? Playlist { get; set; }
 
 		//relacionamentos
 		public int CursoId { get; set; }

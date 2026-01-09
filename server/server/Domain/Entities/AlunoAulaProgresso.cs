@@ -19,5 +19,12 @@ namespace server.Domain.Entities
 		public Aluno Aluno { get; set; } = default!;
 		public Aula Aula { get; set; } = default!;
 		public Modulo Modulo { get; set; } = default!;
+
+		public AlunoAulaProgresso(int idAluno, int idAula, int idModulo)
+		{
+			IdAluno = idAluno;
+			IdAula = idAula;
+			IdModulo = idModulo;
+		}
 	}
 }

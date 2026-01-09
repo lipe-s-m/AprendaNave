@@ -261,7 +261,7 @@ namespace server.Migrations
                         .HasColumnName("pontos");
 
                     b.HasKey("Id")
-                        .HasName("pk_desafio_jcc");
+                        .HasName("desafio_jcc_pkey");
 
                     b.ToTable("desafio_jcc", (string)null);
                 });

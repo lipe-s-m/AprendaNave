@@ -31,6 +31,15 @@ namespace server.Repository.Database
 		}
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
+			modelBuilder.Entity<Curso>()
+				.Property(c => c.Status)
+				.HasConversion<string>();
+			modelBuilder.Entity<Modulo>()
+				.Property(m => m.Status)
+				.HasConversion<string>();
+			modelBuilder.Entity<Aula>()
+				.Property(a => a.Status)
+				.HasConversion<string>();
 			modelBuilder.Entity<AlunoModuloProgresso>()
 				.HasKey(amp => new { amp.IdAluno, amp.IdModulo });
 			modelBuilder.Entity<AlunoModuloProgresso>()
