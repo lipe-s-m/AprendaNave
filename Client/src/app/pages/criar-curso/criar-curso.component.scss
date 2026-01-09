@@ -1,0 +1,154 @@
+@import "../../scss/variables";
+
+.criar-curso-container {
+  padding: 2rem 1rem;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  @media (max-width: 768px) {
+    padding: 0.5rem;
+  }
+}
+
+.criar-curso-content {
+  max-width: 1200px;
+  width: 98%;
+  margin: 0 auto;
+  padding: 2rem;
+  box-shadow: 1px 1px 22px var(--background-senary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media (max-width: 768px) {
+    padding: 1.5rem 1rem 2rem;
+    border-radius: 0;
+    max-width: 600px;
+  }
+}
+
+.header-section {
+  margin-bottom: 2rem;
+  text-align: center;
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+
+    @media (max-width: 768px) {
+      font-size: 2rem;
+    }
+  }
+
+  .subtitle {
+    font-size: 2rem;
+    color: var(--text-secondary);
+    margin: 0;
+
+    @media (max-width: 768px) {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+.curso-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  max-width: 70rem;
+  width: 100%;
+  .divisoria {
+    display: flex;
+    width: 100%;
+    gap: 2rem;
+  }
+  @media (max-width: 768px) {
+    .divisoria {
+      flex-direction: column;
+    }
+  }
+  @media (min-width: 769px) {
+    .bloco-2 {
+      width: 100%;
+    }
+  }
+}
+.bloco-1 {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 262px;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  label {
+    align-self: flex-start;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    opacity: 0.8;
+  }
+
+  .error-message {
+    font-size: 1.3rem;
+    color: var(--error-color);
+    margin-top: 0.25rem;
+    display: block;
+    animation: fadeIn 0.2s ease-in;
+  }
+}
+app-input {
+  width: 100%;
+}
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 1rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  app-button {
+    flex: 1;
+
+    @media (max-width: 768px) {
+      width: 100%;
+    }
+  }
+}
+
+.loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import { TrilhaService } from '../../services/trilha/trilha.service';
 import { Curso, Modulo } from '../../models/curso.model';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
@@ -40,7 +39,6 @@ export class TrilhaComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private trilhaService: TrilhaService,
     private moduloService: ModuloService,
     private toastr: ToastrService,
     private navigationStateService: NavigationStateService
@@ -75,7 +73,7 @@ export class TrilhaComponent implements OnInit, OnDestroy {
 
     this.moduloService.getModulos(id).subscribe({
       next: (trilha) => {
-        this.trilha = trilha;
+        this.trilha = trilha?.sort((a, b) => a.ordem - b.ordem);
         console.log(trilha);
 
         this.isLoading = false;
@@ -88,46 +86,46 @@ export class TrilhaComponent implements OnInit, OnDestroy {
     });
   }
 
-  atualizarStatusModulo(
-    modulo: Modulo,
-    novoStatus: 'NAO_INICIADO' | 'EM_ANDAMENTO' | 'CONCLUIDO'
-  ): void {
-    if (this.trilhaId === null) {
-      return;
-    }
+  // atualizarStatusModulo(
+  //   modulo: Modulo,
+  //   novoStatus: 'NAO_INICIADO' | 'EM_ANDAMENTO' | 'CONCLUIDO'
+  // ): void {
+  //   if (this.trilhaId === null) {
+  //     return;
+  //   }
 
-    this.trilhaService
-      .atualizarStatusModulo(this.trilhaId, modulo.id, novoStatus)
-      .subscribe({
-        next: (trilha) => {
-          this.trilha = trilha;
+  //   this.trilhaService
+  //     .atualizarStatusModulo(this.trilhaId, modulo.id, novoStatus)
+  //     .subscribe({
+  //       next: (trilha) => {
+  //         this.trilha = trilha;
 
-          let mensagemStatus = '';
-          switch (novoStatus) {
-            case 'NAO_INICIADO':
-              mensagemStatus = 'não iniciado';
-              break;
-            case 'EM_ANDAMENTO':
-              mensagemStatus = 'em andamento';
-              // Redirecionar para a página do módulo
-              this.navegarParaModulo(modulo);
-              break;
-            case 'CONCLUIDO':
-              mensagemStatus = 'concluído';
-              break;
-          }
+  //         let mensagemStatus = '';
+  //         switch (novoStatus) {
+  //           case 'NAO_INICIADO':
+  //             mensagemStatus = 'não iniciado';
+  //             break;
+  //           case 'EM_ANDAMENTO':
+  //             mensagemStatus = 'em andamento';
+  //             // Redirecionar para a página do módulo
+  //             this.navegarParaModulo(modulo);
+  //             break;
+  //           case 'CONCLUIDO':
+  //             mensagemStatus = 'concluído';
+  //             break;
+  //         }
 
-          this.toastr.success(
-            `Módulo marcado como ${mensagemStatus}`,
-            'Sucesso'
-          );
-        },
-        error: (err) => {
-          console.error('Erro ao atualizar módulo:', err);
-          this.toastr.error(err.message, 'Erro');
-        },
-      });
-  }
+  //         this.toastr.success(
+  //           `Módulo marcado como ${mensagemStatus}`,
+  //           'Sucesso'
+  //         );
+  //       },
+  //       error: (err) => {
+  //         console.error('Erro ao atualizar módulo:', err);
+  //         this.toastr.error(err.message, 'Erro');
+  //       },
+  //     });
+  // }
 
   abrirModalModulo(modulo: Modulo, event?: Event): void {
     if (modulo.id !== 1) {
@@ -191,8 +189,7 @@ export class TrilhaComponent implements OnInit, OnDestroy {
         // Primeiro fechar o modal para evitar problemas de redirecionamento
         setTimeout(() => {
           // Marcar como em andamento e redirecionar
-
-          this.atualizarStatusModulo(moduloId, 'EM_ANDAMENTO');
+          // this.atualizarStatusModulo(moduloId, 'EM_ANDAMENTO');
         }, 100);
       } catch (error) {
         console.error('Erro ao confirmar início do módulo:', error);
@@ -251,7 +248,7 @@ export class TrilhaComponent implements OnInit, OnDestroy {
   }
 
   resetarDados(): void {
-    this.trilhaService.resetarCursos();
+    // this.trilhaService.resetarCursos();
     this.toastr.success('Dados resetados com sucesso!', 'Sucesso');
     if (this.trilhaId) {
       this.loadTrilha(this.trilhaId);

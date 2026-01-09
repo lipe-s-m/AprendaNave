@@ -26,6 +26,7 @@ export class InputComponent {
   @Input() inputDisabled = false;
   @Input() inputBackgroundColor?: string;
   @Input() inputTextColor?: string;
+  @Input() rows?: number = 4;
 
   // O valor interno do input
   value?: any = '';

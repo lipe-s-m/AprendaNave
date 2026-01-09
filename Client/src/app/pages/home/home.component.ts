@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { ThemeService } from '../../services/theme/theme.service';
 import { Subscription } from 'rxjs';
-import { TrilhaService } from '../../services/trilha/trilha.service';
+// import { TrilhaService } from '../../services/trilha/trilha.service';
 import { LoaderComponent } from '../../shared/components/loader/loader.component';
 import { SubheaderComponent } from '../../shared/components/subheader/subheader.component';
 import { DesafioJccService } from '../../services/desafio-jcc/desafio-jcc.service';
@@ -100,5 +100,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
   goToAprendaBot() {
     this.router.navigate(['/aprendabot']);
+  }
+  goToMeusCursos() {
+    this.router.navigate(['/meus-cursos']);
   }
 }

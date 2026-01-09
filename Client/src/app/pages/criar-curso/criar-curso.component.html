@@ -1,0 +1,58 @@
+<header>
+  <app-subheader />
+</header>
+
+<div class="criar-curso-container">
+  <main class="criar-curso-content">
+    <div class="header-section">
+      <h1>Criar Curso</h1>
+      <p class="subtitle">Preencha as informações para criar seu curso</p>
+    </div>
+
+    <form [formGroup]="formCriarCurso" (ngSubmit)="handleSubmit()" class="curso-form">
+      <div class="divisoria">
+        <div class="inputs bloco-1">
+          <div class="form-group">
+            <label for="nome">Nome do Curso *</label>
+            <app-input placeholder="Digite o nome do curso" inputName="nome" inputSize="large" inputType="text" formControlName="nome" />
+            <span class="error-message" *ngIf="isFieldInvalid('nome')">
+              {{ getErrorMessage('nome') }}
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label for="logo">Logo (URL) *</label>
+            <app-input placeholder="https://exemplo.com/logo.png" inputName="logo" inputSize="large" inputType="url" formControlName="logo" />
+            <span class="error-message" *ngIf="isFieldInvalid('logo')">
+              {{ getErrorMessage('logo') }}
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label for="autor">Autor</label>
+            <app-input placeholder="Autor do curso" inputName="autor" inputSize="large" inputType="text" formControlName="autor" [inputDisabled]="true" />
+          </div>
+        </div>
+        <div class="bloco-2">
+
+          <div class="form-group">
+            <label for="descricao">Descrição *</label>
+            <app-input inputName="descricao" inputSize="large" inputType="textarea" formControlName="descricao" placeholder="Descreva o conteúdo e objetivos do curso..." [rows]=6></app-input>
+            <span class="error-message" *ngIf="isFieldInvalid('descricao')">
+              {{ getErrorMessage('descricao') }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <app-button buttonText="Criar Curso" buttonSize="large" buttonLevel="primary" buttonTheme="dark" buttonType="submit" [buttonDisabled]="formCriarCurso.invalid || isLoading()" />
+        <app-button buttonText="Cancelar" buttonSize="large" buttonLevel="secondary" buttonTheme="dark" buttonType="button" (click)="goToMeusCursos()" />
+      </div>
+    </form>
+  </main>
+</div>
+
+<div class="loading" *ngIf="isLoading()">
+  <app-loader></app-loader>
+</div>

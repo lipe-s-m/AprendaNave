@@ -1,4 +1,5 @@
-<input [type]="inputType" [name]="inputName" [placeholder]="placeholder" [ngClass]="[inputSize, inputTheme, inputLevel]" [value]="value" (input)="onInputChange($event)" (blur)="onTouched()">
+<input *ngIf="inputType !== 'textarea'" [type]="inputType" [name]="inputName" [placeholder]="placeholder" [ngClass]="[inputSize, inputTheme, inputLevel]" [value]="value" (input)="onInputChange($event)" (blur)="onTouched()">
+<textarea *ngIf="inputType === 'textarea'" [name]="inputName" [placeholder]="placeholder" [ngClass]="[inputSize, inputTheme, inputLevel]" [rows]="rows" (input)="onInputChange($event)" [value]="value" (blur)="onTouched()"></textarea>
 <!-- <div class="showPassword">
   <img *ngIf="inputType === 'password'" src="/assets/eye-open.svg" alt="Mostrar senha" width="24" height="24" />
 </div> -->

@@ -62,7 +62,7 @@
           <div class="info-row">
             <div class="instructor">
               <img src="assets/logo.svg" alt="Instrutor" class="instructor-avatar" />
-              <span>{{ curso.professor }}</span>
+              <span>Criado por {{ curso.autor }}</span>
             </div>
             <div class="enrollments">{{ curso.id }} alunos</div>
           </div>
@@ -71,7 +71,9 @@
     </div>
   </main>
 </div>
-
-<div class="loading" *ngIf="isLoading">
+<button class="create-course-button" (click)="goToMeusCursos()">
+  <span>Meus Cursos</span>
+</button>
+<div class=" loading" *ngIf="isLoading">
   <app-loader></app-loader>
 </div>

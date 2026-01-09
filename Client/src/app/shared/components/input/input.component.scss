@@ -1,12 +1,12 @@
 @use "./../../../scss/variables";
-input {
+input,
+textarea {
   padding: 1.6rem;
   border-radius: variables.$borda-radius;
   border: 0.24rem solid #e4e4e446;
   background-color: #5e48794d;
   font-size: variables.$fonte-tamanho-p;
   color: #fff;
-
   &.large {
     width: 100%;
     min-width: 26rem;

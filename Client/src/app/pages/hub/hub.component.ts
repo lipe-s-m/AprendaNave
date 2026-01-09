@@ -3,8 +3,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { Router } from '@angular/router';
 import { HeaderComponent } from '../../layout/header/header.component';
-import { TrilhaService } from '../../services/trilha/trilha.service';
 import { Subscription } from 'rxjs';
+import { CursoService } from '../../services/curso/curso.service';
 
 @Component({
   selector: 'app-hub',
@@ -19,7 +19,7 @@ export class HubComponent implements OnInit, OnDestroy {
   error: string | null = null;
   private subscription: Subscription | null = null;
 
-  constructor(private router: Router, private trilhaService: TrilhaService) {}
+  constructor(private router: Router, private cursoService: CursoService) {}
 
   ngOnInit(): void {
     this.loadCursos();
@@ -35,7 +35,7 @@ export class HubComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.error = null;
 
-    this.subscription = this.trilhaService.getCursosResumidos().subscribe({
+    this.subscription = this.cursoService.getCursos().subscribe({
       next: (cursos) => {
         this.cursos = cursos;
         this.isLoading = false;

@@ -4,7 +4,6 @@ import { Subscription } from 'rxjs';
 import { LoginService } from '../../../services/login/login.service';
 import { ToastrService } from 'ngx-toastr';
 import { ThemeService } from '../../../services/theme/theme.service';
-import { TrilhaService } from '../../../services/trilha/trilha.service';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent } from '../button/button.component';
 

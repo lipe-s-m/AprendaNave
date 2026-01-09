@@ -1,7 +1,6 @@
 import { Component, OnDestroy, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TrilhaService } from '../../services/trilha/trilha.service';
 import { Curso, Modulo } from '../../models/curso.model';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
@@ -54,7 +53,6 @@ export class ModuloComponent implements OnDestroy {
   private route = inject(ActivatedRoute);
   constructor(
     private router: Router,
-    private trilhaService: TrilhaService,
     private aulaService: AulaService,
     private toastr: ToastrService
   ) {}
@@ -104,29 +102,7 @@ export class ModuloComponent implements OnDestroy {
     if (this.cursoId && this.moduloId) {
       this.aulas.forEach((aula) => this.marcarConclusaoLocal(aula.idAula));
       this.sincronizarConclusoesLocais();
-      this.atualizarStatusModulo();
     }
-  }
-
-  private atualizarStatusModulo(): void {
-    this.trilhaService
-      .atualizarStatusModulo(this.cursoId!, this.moduloId!, 'CONCLUIDO')
-      .subscribe({
-        next: (curso) => {
-          this.curso = curso;
-          this.modulo =
-            curso.modulos.find((c: Modulo) => c.id === this.moduloId) || null;
-          this.toastr.success('Módulo concluído com sucesso!', 'Parabéns');
-
-          // Navegar de volta para a trilha após 2 segundos
-          setTimeout(() => {
-            this.router.navigate(['/trilha', this.cursoId]);
-          }, 2000);
-        },
-        error: (err) => {
-          this.toastr.error(err.message, 'Erro');
-        },
-      });
   }
 
   voltarParaTrilha(): void {

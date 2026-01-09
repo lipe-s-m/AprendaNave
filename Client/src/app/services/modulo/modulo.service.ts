@@ -15,7 +15,7 @@ export class ModuloService {
   getModulos(cursoId: number): Observable<IModulo[] | null> {
     // if (this.moduloCache$ === EMPTY) {
     this.moduloCache$ = this.http
-      .get<IModulo[]>(`${this.apiUrl}/cursos/modulos?cursoId=${cursoId}`)
+      .get<IModulo[]>(`${this.apiUrl}/cursos/${cursoId}/modulos/aprovados`)
       .pipe(
         tap(() =>
           console.log(

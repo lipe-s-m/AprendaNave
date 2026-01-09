@@ -40,7 +40,7 @@ export class AulaService {
     this.errorSignal.set(null);
 
     return this.http
-      .get<AulaDTO[]>(`${this.apiUrl}/modulos/${moduloId}/aulas`)
+      .get<AulaDTO[]>(`${this.apiUrl}/modulos/${moduloId}/aulas/aprovadas`)
       .pipe(
         tap((aulas) => {
           this.aulasSignal.set(aulas);

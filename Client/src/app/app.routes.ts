@@ -13,6 +13,8 @@ import { AprendabotComponent } from './pages/aprendabot/aprendabot.component';
 import { DesafioJccComponent } from './pages/desafio-jcc/desafio-jcc.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { DesafioMatematicaComponent } from './pages/desafio-matematica/desafio-matematica.component';
+import { CriarCursoComponent } from './pages/criar-curso/criar-curso.component';
+import { MeusCursosComponent } from './pages/meus-cursos/meus-cursos.component';
 
 export const routes: Routes = [
   { path: '', component: StartComponent, pathMatch: 'full' },
@@ -20,6 +22,16 @@ export const routes: Routes = [
   { path: 'hub', component: HubComponent, canActivate: [authGuard] },
   { path: 'perfil', component: PerfilComponent, canActivate: [authGuard] },
   { path: 'home', component: HomeComponent, canActivate: [authGuard] },
+  {
+    path: 'curso/criar',
+    component: CriarCursoComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'meus-cursos',
+    component: MeusCursosComponent,
+    canActivate: [authGuard],
+  },
   {
     path: 'trilha/:id',
     component: TrilhaComponent,

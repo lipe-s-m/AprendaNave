@@ -2,7 +2,7 @@
 
 ## Objetivo do Projeto
 
-Criar uma plataforma web de cursos de aprendizado gamificado voltada para jovens.
+Criar uma plataforma web de Cursos de aprendizado gamificado voltada para jovens.
 
 ## Regras Gerais
 

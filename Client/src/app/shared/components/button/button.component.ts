@@ -12,7 +12,7 @@ export class ButtonComponent {
   @Input() buttonText?: string;
   @Input() buttonSize: 'small' | 'medium' | 'large' = 'medium';
   @Input() buttonLevel: 'primary' | 'secondary' = 'primary';
-  @Input() buttonTheme: 'light' | 'dark' = 'light';
+  @Input() buttonTheme: 'light' | 'dark' = 'dark';
   @Input() buttonType: 'submit' | 'button' = 'button';
   @Input() buttonDisabled: boolean = false;
   @Input() buttonBackgroundColor?: string;

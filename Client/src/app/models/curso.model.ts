@@ -24,8 +24,19 @@ export interface Curso {
   id: number;
   nome: string;
   logo?: string;
-  professor?: string;
+  autor?: string;
+  autorNome?: string;
+  autorId?: number;
   quantidadeModulos?: number;
   modulos: Modulo[];
   tag: string;
+  descricao?: string;
+  statusAprovacao?: number; // 0=Pendente, 1=Aprovado, 2=Rejeitado
+}
+
+export interface CreateCursoDto {
+  nome: string;
+  logo: string;
+  autorNome: string;
+  descricao: string;
 }
