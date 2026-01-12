@@ -11,6 +11,7 @@ Criar uma plataforma web de Cursos de aprendizado gamificado voltada para jovens
 - Referência conceitual: Duolingo (apenas como inspiração, não copiar layouts).
 - Sempre Responda em português
 - "Cursos" são as "trilhas", em alguns lugares o nome muda porém tudo é curso
+- Utilize Reactive Forms para formulários.
 
 ## Frontend (Angular)
 
@@ -23,6 +24,7 @@ Criar uma plataforma web de Cursos de aprendizado gamificado voltada para jovens
 
 - Toda lógica e regra de negócio DEVEM estar em **services**.
 - Componentes DEVEM conter apenas lógica de apresentação.
+- Alguns Componentes ja estao preestabelecidos em src\app\shared\components, como botoes, input, e loader
 - Templates HTML NÃO DEVEM conter lógica de negócio.
 - Comunicação com backend DEVE ser feita exclusivamente via services.
 

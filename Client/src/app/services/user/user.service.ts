@@ -42,7 +42,7 @@ export class UserService {
 
     if (currentUser) {
       this.http
-        .patch(`${this.apiUrl}/users/${currentUser.id}/pontos`, {
+        .patch(`${this.apiUrl}/user/${currentUser.id}/pontos`, {
           pontos: pontos,
         })
         .subscribe({

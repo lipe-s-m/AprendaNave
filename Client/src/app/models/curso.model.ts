@@ -24,7 +24,6 @@ export interface Curso {
   id: number;
   nome: string;
   logo?: string;
-  autor?: string;
   autorNome?: string;
   autorId?: number;
   quantidadeModulos?: number;

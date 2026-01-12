@@ -54,9 +54,8 @@
       </svg>
       <h2>Nenhum curso criado</h2>
       <p>Você ainda não criou nenhum curso. Comece criando seu primeiro curso!</p>
-      <button class="create-button" (click)="router.navigate(['/curso/criar'])">
-        Criar Primeiro Curso
-      </button>
+      <app-button buttonText="Criar Curso" buttonSize="medium" buttonLevel="primary" buttonType="button" (click)="router.navigate(['/curso/criar'])">
+      </app-button>
     </div>
 
     <div class="error-state" *ngIf="error()">

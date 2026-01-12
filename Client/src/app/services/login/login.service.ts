@@ -45,7 +45,7 @@ export class LoginService {
       senhaConfirmacao: userData.confirmarSenha,
     };
 
-    return this.http.post<CadastroResponseDTO>(`${this.apiUrl}/users`, payload);
+    return this.http.post<CadastroResponseDTO>(`${this.apiUrl}/user`, payload);
   }
 
   // Use GET to query users by email+senha so we don't accidentally create users on login
