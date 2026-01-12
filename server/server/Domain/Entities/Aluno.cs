@@ -15,15 +15,19 @@ namespace server.Domain.Entities
 		[StringLength(60)]
 		public string Nome { get; set; } = default!;
 
+		[AllowNull]
+		public string? Bio { get; set; } = default!;
+
+		[AllowNull]
+		public string? FotoPerfil { get; set; } = default!;
+
 		[Required]
 		[EmailAddress]
 		[StringLength(100)]
-		[AllowNull]
 		public string Email { get; set; } = default!;
 
 		[StringLength(255)]
 		[Required]
-		[AllowNull]
 		public string Senha { get; set; } = default!;
 
 		[StringLength(20)]

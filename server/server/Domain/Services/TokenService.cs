@@ -1,5 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using server.Domain.DTOs;
+using server.Domain.Entities;
 using server.Settings;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -14,7 +14,7 @@ namespace server.Domain.Services
 		{
 			_config = config;
 		}
-		public string Generate(LoginResponseDTO User)
+		public string Generate(Aluno User)
 		{
 			var handler = new JwtSecurityTokenHandler();
 			var key = Encoding.UTF8.GetBytes(_config.PrivateKey);
@@ -30,7 +30,7 @@ namespace server.Domain.Services
 			return strToken;
 		}
 
-		public static ClaimsIdentity GenerateClaims(LoginResponseDTO User)
+		public static ClaimsIdentity GenerateClaims(Aluno User)
 		{
 			var ci = new ClaimsIdentity();
 			ci.AddClaim(new Claim("id", User.Id.ToString()));

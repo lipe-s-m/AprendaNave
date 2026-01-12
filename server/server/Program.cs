@@ -9,6 +9,7 @@ using server.Domain.Services;
 using server.Endpoints.Aulas;
 using server.Endpoints.Cursos;
 using server.Endpoints.Modulos;
+using server.Endpoints.User;
 using server.Repository.Database;
 using server.Settings;
 using System.Text;
@@ -53,8 +54,8 @@ builder.Services.AddScoped<ICurrentUser, CurrentUserService>();
 builder.Services.AddDbContext<DbContexto>(options =>
 	//options.UseNpgsql(builder.Configuration.GetConnectionString("Host=localhost;Port=5432;Database=aprendanavedb;User Id=postgres;"),
 	//options.UseNpgsql(builder.Configuration.GetConnectionString("LocalConnection"),
-	//options.UseNpgsql(builder.Configuration.GetConnectionString("LocalDockerConnection"),
-	options.UseNpgsql(builder.Configuration.GetConnectionString("TransationConnection"),
+	options.UseNpgsql(builder.Configuration.GetConnectionString("LocalDockerConnection"),
+	//options.UseNpgsql(builder.Configuration.GetConnectionString("TransationConnection"),
 	npgsqlOptions => npgsqlOptions.EnableRetryOnFailure())
 	.EnableSensitiveDataLogging()
 	.EnableDetailedErrors()
@@ -135,7 +136,6 @@ app.UseAuthorization();
 
 
 app.MapGet("/", () => "Hello World!");
-app.MapGet("/ola", () => "ola World!");
 app.MapPost("/auth/login", ([FromBody] LoginRequestDTO loginRequestDTO, IAlunoService alunoService, TokenService tokenService, HttpContext httpContext) =>
 {
 	var res = alunoService.Login(loginRequestDTO);
@@ -147,13 +147,12 @@ app.MapPost("/auth/login", ([FromBody] LoginRequestDTO loginRequestDTO, IAlunoSe
 	{
 		LoginResponseDTO LoginDto = new LoginResponseDTO
 		{
-			Id = res.Id,
 			Nome = res.Nome,
 			Email = res.Email,
 			Cargo = res.Cargo,
 			Pontos = res.Pontos
 		};
-		var tokenJwt = tokenService.Generate(LoginDto);
+		var tokenJwt = tokenService.Generate(res);
 
 		var cookieOptions = new CookieOptions
 		{
@@ -171,45 +170,11 @@ app.MapPost("/auth/login", ([FromBody] LoginRequestDTO loginRequestDTO, IAlunoSe
 })
 	.WithTags("Auth");
 
-app.MapPost("/users", async ([FromBody] CadastroRequestDTO aluno, IAlunoService alunoService) =>
-{
-	var novoAluno = await alunoService.CreateAluno(aluno);
-	if (novoAluno != null)
-	{
-		return Results.Created($"/alunos/{novoAluno.Id}", novoAluno);
-	}
-	return Results.BadRequest("Falha na criação do aluno (ex: senha muito curta).");
-}).WithTags("Usuários");
-
-app.MapGet("/users", (IAlunoService alunoService) =>
-{
-	var res = alunoService.GetAllAlunos();
-	if (res != null)
-	{
-		return Results.Json(data: res, statusCode: 200);
-	}
-	return Results.Json(data: null, statusCode: 500);
-}).WithTags("Usuários");
-
+app.MapUserEndpoints();
 app.MapCursosEndpoints();
 app.MapModulosEndpoints();
 app.MapAulasEndpoints();
 
-
-app.MapPatch("/users/{idUsuario}/pontos", async (int idUsuario, [FromBody] PontosDTO pontos, IAlunoService alunoService) =>
-{
-	try
-	{
-		var res = await alunoService.AtualizarPontos(idUsuario, pontos.Pontos);
-		return Results.Json(data: res, statusCode: 200);
-
-	}
-	catch (Exception ex)
-	{
-		return Results.Json(data: ex, statusCode: 400);
-	}
-
-}).WithTags("Usuários");
 app.MapPost("/guests", async ([FromBody] GuestUserRequestDTO guestUserRequestDTO, [FromServices] IGuestUser guestUserService) =>
 {
 	try

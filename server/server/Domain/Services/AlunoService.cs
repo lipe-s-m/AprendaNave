@@ -19,18 +19,14 @@ namespace server.Domain.Services
 			_logger = logger;
 		}
 
-		public UserResponseDTO? Login(LoginRequestDTO loginRequest)
+		public Aluno? Login(LoginRequestDTO loginRequest)
 		{
 			var res = _context.Alunos.Where(a => a.Email == loginRequest.Email).FirstOrDefault();
-
-			if (res == null) return null;
 
 			//if (res != null)
 			if (res != null && Argon2.Verify(res.Senha, loginRequest.Senha))
 			{
-				UserResponseDTO UserResponse = new UserResponseDTO(res.Nome, res.Email, res.Cargo, res.Pontos);
-				UserResponse.Id = res.Id;
-				return UserResponse;
+				return res;
 
 			}
 			return null;
