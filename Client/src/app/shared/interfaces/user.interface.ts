@@ -3,6 +3,15 @@ export interface User {
   nome: string;
   email: string;
   pontos: number;
+  bio?: string;
+  fotoPerfil?: string;
+}
+export interface UserProfile {
+  nome: string;
+  email: string;
+  pontos: number;
+  bio: string;
+  fotoPerfil: string;
 }
 export interface LoginRequestDTO {
   email: string;

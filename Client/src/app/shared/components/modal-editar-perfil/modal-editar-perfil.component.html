@@ -1,0 +1,130 @@
+<div class="modal-overlay" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <!-- Skeleton Loader -->
+    <div *ngIf="isSkeleton()" class="skeleton-loader">
+      <div class="skeleton-avatar"></div>
+      <div class="skeleton-text"></div>
+      <div class="skeleton-text short"></div>
+      <div class="skeleton-button"></div>
+    </div>
+
+    <!-- Modal Content -->
+    <div *ngIf="!isSkeleton()" class="modal-content">
+      <!-- Header -->
+      <div class="modal-header">
+        <h2>Editar Perfil</h2>
+        <button class="close-button" (click)="closeModal()" type="button">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="perfilForm" (ngSubmit)="onSave()" class="perfil-form">
+        <!-- Avatar Picker -->
+        <div class="avatar-section">
+          <div class="avatar-container" (click)="triggerFileInput()">
+            <img [src]="imagePreview" alt="Avatar" class="avatar-image" />
+            <div class="avatar-overlay">
+              <span class="material-icons">photo_camera</span>
+            </div>
+          </div>
+          <input
+            type="file"
+            id="fileInput"
+            accept="image/*"
+            (change)="onFileSelected($event)"
+            style="display: none"
+          />
+          <p class="avatar-hint">Clique para alterar a foto</p>
+        </div>
+
+        <!-- Nome -->
+        <div class="form-group">
+          <label for="nome">Nome</label>
+          <input
+            type="text"
+            id="nome"
+            formControlName="nome"
+            placeholder="Seu nome"
+            [disabled]="isLoading()"
+            class="form-input"
+          />
+          <div
+            class="error-message"
+            *ngIf="
+              perfilForm.get('nome')?.touched && perfilForm.get('nome')?.errors
+            "
+          >
+            <span *ngIf="perfilForm.get('nome')?.errors?.['required']"
+              >Nome é obrigatório</span
+            >
+            <span *ngIf="perfilForm.get('nome')?.errors?.['minlength']"
+              >Nome deve ter no mínimo 2 caracteres</span
+            >
+          </div>
+        </div>
+
+        <!-- Bio -->
+        <div class="form-group">
+          <label for="bio">Bio</label>
+          <textarea
+            id="bio"
+            formControlName="bio"
+            placeholder="Conte um pouco sobre você..."
+            [disabled]="isLoading()"
+            rows="4"
+            class="form-textarea"
+          ></textarea>
+          <div
+            class="character-counter"
+            [class.limit-reached]="bioCurrentLength() >= bioMaxLength"
+          >
+            {{ bioCharacterCounter }}
+          </div>
+          <div
+            class="error-message"
+            *ngIf="
+              perfilForm.get('bio')?.touched && perfilForm.get('bio')?.errors
+            "
+          >
+            <span *ngIf="perfilForm.get('bio')?.errors?.['maxlength']"
+              >Bio deve ter no máximo {{ bioMaxLength }} caracteres</span
+            >
+          </div>
+        </div>
+
+        <!-- Error Message -->
+        <div *ngIf="errorMessage()" class="alert-error">
+          <span class="material-icons">error_outline</span>
+          <span>{{ errorMessage() }}</span>
+        </div>
+
+        <!-- Actions -->
+        <div class="modal-actions">
+          <div class="buttons">
+            <app-button
+              buttonType="button"
+              buttonText="Cancelar"
+              buttonLevel="secondary"
+              (click)="closeModal()"
+              [buttonDisabled]="isLoading()"
+            >
+            </app-button>
+
+            <app-button
+              type="submit"
+              [buttonDisabled]="isLoading() || !isFormValid"
+              buttonText="Salvar"
+              (click)="onSave()"
+            >
+            </app-button>
+          </div>
+        </div>
+        <span *ngIf="isLoading()" class="loading-spinner">
+          <span class="material-icons spinner">sync</span>
+          Salvando...
+        </span>
+      </form>
+    </div>
+  </div>
+</div>

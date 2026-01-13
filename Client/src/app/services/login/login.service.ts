@@ -68,13 +68,7 @@ export class LoginService {
           if (response.pontos === undefined || response.pontos === null) {
             response.pontos = 0;
           }
-          this.saveUserData({
-            id: response.id,
-            nome: response.nome,
-            email: response.email,
-            cargo: response.cargo,
-            pontos: response.pontos,
-          });
+          this.saveUserData(response);
         })
       );
   }

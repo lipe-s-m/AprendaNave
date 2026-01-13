@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, signal, WritableSignal } from '@angular/core';
 import { User } from '../../shared/interfaces/user.interface';
 import { environment } from '../../../environments/environment';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -58,5 +60,24 @@ export class UserService {
           },
         });
     }
+  }
+
+  updateUsuarioData(data: { nome?: string; bio?: string }): Observable<User> {
+    return this.http.patch<User>(`${this.apiUrl}/user`, data).pipe(
+      tap((updatedUser) => {
+        this.setUser(updatedUser);
+      })
+    );
+  }
+
+  updateUsuarioFoto(file: File): Observable<User> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.http.patch<User>(`${this.apiUrl}/user/image`, formData).pipe(
+      tap((updatedUser) => {
+        this.setUser(updatedUser);
+      })
+    );
   }
 }

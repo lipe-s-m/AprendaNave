@@ -1,20 +1,32 @@
 <div class="background">
-
   <header>
     <app-subheader />
   </header>
 
   <div class="container">
     <section class="perfil">
-
-      <h1 class="title">perfil</h1>
+      <div class="title-row">
+        <h1 class="title">perfil</h1>
+      </div>
       <div class="content perfil">
         <div class="image">
-          <img src="assets/avatar-default.svg" alt="">
+          <img
+            [src]="userSignal()?.fotoPerfil || 'assets/avatar-default.svg'"
+            alt="imagem do Usuario"
+          />
         </div>
         <div class="info-text" *ngIf="userSignal() as user">
-          <h1>Olá, {{user.nome}}!</h1>
-          <h2>Navecoins: {{userSignal()?.pontos}}</h2>
+          <h1>Olá, {{ user.nome }}!</h1>
+          <p class="user-bio">Bio: {{ user.bio }}</p>
+        </div>
+        <div class="bottom">
+          <h2>Navecoins: {{ userSignal()?.pontos }}</h2>
+          <app-button
+            (click)="openEditModal()"
+            type="button"
+            buttonText="Editar"
+            buttonSize="small"
+          ></app-button>
         </div>
       </div>
     </section>
@@ -22,23 +34,22 @@
     <section class="conquistas">
       <h1 class="title">Conquistas</h1>
       <div class="content conquistas">
-
         <ul class="lista">
           <li class="card">
             <div class="logo">
-
-              <img src="assets/flag-green.svg" alt="">
+              <img src="assets/flag-green.svg" alt="" />
             </div>
             <div class="info-text">
               <h1>Explorador de Trilha</h1>
-              <p>Complete todas as aulas do módulo: Fundamentos da Matemática</p>
+              <p>
+                Complete todas as aulas do módulo: Fundamentos da Matemática
+              </p>
               <h2 class="completo">Completo!</h2>
-
             </div>
           </li>
           <li class="card">
             <div class="logo">
-              <img src="assets/flag-red.svg" alt="">
+              <img src="assets/flag-red.svg" alt="" />
             </div>
             <div class="info-text">
               <h1>Aprendiz de Matemática</h1>
@@ -48,7 +59,7 @@
           </li>
           <li class="card">
             <div class="logo">
-              <img src="assets/flag-red.svg" alt="">
+              <img src="assets/flag-red.svg" alt="" />
             </div>
             <div class="info-text">
               <h1>Rei das Contas</h1>
@@ -63,4 +74,8 @@
       </div>
     </section>
   </div>
+
+  <!-- Modal Editar Perfil -->
+  <app-modal-editar-perfil *ngIf="showModal()" (close)="closeEditModal()">
+  </app-modal-editar-perfil>
 </div>

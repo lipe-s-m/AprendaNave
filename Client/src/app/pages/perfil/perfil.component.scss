@@ -15,13 +15,58 @@
   section {
     width: 100%;
     max-width: 70rem;
+
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-left: 1.6rem;
+      margin-right: 1.6rem;
+      margin-bottom: 0.4rem;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+    }
+
     .title {
       font-size: 2.4rem;
       font-weight: 800;
       color: var(--accent-primary);
       text-transform: capitalize;
-      margin-left: 1.6rem;
-      margin-bottom: 0.4rem;
+      margin: 0;
+    }
+
+    .btn-edit {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: var(--accent-primary);
+      color: var(--text-on-accent);
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: "Nunito", sans-serif;
+
+      .material-icons {
+        font-size: 18px;
+      }
+
+      &:hover {
+        background: var(--accent-primary-shadow);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(78, 168, 222, 0.3);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
     }
   }
   .content {
@@ -48,15 +93,22 @@
         margin: 0 auto;
         height: 22rem;
         border-radius: 1.6rem;
-        background-color: rgb(201, 191, 243);
         img {
           height: 90%;
+          border-radius: 25%;
         }
       }
       .info-text {
         display: flex;
         flex-direction: column;
         gap: 0.6rem;
+
+        .user-bio {
+          color: var(--text-primary);
+          font-size: 1.6rem;
+          font-weight: 500;
+          opacity: 0.9;
+        }
       }
     }
     &.conquistas {
@@ -127,4 +179,12 @@
       }
     }
   }
+}
+.bottom {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: -1rem;
 }
