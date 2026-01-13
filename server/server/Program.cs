@@ -13,6 +13,9 @@ using server.Endpoints.User;
 using server.Repository.Database;
 using server.Settings;
 using System.Text;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+
 
 Env.Load();
 var builder = WebApplication.CreateBuilder(args);
@@ -51,10 +54,12 @@ builder.Services.AddScoped<IRanking, RankingService>();
 builder.Services.AddScoped<IGuestUser, GuestUserService>();
 builder.Services.AddScoped<IAulaService, AulaService>();
 builder.Services.AddScoped<ICurrentUser, CurrentUserService>();
+builder.Services.AddScoped<IImageService, ImageService>();
+
 builder.Services.AddDbContext<DbContexto>(options =>
 	//options.UseNpgsql(builder.Configuration.GetConnectionString("Host=localhost;Port=5432;Database=aprendanavedb;User Id=postgres;"),
-	//options.UseNpgsql(builder.Configuration.GetConnectionString("LocalConnection"),
-	options.UseNpgsql(builder.Configuration.GetConnectionString("LocalDockerConnection"),
+	options.UseNpgsql(builder.Configuration.GetConnectionString("LocalConnection"),
+	// options.UseNpgsql(builder.Configuration.GetConnectionString("LocalDockerConnection"),
 	//options.UseNpgsql(builder.Configuration.GetConnectionString("TransationConnection"),
 	npgsqlOptions => npgsqlOptions.EnableRetryOnFailure())
 	.EnableSensitiveDataLogging()
@@ -92,16 +97,17 @@ builder.Services.AddAuthentication(options =>
 			return Task.CompletedTask;
 		}
 	};
+
 	options.TokenValidationParameters = new TokenValidationParameters
 	{
 		ValidateIssuerSigningKey = true,
-		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["PrivateKey"])), // Sua chave secreta
 
-		// Opcional, mas recomendado:
+		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["PrivateKey"])), //  chave secreta
+
 		ValidateIssuer = false,
-		//ValidIssuer = builder.Configuration["JwtSettings:Issuer"], // O "iss" no seu token
+		//ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
 		ValidateAudience = false,
-		//ValidAudience = builder.Configuration["JwtSettings:Audience"], // O "aud" no seu token
+		//ValidAudience = builder.Configuration["JwtSettings:Audience"]
 
 		ValidateLifetime = true,
 		ClockSkew = TimeSpan.Zero,
@@ -283,12 +289,16 @@ app.MapGet("/auth/validate-token", (
 	}
 	return Results.Unauthorized(); // 401 Unauthorized
 }).WithTags("Auth");
-app.UseSwagger();
-app.UseSwaggerUI(options =>
+if (app.Environment.IsDevelopment())
 {
-	options.SwaggerEndpoint("/swagger/v1/swagger.json", "API AprendaNave");
-	options.RoutePrefix = "swagger";
-});
+
+	app.UseSwagger();
+	app.UseSwaggerUI(options =>
+	{
+		options.SwaggerEndpoint("/swagger/v1/swagger.json", "API AprendaNave");
+		options.RoutePrefix = "swagger";
+	});
+}
 
 app.Run();
 

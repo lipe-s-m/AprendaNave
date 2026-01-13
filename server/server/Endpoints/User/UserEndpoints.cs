@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using server.Domain.DTOs;
 using server.Domain.Interfaces;
 
@@ -39,11 +40,22 @@ namespace server.Endpoints.User
 			});
 
 			//todo atualizar
-			group.MapPatch("/", async (UserUpdateDTO userUpdate, IAlunoService alunoService) =>
+			group.MapPatch("/", async (UserUpdateDTO userUpdate, IAlunoService alunoService, ICurrentUser currentUser) =>
 			{
+				var res = await alunoService.AtualizarAluno(currentUser.Id, userUpdate);
+				return Results.Ok(res);
 
+			}).RequireAuthorization();
+			group.MapPatch("/image", async (IFormFile file, IImageService imageService, ICurrentUser currentUser) =>
+			{
+				int id = currentUser.Id;
+				var result = await imageService.AddImageAsync(file, "users/profilePic", $"user_{id}");
 
-			});
+				if (result.Error != null) return Results.BadRequest(result.Error.Message);
+				var res = await imageService.UpdateProfileImage(id, result);
+				return Results.Ok(res);
+
+			}).DisableAntiforgery(); ;
 
 			//todo deletar
 			group.MapDelete("/{id}", async (int id) =>

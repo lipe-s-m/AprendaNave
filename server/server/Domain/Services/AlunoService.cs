@@ -96,7 +96,22 @@ namespace server.Domain.Services
 			}
 			throw new Exception();
 		}
+		public async Task<UserResponseDTO> AtualizarAluno(int id, UserUpdateDTO userUpdate)
+		{
+			var aluno = await _context.Alunos.FirstOrDefaultAsync(a => a.Id == id);
+			if (aluno == null)
+			{
+				throw new AlunoNaoExisteException($"O usuario de id {id} não existe!");
+			}
 
+			aluno.Nome = userUpdate.Nome ?? aluno.Nome;
+			aluno.Bio = userUpdate.Bio ?? aluno.Bio;
+
+
+			await _context.SaveChangesAsync();
+
+			return new UserResponseDTO(aluno);
+		}
 		public async Task<int> AtualizarPontos(int idAluno, int pontos)
 		{
 			var aluno = await this._context.Alunos.FirstOrDefaultAsync(a => a.Id == idAluno);

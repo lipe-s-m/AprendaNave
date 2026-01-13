@@ -13,6 +13,7 @@ namespace server.Domain.Interfaces
 		Aluno? GetById(int id);
 		void DeleteById(Aluno Aluno);
 		Task<int> AtualizarPontos(int idAluno, int pontos);
+		Task<UserResponseDTO> AtualizarAluno(int id, UserUpdateDTO userUpdate);
 
 	}
 }

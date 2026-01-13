@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CloudinaryDotNet" Version="1.27.9" />
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
     <PackageReference Include="EFCore.NamingConventions" Version="8.0.0" />
     <PackageReference Include="Isopoh.Cryptography.Argon2" Version="2.0.0" />
