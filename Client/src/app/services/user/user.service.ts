@@ -30,18 +30,13 @@ export class UserService {
     if (user) {
       this.user.set(user);
       this.saveUserData(user);
-      console.log('Usuário definido/atualizado:', user.nome);
     } else {
       this.user.set(null); // Para logout
     }
   }
 
   setUserPoints(pontos: number) {
-    console.log('to aw');
-
     const currentUser = this.user();
-    console.log(currentUser);
-
     if (currentUser) {
       this.http
         .patch(`${this.apiUrl}/user/${currentUser.id}/pontos`, {
@@ -49,15 +44,12 @@ export class UserService {
         })
         .subscribe({
           next: (response: any) => {
-            console.log('Pontos atualizados com sucesso:', response);
             this.user.update((user) =>
               user ? { ...user, pontos: response } : user
             );
             localStorage.setItem('userData', JSON.stringify(this.user()));
           },
-          error: (error) => {
-            console.error('Erro ao atualizar pontos:', error);
-          },
+          error: () => {},
         });
     }
   }

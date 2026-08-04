@@ -49,7 +49,6 @@ export class DesafioJccComponent implements OnInit {
     private loginService: LoginService
   ) {}
   iniciarDesafio(): void {
-    console.log('Desafio iniciado!');
     this.router.navigate(['/desafio-matematica']);
   }
   ngOnInit() {
@@ -63,24 +62,18 @@ export class DesafioJccComponent implements OnInit {
   obterUser(): void {
     this.authService.isLogged().subscribe({
       next: (isLoggedObservable) => {
-        console.log('Usuário logado:', isLoggedObservable);
         this.isLogged = isLoggedObservable;
         if (!isLoggedObservable) {
           this.guestUserData = JSON.parse(
             localStorage.getItem('guestUserData') || 'null'
           );
           this.isLogged = this.guestUserData !== null;
-          console.log(this.guestUserData);
         }
       },
-      error: (err) => {
-        console.error('Erro ao verificar status de login:', err);
-      },
+      error: () => {},
     });
   }
   criarContaVisitante(): void {
-    console.log(this.formCreateGuestUser.value);
-
     this.isLoading = true;
     this.loginService
       .createGuestAccount({
@@ -91,15 +84,13 @@ export class DesafioJccComponent implements OnInit {
       .subscribe({
         next: (response) => {
           localStorage.setItem('guestUserData', JSON.stringify(response));
-          console.log('Conta visitante criada com sucesso:', response);
           if (sessionStorage.getItem('maiorPontuacaoDesafioJcc')) {
             sessionStorage.removeItem('maiorPontuacaoDesafioJcc');
           }
           this.isLogged = true;
           this.isLoading = false;
         },
-        error: (err) => {
-          console.error('Erro ao criar conta visitante:', err);
+        error: () => {
           this.isLoading = false;
         },
       });
