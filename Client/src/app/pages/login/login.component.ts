@@ -78,13 +78,6 @@ export class LoginComponent implements OnInit {
   });
 
   handleLoginFormSubmit() {
-    if (
-      this.formLogin.get('email')?.value?.toLowerCase() === 'admin' &&
-      this.formLogin.get('senha')?.value?.toLowerCase() === 'admin'
-    ) {
-      this.router.navigate(['/home']);
-      return;
-    }
     if (this.formLogin.valid) {
       this.isLoading = true;
 
@@ -104,7 +97,6 @@ export class LoginComponent implements OnInit {
             this.toastr.error('Email ou senha inválidos', 'Erro');
           } else {
             this.toastr.error('Erro ao realizar login', 'Erro');
-            console.error('Login error:', error);
           }
         },
         complete: () => {
@@ -144,7 +136,6 @@ export class LoginComponent implements OnInit {
             this.toastr.error('Este email já está cadastrado', 'Erro');
           } else {
             // Handle other errors
-            console.error('Registration error:', error);
             this.toastr.error('Erro ao realizar cadastro', 'Erro');
           }
         },
@@ -177,13 +168,9 @@ export class LoginComponent implements OnInit {
       email: email,
       senha: senha,
     };
-    console.log(loginData);
-
     this.loginService.login(loginData).subscribe({
       next: (response) => {
         this.toastr.success('Login realizado com sucesso!', 'Sucesso');
-        console.log(response);
-
         return this.router.navigate(['/home']);
       },
       error: (error: HttpErrorResponse) => {
@@ -192,7 +179,6 @@ export class LoginComponent implements OnInit {
           this.toastr.error('Email ou senha inválidos', 'Erro');
         } else {
           this.toastr.error('Erro ao realizar login', 'Erro');
-          console.error('Login error:', error);
         }
       },
       complete: () => {

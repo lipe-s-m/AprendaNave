@@ -64,13 +64,9 @@ export class ModuloComponent implements OnDestroy {
       const cid = this.route.snapshot.paramMap.get('trilhaId');
       const mid = this.route.snapshot.paramMap.get('moduloId');
 
-      console.log(cid);
       if (cid && mid) {
         cursoId = parseInt(cid, 10);
         moduloId = parseInt(mid, 10);
-
-        // Atualiza o service para que outros componentes também saibam dos IDs
-        console.log(`${cursoId} e ${moduloId}`);
 
         this.navState.updateIdContexto(cursoId, moduloId, null);
       }
@@ -144,8 +140,6 @@ export class ModuloComponent implements OnDestroy {
   }
 
   private carregarAulas(moduloId: number): void {
-    console.log('tester');
-
     this.isLoading = true;
     this.aulasSubscription?.unsubscribe();
     this.aulasSubscription = this.aulaService.getAulas(moduloId).subscribe({
@@ -156,7 +150,6 @@ export class ModuloComponent implements OnDestroy {
             ...aula,
             concluida: this.aulaService.isAulaConcluida(aula.idAula),
           }));
-        console.log(aulas);
         this.navState.setAulas(this.aulas);
         this.aplicarRegraStatusModulo();
         this.sincronizarConclusoesLocais();

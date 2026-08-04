@@ -1,0 +1,33 @@
+{
+  "name": "aprendanave-api",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "npx prisma generate && tsup src/index.ts --format cjs",
+    "start": "node dist/index.js",
+    "db:pull": "prisma db pull",
+    "db:generate": "prisma generate",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.14.0",
+    "@node-rs/argon2": "^2.0.2",
+    "@prisma/client": "^6.8.0",
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.5.0",
+    "hono": "^4.7.0",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^22.15.0",
+    "prisma": "^6.8.0",
+    "tsup": "^8.4.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vitest": "^4.1.10"
+  }
+}

@@ -21,8 +21,6 @@ export class DesafioJccService {
       IdAluno: id,
       NomeAluno: nome,
     };
-    console.log(payload);
-
     return this.httpClient.patch(
       `${this.apiUrl}/desafio/desafio-jcc/pontuacao`,
       payload

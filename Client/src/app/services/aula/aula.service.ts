@@ -3,6 +3,7 @@ import { Injectable, computed, signal } from '@angular/core';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AulaDTO } from '../../shared/interfaces/aulas';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +15,7 @@ export class AulaService {
   private readonly errorSignal = signal<string | null>(null);
   private readonly concluidasSignal = signal<Set<number>>(new Set());
   private moduloAtual: number | null = null;
+  private isAuthenticated = false;
 
   readonly aulas = computed(() => this.aulasSignal());
   readonly isLoading = computed(() => this.loadingSignal());
@@ -28,7 +30,14 @@ export class AulaService {
     };
   });
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(
+    private readonly http: HttpClient,
+    private readonly authService: AuthService
+  ) {
+    this.authService.isLogged().subscribe((logged) => {
+      this.isAuthenticated = logged;
+    });
+  }
 
   getAulas(moduloId: number): Observable<AulaDTO[]> {
     if (this.moduloAtual !== moduloId) {
@@ -45,6 +54,7 @@ export class AulaService {
         tap((aulas) => {
           this.aulasSignal.set(aulas);
           this.loadingSignal.set(false);
+          this.sincronizarProgressoServidor(moduloId);
         }),
         catchError((error) => {
           this.loadingSignal.set(false);
@@ -53,15 +63,28 @@ export class AulaService {
         })
       );
   }
+
   getAulaById(aulaId: number): Observable<AulaDTO> {
     return this.http.get<AulaDTO>(`${this.apiUrl}/aulas/${aulaId}`);
   }
+
   markAulaComoConcluida(aulaId: number): void {
     if (!this.moduloAtual) return;
     const atual = new Set(this.concluidasSignal());
     atual.add(aulaId);
     this.concluidasSignal.set(atual);
     this.persistirConclusoesLocais(this.moduloAtual, atual);
+
+    // Fire and forget: persist server-side if authenticated
+    if (this.isAuthenticated) {
+      this.http
+        .post(`${this.apiUrl}/aulas/${aulaId}/concluir`, {})
+        .subscribe({
+          error: () => {
+            // Silently ignore - localStorage keeps the data as fallback
+          },
+        });
+    }
   }
 
   resetConclusoes(): void {
@@ -72,6 +95,24 @@ export class AulaService {
 
   isAulaConcluida(aulaId: number): boolean {
     return this.concluidasSignal().has(aulaId);
+  }
+
+  private sincronizarProgressoServidor(moduloId: number): void {
+    if (!this.isAuthenticated) return;
+
+    this.http
+      .get<number[]>(`${this.apiUrl}/aulas/progresso/${moduloId}`)
+      .subscribe({
+        next: (serverIds) => {
+          const localConcluidas = this.concluidasSignal();
+          const merged = new Set([...localConcluidas, ...serverIds]);
+          this.concluidasSignal.set(merged);
+          this.persistirConclusoesLocais(moduloId, merged);
+        },
+        error: () => {
+          // Silently ignore - keep localStorage data as fallback
+        },
+      });
   }
 
   private restaurarConclusoesLocais(moduloId: number) {

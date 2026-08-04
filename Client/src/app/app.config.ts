@@ -16,15 +16,8 @@ import { routes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { CookieInterceptor } from './services/auth/auth.cookie.interceptor';
 import { AuthService } from './services/auth/auth.service';
-import { tap } from 'rxjs';
-
 export function initializeApp(authService: AuthService) {
-  return () =>
-    authService.checkAuthState().pipe(
-      tap((isAuthenticated) => {
-        console.log('App Initialized: User is authenticated?', isAuthenticated);
-      })
-    );
+  return () => authService.checkAuthState();
 }
 export const appConfig: ApplicationConfig = {
   providers: [

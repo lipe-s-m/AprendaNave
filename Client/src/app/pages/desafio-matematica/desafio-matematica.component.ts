@@ -10,6 +10,7 @@ import { ButtonComponent } from '../../shared/components/button/button.component
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user/user.service';
 import { User } from '../../shared/interfaces/user.interface';
+import { MathGameService } from '../../services/math-game/math-game.service';
 
 @Component({
   selector: 'app-desafio-matematica',
@@ -20,6 +21,8 @@ import { User } from '../../shared/interfaces/user.interface';
 })
 export class DesafioMatematicaComponent {
   private subscription: Subscription | null = null;
+  private countdownInterval: any = null;
+  private timerInterval: any = null;
   cursoId: string | null = null;
   moduloId: string | null = null;
   modulo$: Observable<IModulo | null> = of(null);
@@ -50,7 +53,8 @@ export class DesafioMatematicaComponent {
     private toastr: ToastrService,
     private router: Router,
     private desafioJccService: DesafioJccService,
-    private authService: AuthService
+    private authService: AuthService,
+    private mathGameService: MathGameService
   ) {
     this.userSignal = this.userService.getUserSignal();
   }
@@ -61,20 +65,16 @@ export class DesafioMatematicaComponent {
     this.number1 = this.randNumber1();
     this.number2 = this.randNumber2();
     this.resultNumber();
-    console.log(this.nomeQuiz);
-
     this.obterUser();
-    this.authService.isLogged().subscribe({
-      next: (isLogged) => {
-        console.log('Usuário logado:', isLogged);
-      },
-    });
+    this.authService.isLogged().subscribe({});
   }
 
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+    clearInterval(this.countdownInterval);
+    clearInterval(this.timerInterval);
   }
 
   obterUser(): void {
@@ -87,21 +87,19 @@ export class DesafioMatematicaComponent {
         } else {
           this.currentUser = this.userSignal();
         }
-        console.log('to login?', isLogged);
       },
     });
-
-    console.log('usuer:', this.currentUser);
   }
 
   handlerInitializingGame() {
     this.initializingGame = true;
 
-    const interval = setInterval(() => {
+    clearInterval(this.countdownInterval);
+    this.countdownInterval = setInterval(() => {
       this.contagemRegressiva--;
 
       if (this.contagemRegressiva === 0) {
-        clearInterval(interval);
+        clearInterval(this.countdownInterval);
         this.inGame = true;
         this.contagemRegressiva = 3;
         this.initializingGame = false;
@@ -134,19 +132,17 @@ export class DesafioMatematicaComponent {
   }
   resultNumber(): void {
     this.opIndex = this.balancearDificuldade(this.questionIndex);
-    this.result = this.calcNumber();
 
-    this.questions = [this.result];
+    const question = this.mathGameService.generateQuestion(
+      this.number1,
+      this.number2,
+      this.opIndex
+    );
+    this.number1 = question.num1;
+    this.number2 = question.num2;
+    this.result = question.result;
 
-    while (this.questions.length < 4) {
-      let incorrectAnswer = this.generateIncorrectAnswer(this.result);
-
-      if (!this.questions.includes(incorrectAnswer)) {
-        this.questions.push(incorrectAnswer);
-      }
-    }
-
-    this.shuffleArray(this.questions);
+    this.questions = this.mathGameService.generateOptions(this.result);
   }
   balancearDificuldade(questionIndex: number): number {
     let opIndex: number = 0;
@@ -156,15 +152,11 @@ export class DesafioMatematicaComponent {
 
     opIndex = Math.floor(Math.random() * 4);
     if (questionIndex >= 10 && questionIndex < 20) {
-      console.log('index: ' + opIndex);
       if (opIndex === 3 && this.number2 !== 0) {
-        console.log('oi');
-
         while (
           this.isFloat(this.number1 / this.number2) ||
           this.number1 % this.number2 !== 0
         ) {
-          console.log('divisao quebrada');
           this.number1 = this.randNumber1();
           this.number2 = this.randNumber2();
         }
@@ -183,63 +175,11 @@ export class DesafioMatematicaComponent {
     }
     return false;
   }
-  private generateIncorrectAnswer(correctAnswer: number): number {
-    const offset = Math.floor(Math.random() * 21) - 10;
-    let incorrect = correctAnswer + offset;
-
-    if (incorrect === correctAnswer) {
-      incorrect += incorrect > 0 ? 1 : -1;
-    }
-
-    return Math.max(0, incorrect);
-  }
-
-  private shuffleArray(array: any[]): void {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-  }
-  calcNumber(): number {
-    switch (this.opIndex) {
-      case 0:
-        return this.number1 + this.number2;
-      case 1:
-        return this.number1 - this.number2;
-      case 2:
-        return this.number1 * this.number2;
-      case 3:
-        if (this.number2 !== 0) {
-          return this.number1 / this.number2;
-        } else {
-          console.error('Divisão por zero não permitida');
-          return 0;
-        }
-      default:
-        return 0;
-    }
-  }
   resultOp(): string {
-    switch (this.opIndex) {
-      case 0:
-        return '+';
-      case 1:
-        return '-';
-      case 2:
-        return '*';
-      case 3:
-        return '/';
-
-      default:
-        return 'error';
-    }
+    return this.mathGameService.getOperatorSymbol(this.opIndex);
   }
   checkAnswer(answer: number | null) {
     let audio = new Audio();
-    console.log('resposta', answer);
-    console.log('result', this.result);
-    console.log(answer === this.result);
-
     if (answer != null && answer === this.result) {
       audio.src = 'assets/retro-coin.mp3';
       audio.load();
@@ -261,15 +201,10 @@ export class DesafioMatematicaComponent {
         this.maiorPontuacaoUser = Number(
           sessionStorage.getItem('maiorPontuacaoDesafioJcc')
         );
-        console.log(
-          `Maior pontuacao: ${this.maiorPontuacaoUser}, pontuacao atual: ${this.points}`
-        );
-
         if (
           this.maiorPontuacaoUser === null ||
           this.points > this.maiorPontuacaoUser
         ) {
-          console.log('atualizando pontuacao');
           this.atualizarPontuacaoNoServidor();
         }
         return;
@@ -281,10 +216,7 @@ export class DesafioMatematicaComponent {
     sessionStorage.setItem('maiorPontuacaoDesafioJcc', this.points.toString());
 
     if (this.currentUser && typeof this.currentUser.id === 'number') {
-      console.log(this.currentUser.id);
-
       if (this.nomeQuiz === 'Desafio Matemática') {
-        console.log('Entrei aq');
         this.desafioJccService
           .updatePontuacao(
             this.points,
@@ -292,12 +224,8 @@ export class DesafioMatematicaComponent {
             this.currentUser.nome
           )
           .subscribe({
-            next: (response) => {
-              console.log('Pontuação atualizada no servidor:', response);
-            },
+            next: () => {},
           });
-      } else {
-        console.warn('User id not available; skipping server update');
       }
     }
   }
@@ -338,15 +266,16 @@ export class DesafioMatematicaComponent {
 
     if (this.inGame) {
       this.tempoRestante = this.getDificuldade();
-      const interval = setInterval(() => {
+      clearInterval(this.timerInterval);
+      this.timerInterval = setInterval(() => {
         this.tempoRestante -= 1;
         if (this.tempoRestante <= 0 && this.inGame) {
-          clearInterval(interval);
+          clearInterval(this.timerInterval);
           this.tempoRestante = this.getDificuldade();
           this.checkAnswer(null);
         }
         if (this.questionIndex !== questionIndexAtual) {
-          clearInterval(interval);
+          clearInterval(this.timerInterval);
           this.tempoRestante = this.getDificuldade();
         }
       }, 1000);

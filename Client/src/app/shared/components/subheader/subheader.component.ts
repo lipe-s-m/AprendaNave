@@ -69,7 +69,6 @@ export class SubheaderComponent {
   }
 
   goToProfile() {
-    this.toastr.info('Funcionalidade de perfil em desenvolvimento', 'Info');
     this.isOpen = false;
     this.router.navigate(['/perfil']);
   }

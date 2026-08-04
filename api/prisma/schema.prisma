@@ -1,0 +1,150 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model aluno {
+  id              Int       @id @default(autoincrement())
+  nome            String    @db.VarChar(60)
+  bio             String?
+  foto_perfil     String?
+  email           String    @db.VarChar(100)
+  senha           String    @db.VarChar(255)
+  cargo           String    @default("Visitante") @db.VarChar(20)
+  pontos          Int       @default(0)
+  created_at      DateTime  @default(now()) @db.Timestamptz()
+  last_updated_at DateTime? @db.Timestamptz()
+
+  aluno_modulo_progresso aluno_modulo_progresso[]
+  aluno_aula_progresso   aluno_aula_progresso[]
+  ranking                ranking[]
+
+  @@map("aluno")
+}
+
+model curso {
+  id         Int    @id @default(autoincrement())
+  nome       String @db.VarChar(50)
+  logo       String
+  autor_nome String @db.VarChar(50)
+  autor_id   Int
+  descricao  String
+  status     String @default("Pendente")
+
+  modulo modulo[]
+
+  @@map("curso")
+}
+
+model modulo {
+  id               Int       @id @default(autoincrement())
+  nome             String    @db.VarChar(50)
+  descricao        String    @db.VarChar(255)
+  ordem            Int
+  nivel            Int
+  quantidade_aulas Int
+  quantidade_horas Int
+  playlist         String?
+  status           String    @default("Pendente")
+  curso_id         Int
+  created_at       DateTime  @default(now()) @db.Timestamptz()
+  last_updated_at  DateTime? @db.Timestamptz()
+
+  curso                  curso                    @relation(fields: [curso_id], references: [id], onDelete: Cascade)
+  aula                   aula[]
+  aluno_modulo_progresso aluno_modulo_progresso[]
+  aluno_aula_progresso   aluno_aula_progresso[]
+
+  @@index([curso_id], map: "ix_modulo_curso_id")
+  @@map("modulo")
+}
+
+model aula {
+  id               Int    @id @default(autoincrement())
+  titulo           String @db.VarChar(100)
+  descricao        String @db.VarChar(255)
+  ordem            Int
+  duracao          Int?
+  video_youtube_id String
+  status           String @default("Pendente")
+  modulo_id        Int
+
+  modulo               modulo                 @relation(fields: [modulo_id], references: [id], onDelete: Cascade)
+  aluno_aula_progresso aluno_aula_progresso[]
+
+  @@index([modulo_id], map: "ix_aula_modulo_id")
+  @@map("aula")
+}
+
+model aluno_modulo_progresso {
+  id_aluno         Int
+  id_modulo        Int
+  status_progresso Int
+
+  aluno  aluno  @relation(fields: [id_aluno], references: [id], onDelete: Cascade)
+  modulo modulo @relation(fields: [id_modulo], references: [id], onDelete: Cascade)
+
+  @@id([id_aluno, id_modulo])
+  @@index([id_modulo], map: "ix_aluno_modulo_progresso_id_modulo")
+  @@map("aluno_modulo_progresso")
+}
+
+model aluno_aula_progresso {
+  id        Int @id @default(autoincrement())
+  id_aluno  Int
+  id_aula   Int
+  id_modulo Int
+  aluno_id  Int
+  aula_id   Int
+  modulo_id Int
+
+  aluno  aluno  @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
+  aula   aula   @relation(fields: [aula_id], references: [id], onDelete: Cascade)
+  modulo modulo @relation(fields: [modulo_id], references: [id], onDelete: Cascade)
+
+  @@index([aluno_id], map: "ix_aluno_aula_progresso_aluno_id")
+  @@index([aula_id], map: "ix_aluno_aula_progresso_aula_id")
+  @@index([modulo_id], map: "ix_aluno_aula_progresso_modulo_id")
+  @@map("aluno_aula_progresso")
+}
+
+model ranking {
+  id              Int       @id @default(autoincrement())
+  id_aluno        Int
+  nome_aluno      String
+  modalidade      String
+  pontos          Int
+  created_at      DateTime  @default(now()) @db.Timestamptz()
+  last_updated_at DateTime? @db.Timestamptz()
+  aluno_id        Int
+
+  aluno aluno @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
+
+  @@index([aluno_id], map: "ix_ranking_aluno_id")
+  @@map("ranking")
+}
+
+model desafio_jcc {
+  id              Int       @id @default(autoincrement())
+  id_aluno        Int
+  nome_aluno      String
+  pontos          Int
+  created_at      DateTime  @default(now()) @db.Timestamptz()
+  last_updated_at DateTime? @db.Timestamptz()
+
+  @@map("desafio_jcc")
+}
+
+model guest_user {
+  id              Int       @id @default(autoincrement())
+  nome            String
+  contato         String
+  created_at      DateTime  @default(now()) @db.Timestamptz()
+  last_updated_at DateTime? @db.Timestamptz()
+
+  @@map("guest_user")
+}

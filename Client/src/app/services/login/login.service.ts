@@ -77,6 +77,10 @@ export class LoginService {
   }
 
   logout(): void {
+    this.http
+      .post(`${this.apiUrl}/auth/logout`, {}, { withCredentials: true })
+      .subscribe();
+    this.authService.logout();
     localStorage.removeItem('userData');
     localStorage.removeItem('pontos');
   }

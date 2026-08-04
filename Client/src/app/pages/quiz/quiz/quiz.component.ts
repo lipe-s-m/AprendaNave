@@ -9,6 +9,7 @@ import { AsyncPipe, NgIf, NgForOf, NgFor } from '@angular/common';
 import { CdkAriaLive } from '../../../../../node_modules/@angular/cdk/a11y/index';
 import { ToastrService } from 'ngx-toastr';
 import { UserService } from '../../../services/user/user.service';
+import { MathGameService } from '../../../services/math-game/math-game.service';
 
 @Component({
   selector: 'app-quiz',
@@ -20,6 +21,8 @@ import { UserService } from '../../../services/user/user.service';
 })
 export class QuizComponent implements OnInit, OnDestroy {
   private subscription: Subscription | null = null;
+  private countdownInterval: any = null;
+  private timerInterval: any = null;
   cursoId: string | null = null;
   moduloId: string | null = null;
   modulo$: Observable<IModulo | null> = of(null);
@@ -44,7 +47,8 @@ export class QuizComponent implements OnInit, OnDestroy {
     private quizService: QuizService,
     private toastr: ToastrService,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private mathGameService: MathGameService
   ) {}
 
   ngOnInit(): void {
@@ -66,7 +70,8 @@ export class QuizComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
-    this.voltarParaTrilha();
+    clearInterval(this.countdownInterval);
+    clearInterval(this.timerInterval);
   }
   getDificuldade(): number {
     switch (this.dificuldade) {
@@ -89,11 +94,12 @@ export class QuizComponent implements OnInit, OnDestroy {
     }
     this.initializingGame = true;
 
-    const interval = setInterval(() => {
+    clearInterval(this.countdownInterval);
+    this.countdownInterval = setInterval(() => {
       this.contagemRegressiva--;
 
       if (this.contagemRegressiva === 0) {
-        clearInterval(interval);
+        clearInterval(this.countdownInterval);
         this.inGame = true;
         this.contagemRegressiva = 3;
         this.initializingGame = false;
@@ -120,74 +126,21 @@ export class QuizComponent implements OnInit, OnDestroy {
   }
   resultNumber(): void {
     this.opIndex = Math.floor(Math.random() * 4);
-    this.result = this.calcNumber();
 
-    this.questions = [this.result];
+    const question = this.mathGameService.generateQuestion(
+      this.number1,
+      this.number2,
+      this.opIndex
+    );
+    this.number1 = question.num1;
+    this.number2 = question.num2;
+    this.result = question.result;
 
-    while (this.questions.length < 4) {
-      let incorrectAnswer = this.generateIncorrectAnswer(this.result);
-
-      if (!this.questions.includes(incorrectAnswer)) {
-        this.questions.push(incorrectAnswer);
-      }
-    }
-
-    this.shuffleArray(this.questions);
+    this.questions = this.mathGameService.generateOptions(this.result);
   }
 
-  private generateIncorrectAnswer(correctAnswer: number): number {
-    const offset = Math.floor(Math.random() * 21) - 10;
-    let incorrect = correctAnswer + offset;
-
-    if (incorrect === correctAnswer) {
-      incorrect += incorrect > 0 ? 1 : -1;
-    }
-
-    return Math.max(0, incorrect);
-  }
-
-  private shuffleArray(array: any[]): void {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-  }
-  calcNumber(): number {
-    switch (this.opIndex) {
-      case 0:
-        return this.number1 + this.number2;
-      case 1:
-        return this.number1 - this.number2;
-      case 2:
-        return this.number1 * this.number2;
-      case 3:
-        if (this.number2 !== 0 || this.number1 !== 0) {
-          if (this.number1 < this.number2) {
-            [this.number1, this.number2] = [this.number2, this.number1];
-          }
-          return this.number1 / this.number2;
-        } else {
-          console.error('Divisão por zero não permitida');
-          return 0;
-        }
-      default:
-        return 0;
-    }
-  }
   resultOp(): string {
-    switch (this.opIndex) {
-      case 0:
-        return '+';
-      case 1:
-        return '-';
-      case 2:
-        return '*';
-      case 3:
-        return '/';
-
-      default:
-        return 'error';
-    }
+    return this.mathGameService.getOperatorSymbol(this.opIndex);
   }
   checkAnswer(answer: number | null) {
     let audio = new Audio();
@@ -204,7 +157,6 @@ export class QuizComponent implements OnInit, OnDestroy {
       audio.load();
       audio.play();
       this.erros += 1;
-      console.log(this.erros);
       if (this.erros > 3) {
         this.toastr.error(
           'Você errou muitas perguntas! Tente novamente.',
@@ -279,9 +231,6 @@ export class QuizComponent implements OnInit, OnDestroy {
         );
         break;
     }
-    console.log(this.points);
-    console.log(pontuacao);
-
     this.adicionarPontos(pontuacao);
 
     this.router.navigate(['/trilha', this.cursoId]);
@@ -296,22 +245,20 @@ export class QuizComponent implements OnInit, OnDestroy {
     this.ganhou = false;
   }
   iniciarContagemTempoRestante(): void {
-    console.log('fui chamado');
     const questionIndexAtual = this.questionIndex;
 
     if (this.inGame) {
-      console.log('ingame');
-
       this.tempoRestante = this.getDificuldade();
-      const interval = setInterval(() => {
+      clearInterval(this.timerInterval);
+      this.timerInterval = setInterval(() => {
         this.tempoRestante -= 1;
         if (this.tempoRestante <= 0 && this.inGame) {
-          clearInterval(interval);
+          clearInterval(this.timerInterval);
           this.tempoRestante = this.getDificuldade();
           this.checkAnswer(null);
         }
         if (this.questionIndex !== questionIndexAtual) {
-          clearInterval(interval);
+          clearInterval(this.timerInterval);
           this.tempoRestante = this.getDificuldade();
         }
       }, 1000);
