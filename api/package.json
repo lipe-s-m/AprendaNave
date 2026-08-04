@@ -7,7 +7,9 @@
     "build": "npx prisma generate && tsup src/index.ts --format cjs",
     "start": "node dist/index.js",
     "db:pull": "prisma db pull",
-    "db:generate": "prisma generate"
+    "db:generate": "prisma generate",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@hono/node-server": "^1.14.0",
@@ -25,6 +27,7 @@
     "prisma": "^6.8.0",
     "tsup": "^8.4.0",
     "tsx": "^4.19.0",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "vitest": "^4.1.10"
   }
 }
