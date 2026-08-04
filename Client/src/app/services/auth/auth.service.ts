@@ -34,4 +34,8 @@ export class AuthService {
   isLogged() {
     return this.isAuth$;
   }
+
+  logout(): void {
+    this.isAuthSubject.next(false);
+  }
 }

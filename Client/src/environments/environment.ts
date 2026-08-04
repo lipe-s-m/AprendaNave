@@ -1,6 +1,6 @@
 export const environment = {
   production: false, // 💡 Deve ser false no arquivo base
-  apiUrl: 'http://localhost:5269',
+  apiUrl: 'http://localhost:3000',
   apiKeyFirebase: 'AIzaSyB9WTuvBozejMwbnP9ASQZB7tznujX1tlQ',
   authDomainFirebase: 'aprendanave.firebaseapp.com',
   projectIdFirebase: 'aprendanave',
