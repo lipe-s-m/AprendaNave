@@ -77,9 +77,7 @@ export class AulaComponent implements OnInit, OnDestroy {
     private toastr: ToastrService,
     private sanitizer: DomSanitizer,
     private aulaService: AulaService
-  ) {
-    console.log(this.cursoNome);
-  }
+  ) {}
 
   ngOnInit(): void {
     this.subscription = this.route.paramMap.subscribe((params) => {
@@ -104,10 +102,9 @@ export class AulaComponent implements OnInit, OnDestroy {
       const aulaIdNum = aulaId !== null ? Number(aulaId) : null;
 
       this.navState.updateIdContexto(cursoIdNum, moduloIdNum, aulaIdNum);
-      console.log(cursoIdNum, moduloIdNum, aulaIdNum);
 
       if (cursoIdNum !== null && moduloIdNum !== null && aulaIdNum !== null) {
-        if (this.aulasList.length === 0) {
+        if (this.aulasList().length === 0) {
           this.aulaService.getAulas(moduloIdNum).subscribe({
             next: (aulas) => {
               this.aulasList.set(aulas);
@@ -145,12 +142,8 @@ export class AulaComponent implements OnInit, OnDestroy {
         // Verificar se todas as aulas foram concluídas
         // Encontrar a próxima aula e a aula anterior
         this.aula = aula;
-        console.log(aula);
-
         this.gerarVideoUrl(this.aula.videoYoutubeIdAula);
         this.aulasList.set(this.navState.aulas() || []);
-        console.log(this.aulasList());
-
         this.definirNavegacaoAulas();
 
         // Marcar a aula como concluída se ainda não estiver
@@ -172,7 +165,7 @@ export class AulaComponent implements OnInit, OnDestroy {
   }
 
   verificarAulasConcluidas(): void {
-    if (this.aulasList.length === 0) {
+    if (this.aulasList().length === 0) {
       this.todasAsAulasConcluidas = false;
       return;
     }
@@ -200,7 +193,7 @@ export class AulaComponent implements OnInit, OnDestroy {
   }
 
   definirNavegacaoAulas(): void {
-    if (!this.aula || !this.aulasList.length) return;
+    if (!this.aula || !this.aulasList().length) return;
 
     const currentIndex = this.aulasList().findIndex(
       (a) => a.idAula === this.aula!.idAula

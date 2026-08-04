@@ -10,7 +10,7 @@
         <span class="tag">TUTOR IA</span>
 
         <div class="course-icon challenge-icon">
-          <img src="https://i.ibb.co/XrhcPQt3/4712010.png" alt="Logo AprendaNave" />
+          <img src="assets/aprendabot-icon.png" alt="Logo AprendaNave" />
         </div>
 
         <div class="card-content">
@@ -30,7 +30,7 @@
         <span class="tag">DESAFIO</span>
 
         <div class="course-icon challenge-icon">
-          <img src="https://cdn-icons-png.flaticon.com/512/1620/1620512.png" alt="Logo AprendaNave" />
+          <img src="assets/desafio-icon.png" alt="Logo AprendaNave" />
         </div>
 
         <div class="card-content">
@@ -57,14 +57,13 @@
         <div class="card-content">
           <span class="title-section">
             <h3>{{ curso.nome }}</h3>
-            <div class="modules">4 módulos</div>
+            <div class="modules">{{ curso.quantidadeModulos ? curso.quantidadeModulos + ' módulos' : 'Curso' }}</div>
           </span>
           <div class="info-row">
             <div class="instructor">
               <img src="assets/logo.svg" alt="Instrutor" class="instructor-avatar" />
               <span>Criado por {{ curso.autorNome }}</span>
             </div>
-            <div class="enrollments">{{ curso.id }} alunos</div>
           </div>
         </div>
       </div>

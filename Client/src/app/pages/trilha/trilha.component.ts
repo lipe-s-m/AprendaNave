@@ -74,8 +74,6 @@ export class TrilhaComponent implements OnInit, OnDestroy {
     this.moduloService.getModulos(id).subscribe({
       next: (trilha) => {
         this.trilha = trilha?.sort((a, b) => a.ordem - b.ordem);
-        console.log(trilha);
-
         this.isLoading = false;
       },
       error: (err) => {
@@ -128,11 +126,6 @@ export class TrilhaComponent implements OnInit, OnDestroy {
   // }
 
   abrirModalModulo(modulo: Modulo, event?: Event): void {
-    if (modulo.id !== 1) {
-      this.toastr.info('Funcionalidade em desenvolvimento', 'Atenção');
-      return;
-    }
-
     try {
       // Verificar se o evento veio de um botão
       const isButtonClick =
@@ -148,7 +141,6 @@ export class TrilhaComponent implements OnInit, OnDestroy {
       // Caso contrário, abrimos o modal para confirmação
       this.moduloSelecionado = modulo;
     } catch (error) {
-      console.error('Erro ao abrir modal do módulo:', error);
       this.toastr.error('Ocorreu um erro ao abrir o modal', 'Erro');
     }
   }
@@ -169,18 +161,11 @@ export class TrilhaComponent implements OnInit, OnDestroy {
         this.navegarParaModulo(modulo);
       }
     } catch (error) {
-      console.error('Erro ao iniciar ou continuar módulo:', error);
       this.toastr.error('Ocorreu um erro ao processar a ação', 'Erro');
     }
   }
 
   confirmarIniciarModulo(): void {
-    if (this.moduloSelecionado.id !== 1) {
-      this.toastr.info('Funcionalidade em desenvolvimento', 'Atenção');
-      this.fecharModal();
-
-      return;
-    }
     if (this.moduloSelecionado) {
       try {
         const moduloId = this.moduloSelecionado.id;
@@ -192,11 +177,8 @@ export class TrilhaComponent implements OnInit, OnDestroy {
           // this.atualizarStatusModulo(moduloId, 'EM_ANDAMENTO');
         }, 100);
       } catch (error) {
-        console.error('Erro ao confirmar início do módulo:', error);
         this.toastr.error('Ocorreu um erro ao iniciar o módulo', 'Erro');
       }
-    } else {
-      console.error('confirmarIniciarModulo chamado sem módulo selecionado');
     }
   }
 
@@ -238,7 +220,6 @@ export class TrilhaComponent implements OnInit, OnDestroy {
     if (this.trilhaId !== null) {
       this.navigationStateService.setModulo(modulo.id, modulo.nome);
       this.navigationStateService.setDescricaoCurso(modulo.descricao);
-      console.log(this.navigationStateService.nomeCurso());
       this.router.navigate(['/modulo', this.trilhaId, modulo.id]);
     }
   }
