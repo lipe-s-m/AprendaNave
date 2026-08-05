@@ -135,8 +135,7 @@ export class ModuloComponent implements OnDestroy {
     this.navState.updateIdContexto(this.cursoId, this.moduloId, aula.idAula);
     this.router.navigate(['/aula', this.cursoId, this.moduloId, aula.idAula]);
 
-    this.marcarConclusaoLocal(aula.idAula);
-    this.sincronizarConclusoesLocais();
+    // Conclusão acontece exclusivamente em AulaComponent (fluxo explícito)
   }
 
   private carregarAulas(moduloId: number): void {
@@ -164,26 +163,15 @@ export class ModuloComponent implements OnDestroy {
   }
 
   private aplicarRegraStatusModulo(): void {
-    if (!this.modulo) {
-      return;
-    }
-
-    if (this.modulo.status === 'CONCLUIDO') {
-      this.aulas.forEach((aula) => this.marcarConclusaoLocal(aula.idAula));
-    } else if (
-      this.modulo.status === 'EM_ANDAMENTO' &&
-      !this.aulas.some((aula) => aula.concluida)
-    ) {
-      const primeiraAula = this.aulas[0];
-      if (primeiraAula) {
-        this.marcarConclusaoLocal(primeiraAula.idAula);
-      }
-    }
+    // O servidor é a fonte da verdade para progresso.
+    // Apenas refletir o progresso já carregado do servidor nas aulas.
+    if (!this.modulo) return;
+    this.sincronizarConclusoesLocais();
   }
 
   private marcarConclusaoLocal(aulaId: number): void {
     if (!this.aulaService.isAulaConcluida(aulaId)) {
-      this.aulaService.markAulaComoConcluida(aulaId);
+      this.aulaService.markAulaComoConcluida(aulaId).subscribe();
     }
   }
 

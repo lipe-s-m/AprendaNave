@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken'
 export const prismaMock = {
   aluno: { findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn() },
   curso: { findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn() },
-  modulo: { findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn() },
+  modulo: { findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn() },
   aula: { findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn() },
   desafio_jcc: { findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn() },
   ranking: { findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn() },

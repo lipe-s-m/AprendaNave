@@ -1,4 +1,19 @@
-<button [ngClass]="[buttonTheme, buttonLevel, buttonSize]" [style.background-color]="buttonBackgroundColor && buttonBackgroundColor" [style.color]="buttonTextColor && buttonTextColor" [disabled]="buttonDisabled" [type]="buttonType" >
-  <img class="play" *ngIf="buttonText?.toLocaleLowerCase() === 'iniciar'" src="assets/play-button.svg" alt="">
-  {{buttonText}}
+<button
+  [ngClass]="[
+    buttonTheme,
+    buttonSize,
+    buttonVariant ? 'variant-' + buttonVariant : buttonLevel
+  ]"
+  [style.background-color]="buttonBackgroundColor && buttonBackgroundColor"
+  [style.color]="buttonTextColor && buttonTextColor"
+  [disabled]="buttonDisabled"
+  [type]="buttonType"
+>
+  <img
+    class="play"
+    *ngIf="buttonText?.toLocaleLowerCase() === 'iniciar'"
+    src="assets/play-button.svg"
+    alt=""
+  />
+  {{ buttonText }}
 </button>

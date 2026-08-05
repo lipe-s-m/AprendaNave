@@ -3,6 +3,7 @@ export interface User {
   nome: string;
   email: string;
   pontos: number;
+  cargo?: string;
   bio?: string;
   fotoPerfil?: string;
 }
@@ -50,4 +51,24 @@ export interface GuestResponseDTO {
   id: number;
   nome: string;
   contato: string;
+}
+
+export interface ModuloProgresso {
+  idModulo: number;
+  idCurso: number;
+  status: 'NAO_INICIADO' | 'EM_ANDAMENTO' | 'CONCLUIDO';
+  aulasConcluidas: number;
+  totalAulas: number;
+}
+
+export interface UserProgress {
+  aulasConcluidas: number[];
+  modulosProgresso: ModuloProgresso[];
+}
+
+export interface ConcluirAulaResponse {
+  idAula: number;
+  idModulo: number;
+  moduloStatus: 'EM_ANDAMENTO' | 'CONCLUIDO';
+  todasAulasConcluidas: boolean;
 }

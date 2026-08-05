@@ -139,20 +139,19 @@ export class AulaComponent implements OnInit, OnDestroy {
 
     this.aulaService.getAulaById(aulaId).subscribe({
       next: (aula) => {
-        // Verificar se todas as aulas foram concluídas
-        // Encontrar a próxima aula e a aula anterior
         this.aula = aula;
         this.gerarVideoUrl(this.aula.videoYoutubeIdAula);
         this.aulasList.set(this.navState.aulas() || []);
         this.definirNavegacaoAulas();
 
-        // Marcar a aula como concluída se ainda não estiver
-        // if (!this.aula.concluida) {
-        //   // this.marcarAulaConcluida(aulaId);
-
-        //   this.aula.concluida = true;
-        //   this.verificarAulasConcluidas();
-        // }
+        // Marcar a aula como concluída no servidor se ainda não estiver
+        if (!this.aulaService.isAulaConcluida(aulaId)) {
+          this.marcarAulaConcluida(
+            this.cursoId!,
+            this.moduloId!,
+            aulaId
+          );
+        }
 
         this.isLoading = false;
       },
@@ -217,7 +216,13 @@ export class AulaComponent implements OnInit, OnDestroy {
   marcarAulaConcluida(cursoId: number, moduloId: number, aulaId: number): void {
     if (!cursoId || !moduloId || !aulaId) return;
 
-    this.aulaService.markAulaComoConcluida(aulaId);
+    this.aulaService.markAulaComoConcluida(aulaId).subscribe({
+      next: (res) => {
+        if (res.todasAulasConcluidas) {
+          this.verificarAulasConcluidas();
+        }
+      },
+    });
   }
 
   irParaProximaAula(): void {

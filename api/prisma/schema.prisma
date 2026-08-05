@@ -22,6 +22,7 @@ model aluno {
   aluno_modulo_progresso aluno_modulo_progresso[]
   aluno_aula_progresso   aluno_aula_progresso[]
   ranking                ranking[]
+  aluno_conquista        aluno_conquista[]
 
   @@map("aluno")
 }
@@ -147,4 +148,32 @@ model guest_user {
   last_updated_at DateTime? @db.Timestamptz()
 
   @@map("guest_user")
+}
+
+model conquista {
+  id             Int      @id @default(autoincrement())
+  nome           String   @db.VarChar(100)
+  descricao      String   @db.VarChar(255)
+  icone          String   @default("flag-red.svg") @db.VarChar(50)
+  tipo           String   @db.VarChar(30)
+  condicao_valor Int      @default(0)
+  pontos         Int      @default(0)
+  criado_em      DateTime @default(now()) @db.Timestamptz()
+
+  aluno_conquista aluno_conquista[]
+
+  @@map("conquista")
+}
+
+model aluno_conquista {
+  id             Int      @id @default(autoincrement())
+  id_aluno       Int
+  id_conquista   Int
+  desbloqueado_em DateTime @default(now()) @db.Timestamptz()
+
+  aluno     aluno     @relation(fields: [id_aluno], references: [id], onDelete: Cascade)
+  conquista conquista @relation(fields: [id_conquista], references: [id], onDelete: Cascade)
+
+  @@unique([id_aluno, id_conquista])
+  @@map("aluno_conquista")
 }

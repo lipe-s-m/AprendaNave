@@ -1,5 +1,11 @@
 @use "@angular/material" as mat;
 
+// ─────────────────────────────────────────────────────────────
+// DESIGN TOKENS GLOBAIS — AprendaNave
+// Regras: 1rem = 10px; cores sempre via variáveis; nunca hex
+// direto em componentes.
+// ─────────────────────────────────────────────────────────────
+
 // Variáveis para o tema escuro (padrão)
 :root {
   --background-primary: #0d1117;
@@ -22,18 +28,26 @@
       active-indicator-color: #ac87c5,
     )
   );
+
+  // Tokens semânticos — superfícies, input, foco e status
+  --surface-card: var(--background-secondary);
+  --surface-card-hover: var(--background-tertiary);
+  --surface-elevated: var(--background-tertiary);
+  --input-background: rgba(94, 72, 121, 0.3);
+  --input-border: var(--border-color);
+  --input-placeholder: var(--text-muted);
+  --focus-ring: var(--accent-primary);
+  --overlay-background: rgba(0, 0, 0, 0.6);
+  --status-success-background: rgba(19, 197, 87, 0.15);
+  --status-warning-background: rgba(251, 169, 76, 0.15);
+  --status-error-background: rgba(247, 90, 104, 0.15);
+  --status-info-background: rgba(78, 168, 222, 0.15);
 }
 
 // Tema claro
 .light-theme {
-  --background-primary: #ffffff;
-  --background-primary: #bec1f8;
-  --background-primary: #3396d3;
+  // Últimas cores intencionais do tema claro (validadas visualmente)
   --background-primary: #f2f4f7;
-
-  --background-secondary: #ac87c5;
-  --background-secondary: #f6f8fa;
-  --background-secondary: #3396d3;
   --background-secondary: #f2f4f7;
   --background-tertiary: #ffffff;
   --background-quaternary: #f2f4f7;
@@ -64,6 +78,20 @@
       active-indicator-color: #0b1ec5,
     )
   );
+
+  // Tokens semânticos — tema claro
+  --surface-card: var(--background-secondary);
+  --surface-card-hover: var(--background-tertiary);
+  --surface-elevated: var(--background-tertiary);
+  --input-background: #ffffff;
+  --input-border: var(--border-color);
+  --input-placeholder: var(--text-muted);
+  --focus-ring: var(--accent-primary);
+  --overlay-background: rgba(13, 17, 23, 0.5);
+  --status-success-background: rgba(11, 30, 197, 0.12);
+  --status-warning-background: rgba(154, 103, 0, 0.12);
+  --status-error-background: rgba(209, 36, 47, 0.12);
+  --status-info-background: rgba(48, 37, 143, 0.12);
 }
 
 // Tema escuro (explícito)
@@ -91,12 +119,25 @@
   --error-color: #f75a68;
   --pastel-primary: #ac87c5;
   --background-primary-dark: #8854c0;
+
+  // Tokens semânticos — tema escuro
+  --surface-card: var(--background-secondary);
+  --surface-card-hover: var(--background-tertiary);
+  --surface-elevated: var(--background-tertiary);
+  --input-background: rgba(94, 72, 121, 0.3);
+  --input-border: var(--border-color);
+  --input-placeholder: var(--text-muted);
+  --focus-ring: var(--accent-primary);
+  --overlay-background: rgba(0, 0, 0, 0.6);
+  --status-success-background: rgba(19, 197, 87, 0.15);
+  --status-warning-background: rgba(251, 169, 76, 0.15);
+  --status-error-background: rgba(247, 90, 104, 0.15);
+  --status-info-background: rgba(78, 168, 222, 0.15);
 }
 
 // Cores antigas (mantidas para compatibilidade)
 $cor-background-light: #f0f8ff;
 $cor-background-dark: #161b50;
-$cor-header-dark: #0c1032;
 $cor-header-dark: oklch(19.379% 0.04727 290.906);
 $cor-header-light: #ac87c5;
 $cor-text-light: #ffffff;
@@ -105,10 +146,10 @@ $cor-text-dark: #d791f8;
 $cor-button-primary-dark: #aa77cc;
 $cor-button-secundary-dark: #f0dffc;
 
-//fontes
+// Fontes
 $fonte-principal: "Montserrat", sans-serif;
 
-//tamanhos de fonte
+// Tamanhos de fonte (1rem = 10px)
 $fonte-tamanho-p: 1.6rem;
 $fonte-tamanho-h1: 2.4rem;
 $fonte-tamanho-h2: 2rem;
@@ -116,13 +157,26 @@ $fonte-tamanho-h3: 1.8rem;
 $fonte-tamanho-h4: 1.6rem;
 $fonte-tamanho-h5: 1.4rem;
 
-//borda
+// Bordas
 $borda-radius: 1.6rem;
 $borda-radius-card: 0.8rem;
 $borda-radius-input: 0.4rem;
 
-//sombra
+// Sombras
 $sombra-card: 0 0.8rem 1.6rem rgba(0, 0, 0, 0.2);
 $sombra-card-hover: 0 1.6rem 3.2rem rgba(0, 0, 0, 0.2);
 $sombra-input: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.1);
 $sombra-input-focus: 0 0.8rem 1.6rem rgba(0, 0, 0, 0.2);
+
+// Escala de espaçamento (1rem = 10px)
+$espaco-1: 0.4rem;
+$espaco-2: 0.8rem;
+$espaco-3: 1.2rem;
+$espaco-4: 1.6rem;
+$espaco-5: 2.4rem;
+$espaco-6: 3.2rem;
+$espaco-7: 4.8rem;
+
+// Transições
+$transicao-rapida: 160ms ease;
+$transicao-padrao: 240ms ease;

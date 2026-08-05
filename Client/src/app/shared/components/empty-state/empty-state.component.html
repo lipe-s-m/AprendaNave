@@ -1,0 +1,12 @@
+<div class="empty-state">
+  <span class="material-icons empty-icon" aria-hidden="true">{{ icon }}</span>
+  <h2 class="empty-title">{{ title }}</h2>
+  <p class="empty-description" *ngIf="description">{{ description }}</p>
+  <app-button
+    *ngIf="actionText"
+    [buttonText]="actionText"
+    buttonSize="medium"
+    buttonType="button"
+    (click)="action.emit()"
+  />
+</div>

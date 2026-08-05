@@ -9,6 +9,8 @@ import { aulasRoutes } from './routes/aulas'
 import { desafioJccRoutes } from './routes/desafioJcc'
 import { rankingRoutes } from './routes/ranking'
 import { guestsRoutes } from './routes/guests'
+import { adminRoutes } from './routes/admin'
+import { conquistasRoutes } from './routes/conquistas'
 
 const app = new Hono()
 
@@ -32,6 +34,8 @@ app.route('/aulas', aulasRoutes)
 app.route('/desafio/desafio-jcc', desafioJccRoutes)
 app.route('/rankings', rankingRoutes)
 app.route('/guests', guestsRoutes)
+app.route('/admin', adminRoutes)
+app.route('/conquistas', conquistasRoutes)
 
 const port = parseInt(process.env.PORT || '3000')
 

@@ -18,6 +18,12 @@ export interface Modulo {
   descricao?: string;
   nivel?: 'INICIANTE' | 'INTERMEDIÁRIO' | 'AVANÇADO';
   aulasList?: Aula[];
+  /** Contagem dinâmica vinda da API (nº de aulas aprovadas para o público). */
+  quantidadeAulas?: number;
+  /** Detalhamento por status, retornado apenas no modo criador. */
+  quantidadeAulasAprovadas?: number;
+  quantidadeAulasPendentes?: number;
+  quantidadeAulasRejeitadas?: number;
 }
 
 export interface Curso {
@@ -38,4 +44,24 @@ export interface CreateCursoDto {
   logo: string;
   autorNome: string;
   descricao: string;
+}
+
+export interface CreateModuloDto {
+  nome: string;
+  descricao: string;
+  ordem: number;
+  nivel: number;
+  // A quantidade de aulas NÃO é enviada: o servidor calcula dinamicamente
+  // a partir da tabela `aula`.
+  quantidadeHoras?: number;
+  cursoId: number;
+}
+
+export interface CreateAulaDto {
+  titulo: string;
+  descricao: string;
+  ordem: number;
+  duracao?: number;
+  videoYoutubeId: string;
+  idModulo: number;
 }

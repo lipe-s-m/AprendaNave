@@ -1,0 +1,91 @@
+@use "./../../../scss/variables";
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: variables.$espaco-4;
+}
+
+.modal-content {
+  background: var(--surface-card);
+  border: 1px solid var(--border-color);
+  border-radius: variables.$borda-radius;
+  padding: variables.$espaco-5;
+  max-width: 40rem;
+  width: calc(100% - 3.2rem);
+  text-align: center;
+  box-shadow: variables.$sombra-card;
+}
+
+h3 {
+  margin: 0 0 variables.$espaco-2;
+  font-size: variables.$fonte-tamanho-h3;
+  color: var(--text-primary);
+  font-family: variables.$fonte-principal;
+}
+
+p {
+  color: var(--text-muted);
+  margin: 0 0 variables.$espaco-5;
+  font-size: variables.$fonte-tamanho-p;
+}
+
+.modal-actions {
+  display: flex;
+  gap: variables.$espaco-3;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-cancel,
+.btn-confirm {
+  min-height: 4.4rem;
+  padding: variables.$espaco-3 variables.$espaco-4;
+  border-radius: variables.$borda-radius-input;
+  cursor: pointer;
+  font-size: variables.$fonte-tamanho-p;
+  font-weight: 600;
+  font-family: variables.$fonte-principal;
+  transition:
+    transform variables.$transicao-rapida,
+    box-shadow variables.$transicao-rapida,
+    background-color variables.$transicao-rapida;
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.btn-cancel {
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-primary);
+
+  &:hover {
+    background: var(--surface-card-hover);
+  }
+}
+
+.btn-confirm {
+  border: none;
+  color: var(--text-on-accent);
+
+  &.danger {
+    background: var(--error-color);
+  }
+  &.success {
+    background: var(--success-color);
+  }
+  &.primary {
+    background: var(--accent-primary);
+  }
+
+  &:hover {
+    transform: translateY(-0.2rem);
+  }
+}

@@ -15,6 +15,8 @@ import { PerfilComponent } from './pages/perfil/perfil.component';
 import { DesafioMatematicaComponent } from './pages/desafio-matematica/desafio-matematica.component';
 import { CriarCursoComponent } from './pages/criar-curso/criar-curso.component';
 import { MeusCursosComponent } from './pages/meus-cursos/meus-cursos.component';
+import { GerenciarCursoComponent } from './pages/gerenciar-curso/gerenciar-curso.component';
+import { AdminComponent } from './pages/admin/admin.component';
 
 export const routes: Routes = [
   { path: '', component: StartComponent, pathMatch: 'full' },
@@ -23,8 +25,18 @@ export const routes: Routes = [
   { path: 'perfil', component: PerfilComponent, canActivate: [authGuard] },
   { path: 'home', component: HomeComponent, canActivate: [authGuard] },
   {
+    path: 'admin',
+    component: AdminComponent,
+    canActivate: [authGuard],
+  },
+  {
     path: 'curso/criar',
     component: CriarCursoComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'curso/:id/gerenciar',
+    component: GerenciarCursoComponent,
     canActivate: [authGuard],
   },
   {

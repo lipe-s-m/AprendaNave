@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import prisma from '../lib/prisma'
-import { getCurrentUserId } from '../middleware/auth'
+import { getCurrentUserId, authRequired, isCursoOwner } from '../middleware/auth'
+import { mapModuloResponse, obterContagensAulasPorModulo } from '../lib/modulo-response'
 
 export const cursosRoutes = new Hono()
 
@@ -109,6 +110,108 @@ cursosRoutes.post('/', async (c) => {
   }
 })
 
+// GET /cursos/:id - fetch single course by ID
+cursosRoutes.get('/:id', async (c) => {
+  try {
+    const id = parseInt(c.req.param('id')!)
+    const curso = await prisma.curso.findFirst({ where: { id } })
+
+    if (!curso) return c.json({ error: 'Curso não encontrado' }, 404)
+
+    return c.json({
+      id: curso.id,
+      nome: curso.nome,
+      logo: curso.logo,
+      autorNome: curso.autor_nome,
+      autorId: curso.autor_id,
+      descricao: curso.descricao,
+      statusAprovacao: statusToInt(curso.status),
+    })
+  } catch (ex) {
+    return c.json({ error: 'Erro interno' }, 500)
+  }
+})
+
+// PUT /cursos/:id - update course (owner only)
+cursosRoutes.put('/:id', authRequired, async (c) => {
+  try {
+    const userId = getCurrentUserId(c)!
+    const cursoId = parseInt(c.req.param('id')!)
+
+    if (!(await isCursoOwner(userId, cursoId))) {
+      return c.json({ error: 'Você não tem permissão para editar este curso' }, 403)
+    }
+
+    const body = await c.req.json()
+    const updated = await prisma.curso.update({
+      where: { id: cursoId },
+      data: {
+        ...(body.nome !== undefined && { nome: body.nome }),
+        ...(body.logo !== undefined && { logo: body.logo }),
+        ...(body.autorNome !== undefined && { autor_nome: body.autorNome }),
+        ...(body.descricao !== undefined && { descricao: body.descricao }),
+      },
+    })
+
+    return c.json({
+      id: updated.id,
+      nome: updated.nome,
+      logo: updated.logo,
+      autorNome: updated.autor_nome,
+      autorId: updated.autor_id,
+      descricao: updated.descricao,
+      statusAprovacao: statusToInt(updated.status),
+    })
+  } catch (ex) {
+    return c.json({ error: 'Erro ao atualizar curso' }, 400)
+  }
+})
+
+// DELETE /cursos/:id - delete course (owner only, cascade modulos + aulas)
+cursosRoutes.delete('/:id', authRequired, async (c) => {
+  try {
+    const userId = getCurrentUserId(c)!
+    const cursoId = parseInt(c.req.param('id')!)
+
+    if (!(await isCursoOwner(userId, cursoId))) {
+      return c.json({ error: 'Você não tem permissão para excluir este curso' }, 403)
+    }
+
+    await prisma.curso.delete({ where: { id: cursoId } })
+    return c.json({ ok: true })
+  } catch (ex) {
+    return c.json({ error: 'Erro ao excluir curso' }, 400)
+  }
+})
+
+// GET /cursos/:cursoId/modulos - all modules (owner sees all, others see only approved)
+cursosRoutes.get('/:cursoId/modulos', async (c) => {
+  try {
+    const cursoId = parseInt(c.req.param('cursoId')!)
+    const userId = getCurrentUserId(c)
+
+    // Se for o dono, mostra todos (incluindo Pendente/Rejeitado). Senão, só Aprovado.
+    const where: any = { curso_id: cursoId }
+    const isOwner = userId ? await isCursoOwner(userId, cursoId) : false
+    if (!isOwner) {
+      where.status = 'Aprovado'
+    }
+
+    const modulos = await prisma.modulo.findMany({ where })
+
+    // Contagem dinâmica a partir de `aula` (fonte da verdade), em lote
+    const contagens = await obterContagensAulasPorModulo(modulos.map((m) => m.id))
+
+    return c.json(
+      modulos.map((m) =>
+        mapModuloResponse(m, contagens.get(m.id)!, isOwner ? 'criador' : 'publico')
+      )
+    )
+  } catch (ex) {
+    return c.json({ error: 'Erro interno' }, 500)
+  }
+})
+
 // GET /cursos/:cursoId/modulos/aprovados
 cursosRoutes.get('/:cursoId/modulos/aprovados', async (c) => {
   try {
@@ -118,30 +221,28 @@ cursosRoutes.get('/:cursoId/modulos/aprovados', async (c) => {
       where: { curso_id: cursoId, status: 'Aprovado' },
     })
 
+    const contagens = await obterContagensAulasPorModulo(modulos.map((m) => m.id))
+
     return c.json(
-      modulos.map((m) => ({
-        id: m.id,
-        nome: m.nome,
-        descricao: m.descricao,
-        ordem: m.ordem,
-        nivel: m.nivel,
-        quantidadeAulas: m.quantidade_aulas,
-        quantidadeHoras: m.quantidade_horas,
-        playlist: m.playlist,
-        status: m.status,
-        cursoId: m.curso_id,
-        createdAt: m.created_at,
-        lastUpdatedAt: m.last_updated_at,
-      }))
+      modulos.map((m) =>
+        mapModuloResponse(m, contagens.get(m.id)!, 'publico')
+      )
     )
   } catch (ex) {
     return c.json({ error: 'Erro interno' }, 500)
   }
 })
 
-// POST /cursos/:cursoId/modulos - create module for a course
-cursosRoutes.post('/:cursoId/modulos', async (c) => {
+// POST /cursos/:cursoId/modulos - create module for a course (owner only)
+cursosRoutes.post('/:cursoId/modulos', authRequired, async (c) => {
   try {
+    const userId = getCurrentUserId(c)!
+    const cursoId = parseInt(c.req.param('cursoId')!)
+
+    if (!(await isCursoOwner(userId, cursoId))) {
+      return c.json({ error: 'Você não tem permissão para adicionar módulos a este curso' }, 403)
+    }
+
     const body = await c.req.json()
 
     const modulo = await prisma.modulo.create({
@@ -151,7 +252,9 @@ cursosRoutes.post('/:cursoId/modulos', async (c) => {
         curso_id: body.cursoId,
         ordem: body.ordem,
         nivel: body.nivel,
-        quantidade_aulas: body.quantidadeAulas,
+        // Coluna legada: NÃO é fonte de verdade. A contagem é calculada
+        // dinamicamente a partir da tabela `aula` na resposta.
+        quantidade_aulas: 0,
         quantidade_horas: body.quantidadeHoras ?? 0,
         status: 'Pendente',
         created_at: new Date(),
@@ -159,21 +262,10 @@ cursosRoutes.post('/:cursoId/modulos', async (c) => {
       },
     })
 
+    const contagens = await obterContagensAulasPorModulo([modulo.id])
+
     return c.json(
-      {
-        id: modulo.id,
-        nome: modulo.nome,
-        descricao: modulo.descricao,
-        ordem: modulo.ordem,
-        nivel: modulo.nivel,
-        quantidadeAulas: modulo.quantidade_aulas,
-        quantidadeHoras: modulo.quantidade_horas,
-        playlist: modulo.playlist,
-        status: modulo.status,
-        cursoId: modulo.curso_id,
-        createdAt: modulo.created_at,
-        lastUpdatedAt: modulo.last_updated_at,
-      },
+      mapModuloResponse(modulo, contagens.get(modulo.id)!, 'criador'),
       201
     )
   } catch (ex) {

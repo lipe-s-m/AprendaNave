@@ -1,16 +1,17 @@
 import { Component, OnDestroy } from '@angular/core';
-import { Router, NavigationStart } from '@angular/router';
+import { Router, RouterModule, NavigationStart } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { LoginService } from '../../../services/login/login.service';
 import { ToastrService } from 'ngx-toastr';
 import { ThemeService } from '../../../services/theme/theme.service';
+import { UserService } from '../../../services/user/user.service';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent } from '../button/button.component';
 
 @Component({
   selector: 'app-subheader',
   standalone: true,
-  imports: [CommonModule, ButtonComponent],
+  imports: [CommonModule, ButtonComponent, RouterModule],
   templateUrl: './subheader.component.html',
   styleUrl: './subheader.component.scss',
 })
@@ -30,8 +31,13 @@ export class SubheaderComponent {
     private router: Router,
     private loginService: LoginService,
     private toastr: ToastrService,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    private userService: UserService
   ) {}
+
+  get isAdmin(): boolean {
+    return this.userService.getUserSignal()()?.cargo === 'Admin';
+  }
 
   ngOnInit(): void {
     this.routerSubscription = this.router.events.subscribe((evt) => {

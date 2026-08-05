@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { ThemeService } from '../../services/theme/theme.service';
 import { Subscription } from 'rxjs';
@@ -11,11 +11,12 @@ import { DesafioJccService } from '../../services/desafio-jcc/desafio-jcc.servic
 import { Curso } from '../../models/curso.model';
 import { CursoService } from '../../services/curso/curso.service';
 import { NavigationStateService } from '../../services/navigation-state/navigation-state.service';
+import { UserService } from '../../services/user/user.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, LoaderComponent, SubheaderComponent],
+  imports: [CommonModule, LoaderComponent, SubheaderComponent, RouterModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
@@ -34,8 +35,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     private toastr: ToastrService,
     private themeService: ThemeService,
     private cursoService: CursoService,
-    private desafioJccService: DesafioJccService
+    private desafioJccService: DesafioJccService,
+    private userService: UserService
   ) {}
+
+  isAdmin(): boolean {
+    return this.userService.getUserSignal()()?.cargo === 'Admin';
+  }
 
   ngOnInit() {
     // Subscreve às mudanças de tema

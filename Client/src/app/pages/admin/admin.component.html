@@ -1,0 +1,164 @@
+<app-subheader />
+
+<div class="page-container">
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">Painel de aprovação</h1>
+      <p class="page-subtitle">Revise conteúdos pendentes antes de publicá-los.</p>
+    </div>
+  </header>
+
+  <!-- Tabs acessíveis -->
+  <div class="tabs" role="tablist" aria-label="Conteúdos pendentes">
+    <button
+      class="tab"
+      type="button"
+      role="tab"
+      [class.active]="abaAtiva() === 'cursos'"
+      [attr.aria-selected]="abaAtiva() === 'cursos'"
+      (click)="setAba('cursos')"
+    >
+      Cursos ({{ pendentes().cursos.length }})
+    </button>
+    <button
+      class="tab"
+      type="button"
+      role="tab"
+      [class.active]="abaAtiva() === 'modulos'"
+      [attr.aria-selected]="abaAtiva() === 'modulos'"
+      (click)="setAba('modulos')"
+    >
+      Módulos ({{ pendentes().modulos.length }})
+    </button>
+    <button
+      class="tab"
+      type="button"
+      role="tab"
+      [class.active]="abaAtiva() === 'aulas'"
+      [attr.aria-selected]="abaAtiva() === 'aulas'"
+      (click)="setAba('aulas')"
+    >
+      Aulas ({{ pendentes().aulas.length }})
+    </button>
+  </div>
+
+  <div class="loading" *ngIf="isLoading()"><app-loader /></div>
+
+  <div class="error-state" *ngIf="error()">
+    <p>{{ error() }}</p>
+    <button class="retry-button" type="button" (click)="carregarPendentes()">Tentar Novamente</button>
+  </div>
+
+  <!-- Cursos -->
+  <div class="list" *ngIf="abaAtiva() === 'cursos' && !isLoading() && !error()">
+    <article class="card" *ngFor="let item of pendentes().cursos">
+      <div class="info">
+        <div class="info-top">
+          <app-status-badge label="Pendente" status="warning" />
+          <strong>{{ item.nome }}</strong>
+        </div>
+        <span class="meta">Autor: {{ item.autorNome }}</span>
+        <p class="descricao" *ngIf="item.descricao">{{ item.descricao }}</p>
+      </div>
+      <div class="actions">
+        <app-button
+          [buttonText]="processando() === 'cursos:' + item.id ? 'Aprovando…' : 'Aprovar'"
+          [buttonVariant]="'success'"
+          [buttonDisabled]="processando() !== null"
+          (click)="aprovar('cursos', item.id)"
+        />
+        <app-button
+          buttonText="Rejeitar"
+          [buttonVariant]="'danger'"
+          [buttonDisabled]="processando() !== null"
+          (click)="pedirRejeicao('cursos', item)"
+        />
+      </div>
+    </article>
+    <app-empty-state
+      *ngIf="pendentes().cursos.length === 0"
+      title="Nenhum curso pendente"
+      description="Tudo em dia por aqui!"
+      icon="check_circle_outline"
+    />
+  </div>
+
+  <!-- Módulos -->
+  <div class="list" *ngIf="abaAtiva() === 'modulos' && !isLoading() && !error()">
+    <article class="card" *ngFor="let item of pendentes().modulos">
+      <div class="info">
+        <div class="info-top">
+          <app-status-badge label="Pendente" status="warning" />
+          <strong>{{ item.nome }}</strong>
+        </div>
+        <span class="meta">Curso: {{ item.cursoNome }}</span>
+        <p class="descricao" *ngIf="item.descricao">{{ item.descricao }}</p>
+      </div>
+      <div class="actions">
+        <app-button
+          [buttonText]="processando() === 'modulos:' + item.id ? 'Aprovando…' : 'Aprovar'"
+          [buttonVariant]="'success'"
+          [buttonDisabled]="processando() !== null"
+          (click)="aprovar('modulos', item.id)"
+        />
+        <app-button
+          buttonText="Rejeitar"
+          [buttonVariant]="'danger'"
+          [buttonDisabled]="processando() !== null"
+          (click)="pedirRejeicao('modulos', item)"
+        />
+      </div>
+    </article>
+    <app-empty-state
+      *ngIf="pendentes().modulos.length === 0"
+      title="Nenhum módulo pendente"
+      description="Nenhum módulo aguardando aprovação."
+      icon="check_circle_outline"
+    />
+  </div>
+
+  <!-- Aulas -->
+  <div class="list" *ngIf="abaAtiva() === 'aulas' && !isLoading() && !error()">
+    <article class="card" *ngFor="let item of pendentes().aulas">
+      <div class="info">
+        <div class="info-top">
+          <app-status-badge label="Pendente" status="warning" />
+          <strong>{{ item.titulo }}</strong>
+        </div>
+        <span class="meta">Módulo: {{ item.moduloNome }} · Curso: {{ item.cursoNome }}</span>
+        <p class="descricao" *ngIf="item.descricao">{{ item.descricao }}</p>
+      </div>
+      <div class="actions">
+        <app-button
+          [buttonText]="processando() === 'aulas:' + item.id ? 'Aprovando…' : 'Aprovar'"
+          [buttonVariant]="'success'"
+          [buttonDisabled]="processando() !== null"
+          (click)="aprovar('aulas', item.id)"
+        />
+        <app-button
+          buttonText="Rejeitar"
+          [buttonVariant]="'danger'"
+          [buttonDisabled]="processando() !== null"
+          (click)="pedirRejeicao('aulas', item)"
+        />
+      </div>
+    </article>
+    <app-empty-state
+      *ngIf="pendentes().aulas.length === 0"
+      title="Nenhuma aula pendente"
+      description="Nenhuma aula aguardando aprovação."
+      icon="check_circle_outline"
+    />
+  </div>
+</div>
+
+<!-- Confirmação de rejeição -->
+<app-confirm-modal
+  [isOpen]="modalRejeitar().aberto"
+  [title]="'Rejeitar ' + (modalRejeitar().tipo === 'cursos' ? 'curso' : modalRejeitar().tipo === 'modulos' ? 'módulo' : 'aula') + '?'"
+  [message]="'O item \'' + modalRejeitar().nome + '\' ficará Rejeitado. O autor poderá editá-lo e enviar novamente.'"
+  confirmText="Rejeitar"
+  variant="danger"
+  (confirm)="confirmarRejeicao()"
+  (cancel)="fecharModalRejeitar()"
+/>

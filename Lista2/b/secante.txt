@@ -1,0 +1,13 @@
+ ./zero-funcao sc 1e-10 0 1   
+ 
+Zero da funcao
+metodos implementados em C
+Metodo: sc
+Refinamento e criterio de parada: 1e-10
+x(0) ou a=0.0000000000000000
+x(1) ou b=1.0000000000000000
+*** Metodo da Secante ***
+Error: 1.000000e-010
+TEM RAIZ REAL <-*********
+Valor de x e 0.6417143708728826
+passos de iteracao 6

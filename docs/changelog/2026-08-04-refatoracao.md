@@ -1,10 +1,10 @@
-# Refatoracao AprendaNave — 04/08/2026
+# Refatoração AprendaNave — 04/08/2026
 
-## Backend: Migracao .NET 8 → TypeScript + Hono
+## Sessão 1: Migração .NET 8 → TypeScript + Hono
 
 ### O que mudou
 - Backend inteiro reescrito de C# (.NET 8 Minimal API) para TypeScript (Hono + Prisma)
-- Nova pasta `api/` na raiz do projeto (pasta `server/` mantida para referencia)
+- Nova pasta `api/` na raiz do projeto (pasta `server/` mantida para referência)
 - ORM: Entity Framework Core → Prisma
 - Hash de senhas: Argon2 → bcrypt (com fallback Argon2 para senhas existentes, migra automaticamente no login)
 - Hospedagem alvo: Azure → Railway
@@ -12,122 +12,188 @@
 ### Arquivos criados
 - `api/src/index.ts` — entry point, CORS, mount de rotas
 - `api/src/middleware/auth.ts` — JWT cookie middleware
-- `api/src/routes/auth.ts` — login, logout, validate-token
-- `api/src/routes/user.ts` — cadastro, perfil, foto
-- `api/src/routes/cursos.ts` — CRUD cursos + modulos aninhados
-- `api/src/routes/modulos.ts` — CRUD modulos + aulas aninhadas
-- `api/src/routes/aulas.ts` — GET aula por ID
-- `api/src/routes/desafioJcc.ts` — ranking desafio JCC
-- `api/src/routes/ranking.ts` — ranking generico por modalidade
-- `api/src/routes/guests.ts` — CRUD visitantes
-- `api/src/lib/prisma.ts` — singleton PrismaClient
-- `api/src/lib/cloudinary.ts` — config Cloudinary
+- `api/src/routes/auth.ts`, `user.ts`, `cursos.ts`, `modulos.ts`, `aulas.ts`, `desafioJcc.ts`, `ranking.ts`, `guests.ts`
+- `api/src/lib/prisma.ts`, `cloudinary.ts`
 - `api/prisma/schema.prisma` — schema das 9 tabelas (escrito manualmente a partir do EF Core snapshot)
-- `api/package.json`, `api/tsconfig.json`, `api/Procfile`, `api/.env.example`
+- `api/package.json`, `tsconfig.json`, `Procfile`, `.env.example`
 
 ### Contratos da API
-Todos os 25+ endpoints mantidos com contratos JSON identicos ao .NET. Frontend nao precisou de mudancas de contrato.
+Todos os 25+ endpoints mantidos com contratos JSON idênticos ao .NET. Frontend não precisou de mudanças de contrato.
 
 ### Frontend: environment.ts
 - `apiUrl` alterado de `http://localhost:5269` para `http://localhost:3000`
 
 ---
 
-## Frontend: Primeira Leva de Refatoracao
+## Sessão 1b: Primeira Leva de Refatoração no Frontend
 
-### 1. Backdoor admin/admin removido (SEGURANCA)
-- **Arquivo:** `Client/src/app/pages/login/login.component.ts`
-- Removido bloco que permitia login com admin/admin sem autenticacao
-
-### 2. Logout real implementado (SEGURANCA)
-- **Arquivo:** `Client/src/app/services/auth/auth.service.ts` — adicionado metodo `logout()` que reseta `isAuthSubject` para `false`
-- **Arquivo:** `Client/src/app/services/login/login.service.ts` — `logout()` agora faz POST `/auth/logout` para limpar cookie no servidor, chama `authService.logout()`, limpa localStorage
-- **Arquivo:** `api/src/routes/auth.ts` — adicionado endpoint `POST /auth/logout` que limpa cookie `access_token`
-
-### 3. Toast enganoso do perfil removido
-- **Arquivo:** `Client/src/app/shared/components/subheader/subheader.component.ts`
-- Removido `toastr.info('Funcionalidade de perfil em desenvolvimento')` do metodo `goToProfile()`
-
-### 4. Botoes Facebook/Google removidos
-- **Arquivo:** `Client/src/app/pages/login/login.component.html`
-- Removidos botoes "Entrar com Facebook" e "Entrar com Google" e divisores "OU" de ambas as secoes (login e cadastro)
-
-### 5. Console.logs removidos (~48 ocorrencias)
-- `login.component.ts` (4)
-- `trilha.component.ts` (5)
-- `modulo.component.ts` (4)
-- `aula.component.ts` (4)
-- `desafio-jcc.component.ts` (6)
-- `desafio-matematica.component.ts` (14)
-- `quiz/quiz.component.ts` (5)
-- `user.service.ts` (4)
-- `desafio-jcc.service.ts` (1)
-- `app.config.ts` (1)
+1. **Backdoor admin/admin removido** (SEGURANCA) — `login.component.ts`
+2. **Logout real implementado** (SEGURANCA) — `auth.service.ts`, `login.service.ts`, `auth.ts`
+3. **Toast enganoso do perfil removido** — `subheader.component.ts`
+4. **Botoes Facebook/Google removidos** — `login.component.html`
+5. **Console.logs removidos** (~48 ocorrências em 10 arquivos)
 
 ---
 
-## Frontend: Segunda Leva de Refatoracao
+## Sessão 1c: Segunda Leva de Refatoração
 
-### 6. Dados hardcoded substituidos por dados reais
-- **Arquivo:** `Client/src/app/pages/home/home.component.html`
-  - "4 modulos" hardcoded → usa `curso.quantidadeModulos` se disponivel, senao mostra "Curso"
-  - `curso.id` exibido como contagem de alunos → removido (nao existe dado real de matriculas)
-- **Arquivo:** `Client/src/app/pages/trilha/trilha.component.html`
-  - `modulo.id+1 aulas · modulo.id*40 min` (dados fabricados) → usa `modulo.quantidadeAulas` e `modulo.quantidadeHoras` reais da API
-
-### 7. Imagens externas internalizadas
-- **Arquivo:** `Client/src/app/pages/home/home.component.html`
-  - Icone AprendaBot (`i.ibb.co`) → salvo em `src/assets/aprendabot-icon.png`
-  - Icone Desafio (`flaticon.com`) → salvo em `src/assets/desafio-icon.png`
-  - Referencias atualizadas para assets locais
-
-### 8. Todos os modulos desbloqueados
-- **Arquivo:** `Client/src/app/pages/trilha/trilha.component.ts`
-  - Removido `if (modulo.id !== 1)` em `abrirModalModulo()` que bloqueava todos os modulos exceto id=1
-  - Removido `if (this.moduloSelecionado.id !== 1)` em `confirmarIniciarModulo()` com mesmo bloqueio
-  - Agora todos os modulos aprovados retornados pela API sao acessiveis
-
-### 9. Bug de signal corrigido no componente de aula
-- **Arquivo:** `Client/src/app/pages/aula/aula.component.ts`
-  - `this.aulasList.length` → `this.aulasList().length` em 3 locais (ngOnInit, verificarAulasConcluidas, definirNavegacaoAulas)
-  - Bug: `.length` na funcao signal (sempre > 0) ao inves do valor do array. Impedia o fetch de aulas e quebrava a navegacao entre aulas
+6. **Dados hardcoded substituídos por dados reais** — `home.component.html`, `trilha.component.html`
+7. **Imagens externas internalizadas** — assets locais
+8. **Todos os módulos desbloqueados** — removido bloqueio `if (modulo.id !== 1)`
+9. **Bug de signal corrigido** — `this.aulasList.length` → `this.aulasList().length`
 
 ---
 
----
+## Sessão 1d: Terceira Leva de Refatoração
 
-## Frontend: Terceira Leva de Refatoracao
-
-### 10. Memory leaks de timers corrigidos
-- **Arquivo:** `Client/src/app/pages/quiz/quiz/quiz.component.ts`
-  - Adicionadas propriedades `countdownInterval` e `timerInterval` para rastrear intervalos
-  - `setInterval` agora armazena referencia e limpa intervalo anterior antes de criar novo
-  - `ngOnDestroy()` limpa ambos os intervalos. Removido `this.voltarParaTrilha()` do destroy (causava race condition de navegacao)
-- **Arquivo:** `Client/src/app/pages/desafio-matematica/desafio-matematica.component.ts`
-  - Mesma correcao aplicada: rastrear, limpar antes de recriar, limpar no destroy
-
-### 11. Logica de quiz unificada em MathGameService
-- **Arquivo criado:** `Client/src/app/services/math-game/math-game.service.ts`
-  - `generateQuestion(num1, num2, opIndex)` — calcula resultado para +, -, *, / com validacao de divisao
-  - `generateOptions(correctAnswer)` — gera 4 opcoes embaralhadas (1 correta + 3 plausíveis)
-  - `shuffleArray<T>(array)` — Fisher-Yates shuffle generico
-  - `getOperatorSymbol(opIndex)` — mapeia 0-3 para +, -, *, /
-- **Arquivo:** `Client/src/app/pages/quiz/quiz/quiz.component.ts` — removidos `calcNumber()`, `generateIncorrectAnswer()`, `shuffleArray()`, substituidos por chamadas ao service
-- **Arquivo:** `Client/src/app/pages/desafio-matematica/desafio-matematica.component.ts` — mesma refatoracao, logica especifica (dificuldade progressiva, game over no primeiro erro) mantida no componente
-
-### 12. Progresso de aulas persistido no servidor
-- **Arquivo backend:** `api/src/routes/aulas.ts`
-  - `GET /aulas/progresso/:moduloId` (auth) — retorna array de IDs de aulas concluidas pelo usuario no modulo
-  - `POST /aulas/:aulaId/concluir` (auth) — marca aula como concluida (idempotente, cria registro em `aluno_aula_progresso`)
-- **Arquivo frontend:** `Client/src/app/services/aula/aula.service.ts`
-  - `getAulas()` agora sincroniza com servidor: busca progresso server-side e faz merge (uniao) com localStorage
-  - `markAulaComoConcluida()` agora tambem faz POST ao servidor (fire-and-forget)
-  - Usuarios nao autenticados (guests) continuam usando apenas localStorage como fallback
+10. **Memory leaks de timers corrigidos** — `quiz.component.ts`, `desafio-matematica.component.ts`
+11. **Lógica de quiz unificada** — `MathGameService` com Fisher-Yates
+12. **Progresso de aulas persistido no servidor** — endpoints em `aulas.ts`, sync no `aula.service.ts`
 
 ---
 
-## Bugs conhecidos (a corrigir)
+## Sessão 2: Progresso Server-Side + Dirty Flag
 
-### BUG: Quantidade de aulas mostra 0 em todos os modulos
-- **Onde:** Pagina de trilha (`trilha.component.html`)
-- **Causa provavel:** O campo `quantidade_aulas` no banco esta com valor 0 para todos os modulos existentes. Os dados corretos nunca foram populados — o .NET original tambem tinha um bug no `ModuloService.CreateModulo` que atribuia `quantidadeAulas` ao campo `quantidadeHoras`. Corrigir populando o valor real no banco ou calculando dinamicamente a partir da contagem de aulas aprovadas do modulo.
+### Backend
+- `POST /aulas/:aulaId/concluir` refatorado com auto-upsert de `aluno_modulo_progresso`
+- Novo: `GET /user/progresso` — progresso consolidado (aulas + módulos)
+- Novo: `GET /modulos/:moduloId/progresso` — progresso por módulo
+- `PATCH /user/` e `PATCH /user/image` corrigidos (não retornam mais `alunoModuloProgresso: []` hardcoded)
+- Tabela `aluno_modulo_progresso` criada no banco (estava faltando)
+
+### Frontend
+- `AulaService` refatorado: servidor como fonte da verdade, dirty flag, localStorage como cache
+- `AulaComponent.marcarAulaConcluida()` descomentado e corrigido
+- `ModuloComponent` e `TrilhaComponent` usando progresso real do servidor
+
+---
+
+## Sessão 3: Painel do Criador
+
+### Backend
+- Novo: `GET /cursos/:id`, `PUT /cursos/:id`, `DELETE /cursos/:id`
+- Novo: `PUT /modulos/:id`, `DELETE /modulos/:id`
+- Novo: `PUT /aulas/:id`, `DELETE /aulas/:id`
+- Novo: `GET /cursos/:cursoId/modulos` (retorna todos se owner, só aprovados se não)
+- Novo: `GET /modulos/:moduloId/aulas` (mesma lógica)
+- Segurança: `POST /cursos/:cursoId/modulos` e `POST /modulos/:moduloId/aulas` agora exigem auth + owner
+- Middleware: `isCursoOwner()`, `isModuloOwner()`, `isAulaOwner()` adicionados
+
+### Frontend
+- Nova página: `GerenciarCursoComponent` (`/curso/:id/gerenciar`) — editar curso, CRUD módulos e aulas
+- Novo componente: `ConfirmModalComponent` (modal genérico)
+- `MeusCursosComponent` refatorado com botões gerenciar/excluir
+- `CursoService` expandido com 10 novos métodos CRUD
+- Interfaces `CreateModuloDto`, `CreateAulaDto` adicionadas
+
+---
+
+## Sessão 4: Painel de Admin
+
+### Backend
+- `adminRoutes` com middleware `adminRequired`
+- `GET /admin/pendentes` — lista pendentes (cursos, módulos, aulas)
+- Aprovar/rejeitar curso, módulo, aula
+- Validação hierárquica: não aprova módulo sem curso aprovado, não aprova aula sem módulo aprovado
+
+### Frontend
+- Nova página: `AdminComponent` (`/admin`) com 3 abas
+- Link "Painel Admin" no subheader (visível só para `cargo === 'Admin'`)
+- Link "Meus Cursos" no subheader (visível para todos)
+
+---
+
+## Sessão 5: Sistema de Conquistas
+
+### Banco
+- Tabela `conquista` — 10 conquistas (Primeiro Passo, Explorador de Trilha, Maratonista, Colecionador, Aprendiz, Rei das Contas, Mestre do Curso, Estudante Dedicado, Criador de Conteúdo, Lenda)
+- Tabela `aluno_conquista` — registros de desbloqueio
+
+### Backend
+- `GET /conquistas` — lista com status de desbloqueio
+- `conquistas.service.ts` — verificação automática (aulas, módulos, pontos, conquistas em cadeia)
+- Integrado ao `POST /aulas/:aulaId/concluir`
+- Tratamento de P2002 (unique constraint) para evitar duplicatas
+
+### Frontend
+- Página de perfil (`/perfil`) carrega conquistas dinamicamente
+- Ícones: `flag-green.svg` (desbloqueada), `flag-red.svg` (bloqueada)
+- Zero HTML hardcoded
+
+---
+
+## Sessão 6: UI e Organização
+
+- **Subheader:** links Admin + Meus Cursos no menu hamburguer (removidos da home)
+- **SCSS:** `gerenciar-curso`, `admin`, `meus-cursos` padronizados com `_variables.scss`
+- **localStorage:** `localStorage.clear()` no login e logout (sem vazamento entre contas)
+- **Interface `User`:** adicionado campo `cargo`
+- **Script `reset-senha.ts`:** utilitário para resetar senha via terminal
+
+---
+
+## Sessão 7: Padronização de Escala de Fonte (CRÍTICO)
+
+> **Importante para qualquer LLM que trabalhar no frontend:** o `root` do projeto define **1rem = 10px**.
+
+### Escala de referência
+| px | rem |
+|----|-----|
+| 10px | 1.0rem |
+| 12px | 1.2rem |
+| 14px | 1.4rem |
+| **16px (padrão)** | **1.6rem** |
+| 18px | 1.8rem |
+| 20px | 2.0rem |
+| 24px | 2.4rem |
+
+### Regras de ouro
+- **Corpo de texto:** 1.6rem (16px) — `$fonte-tamanho-p` em `_variables.scss`
+- **Metadados/labels:** 1.4rem (14px)
+- **Ícones em botões de ação:** 1.6rem
+- **Títulos:** h1=2.4rem, h2=2rem, h3=1.8rem (já definidos nas variáveis)
+- **Cores:** SEMPRE via variáveis CSS de `_variables.scss` (`--background-secondary`, `--text-primary`, `--accent-primary`, etc.) — NUNCA hex hardcoded
+
+### Arquivos ajustados
+- `confirm-modal.component.ts` — estilos inline movidos de px hardcoded + hex para rem + variáveis CSS
+- `meus-cursos.component.scss` — `.action-btn` 1.2rem → 1.6rem
+- `gerenciar-curso.component.scss` — `.icon-btn` 1.4→1.6rem, `.aula-info` 1.4→1.6rem, `.aula-yt` 1.2→1.4rem, `.status-badge` 1.2→1.4rem
+- `perfil.component.scss` — loader centralizado na seção de conquistas
+
+---
+
+## Estrutura Final de Pastas (visão simplificada)
+
+```
+AprendaNave/
+├── Client/                     # Angular 18
+│   └── src/app/
+│       ├── pages/              # 14 páginas
+│       │   ├── admin/          # Painel admin (aprovação)
+│       │   ├── aula/           # Player de aula (YouTube)
+│       │   ├── criar-curso/    # Form de criação de curso
+│       │   ├── gerenciar-curso/# Painel do criador (editar+CRUD módulos/aulas)
+│       │   ├── home/           # Home com grade de cursos
+│       │   ├── login/          # Login + cadastro
+│       │   ├── meus-cursos/    # Lista de cursos do usuário
+│       │   ├── modulo/         # Lista de aulas do módulo
+│       │   ├── perfil/         # Perfil + conquistas
+│       │   ├── quiz/           # Quiz de matemática
+│       │   ├── trilha/         # Lista de módulos do curso
+│       │   └── ...
+│       ├── services/           # 8 serviços
+│       ├── shared/components/  # Button, Input, Loader, Subheader, ConfirmModal
+│       ├── models/             # Interfaces (Curso, Modulo, Aula, DTOs)
+│       └── guards/             # authGuard
+├── api/                        # Hono + Prisma
+│   └── src/
+│       ├── routes/             # 10 arquivos de rota
+│       ├── middleware/         # auth.ts (JWT, admin, owner checks)
+│       ├── services/           # conquistas.service.ts
+│       └── lib/                # prisma.ts, cloudinary.ts
+├── server/                     # .NET 8 original (referência apenas)
+└── docs/                       # Documentação
+    ├── changelog/
+    ├── plans/
+    └── fixes-futuros.md
+```

@@ -1,5 +1,34 @@
-<input *ngIf="inputType !== 'textarea'" [type]="inputType" [name]="inputName" [placeholder]="placeholder" [ngClass]="[inputSize, inputTheme, inputLevel]" [value]="value" (input)="onInputChange($event)" (blur)="onTouched()">
-<textarea *ngIf="inputType === 'textarea'" [name]="inputName" [placeholder]="placeholder" [ngClass]="[inputSize, inputTheme, inputLevel]" [rows]="rows" (input)="onInputChange($event)" [value]="value" (blur)="onTouched()"></textarea>
-<!-- <div class="showPassword">
-  <img *ngIf="inputType === 'password'" src="/assets/eye-open.svg" alt="Mostrar senha" width="24" height="24" />
-</div> -->
+<label class="input-label" *ngIf="label" [for]="inputName">{{ label }}</label>
+
+<input
+  *ngIf="inputType !== 'textarea'"
+  [type]="inputType"
+  [name]="inputName"
+  [id]="inputName"
+  [placeholder]="placeholder"
+  [ngClass]="[inputSize, inputLevel, errorMessage ? 'has-error' : '']"
+  [value]="value"
+  [disabled]="inputDisabled"
+  [attr.aria-invalid]="errorMessage ? true : null"
+  [attr.aria-describedby]="(hint || errorMessage) ? inputName + '-help' : null"
+  (input)="onInputChange($event)"
+  (blur)="onTouched()"
+/>
+
+<textarea
+  *ngIf="inputType === 'textarea'"
+  [name]="inputName"
+  [id]="inputName"
+  [placeholder]="placeholder"
+  [ngClass]="[inputSize, inputLevel, errorMessage ? 'has-error' : '']"
+  [rows]="rows"
+  [disabled]="inputDisabled"
+  [attr.aria-invalid]="errorMessage ? true : null"
+  [attr.aria-describedby]="(hint || errorMessage) ? inputName + '-help' : null"
+  (input)="onInputChange($event)"
+  [value]="value"
+  (blur)="onTouched()"
+></textarea>
+
+<p class="input-hint" *ngIf="hint && !errorMessage" [id]="inputName + '-help'">{{ hint }}</p>
+<p class="input-error" *ngIf="errorMessage" [id]="inputName + '-help'">{{ errorMessage }}</p>

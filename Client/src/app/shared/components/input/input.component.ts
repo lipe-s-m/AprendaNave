@@ -27,6 +27,12 @@ export class InputComponent {
   @Input() inputBackgroundColor?: string;
   @Input() inputTextColor?: string;
   @Input() rows?: number = 4;
+  /** Label exibido acima do campo (1.4rem). */
+  @Input() label?: string;
+  /** Texto de apoio exibido abaixo do campo. */
+  @Input() hint?: string;
+  /** Mensagem de erro exibida abaixo do campo (aria-invalid no campo). */
+  @Input() errorMessage?: string;
 
   // O valor interno do input
   value?: any = '';

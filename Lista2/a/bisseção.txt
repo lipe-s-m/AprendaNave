@@ -1,0 +1,16 @@
+./zero-funcao bs 1e-10 0 1   
+Zero da funcao
+metodos implementados em C
+Metodo: bs
+Refinamento e criterio de parada: 1e-10
+x(0) ou a=0.0000000000000000
+x(1) ou b=1.0000000000000000
+*** Metodo da Bissecao ***
+Error: 1.000000e-010
+Intervalo: (0.000000, 1.000000)
+fx(a = 0.0000000000000000) = -24.0000000000000000
+fx(b = 1.0000000000000000) = -8.0000000000000000 
+Informacao da derivada:
+gx(a = 0.0000000000000000) = 4.0000000000000000
+gx(b = 1.0000000000000000) = 18.0000000000000000
+Nao e possivel garantir raiz neste intervalo.

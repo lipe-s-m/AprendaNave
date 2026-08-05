@@ -1,0 +1,67 @@
+@use "variables";
+
+// ─────────────────────────────────────────────────────────────
+// ESTRUTURA DE PÁGINA — hierarquia: cabeçalho → resumo → conteúdo
+// Mobile-first: ações empilhadas em telas estreitas.
+// ─────────────────────────────────────────────────────────────
+
+.page-container {
+  max-width: 120rem;
+  margin: 0 auto;
+  padding: variables.$espaco-5 variables.$espaco-4 variables.$espaco-7;
+}
+
+.page-header {
+  display: flex;
+  flex-direction: column;
+  gap: variables.$espaco-4;
+  align-items: stretch;
+
+  .page-header-actions {
+    display: flex;
+    flex-direction: column;
+    gap: variables.$espaco-3;
+
+    app-button,
+    .btn-full {
+      width: 100%;
+    }
+  }
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    .page-header-actions {
+      flex-direction: row;
+      align-items: center;
+
+      app-button,
+      .btn-full {
+        width: auto;
+      }
+    }
+  }
+}
+
+.page-title {
+  font-size: variables.$fonte-tamanho-h1;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.page-subtitle {
+  color: var(--text-muted);
+  font-size: variables.$fonte-tamanho-p;
+  margin: variables.$espaco-1 0 0;
+}
+
+// Superfície em camadas: seção/card padrão
+.panel {
+  background: var(--surface-card);
+  border: 0.1rem solid var(--border-color);
+  border-radius: variables.$borda-radius;
+  box-shadow: variables.$sombra-card;
+  padding: variables.$espaco-5;
+}

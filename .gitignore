@@ -9,6 +9,9 @@ dist/
 .env
 .env.*
 
+#docs
+docs/
+
 # Logs e cache
 npm-debug.log*
 yarn-debug.log*

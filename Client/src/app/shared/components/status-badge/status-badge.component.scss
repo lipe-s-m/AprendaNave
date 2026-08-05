@@ -1,0 +1,41 @@
+@use "./../../../scss/variables";
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 1rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+  white-space: nowrap;
+
+  // Estado sempre explicado por texto + cor, nunca só por cor
+  &.success {
+    background: var(--status-success-background);
+    color: var(--success-color);
+  }
+  &.warning {
+    background: var(--status-warning-background);
+    color: var(--warning-color);
+  }
+  &.error {
+    background: var(--status-error-background);
+    color: var(--error-color);
+  }
+  &.info {
+    background: var(--status-info-background);
+    color: var(--accent-primary);
+  }
+  &.neutral {
+    background: var(--surface-elevated);
+    color: var(--text-muted);
+  }
+
+  .material-icons {
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+}

@@ -1,0 +1,30 @@
+@use "./../../../scss/variables";
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: variables.$espaco-3;
+  padding: variables.$espaco-7 variables.$espaco-4;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 4.8rem;
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+.empty-title {
+  font-size: variables.$fonte-tamanho-h3;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.empty-description {
+  color: var(--text-muted);
+  font-size: variables.$fonte-tamanho-p;
+  max-width: 40rem;
+  margin: 0;
+}

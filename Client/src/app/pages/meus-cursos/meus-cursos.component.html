@@ -1,66 +1,71 @@
-<header>
-  <app-subheader />
-</header>
+<app-subheader />
 
-<div class="meus-cursos-container">
-  <main class="meus-cursos-content">
-    <div class="page-header">
-      <h1>Meus Cursos</h1>
-    </div>
+<div class="page-container">
+  <main>
+    <!-- Cabeçalho: título + CTA único -->
+    <header class="page-header">
+      <div>
+        <h1 class="page-title">Meus cursos</h1>
+        <p class="page-subtitle">Crie, gerencie e publique suas trilhas de aprendizado.</p>
+      </div>
+      <div class="page-header-actions">
+        <app-button buttonText="Criar curso" buttonType="button" (click)="router.navigate(['/curso/criar'])"></app-button>
+      </div>
+    </header>
 
+    <!-- Grade de cards -->
     <div class="courses-grid" *ngIf="!isLoading() && cursos().length > 0">
-      <div class="course-card" *ngFor="let curso of cursos()" (click)="goToCurso(curso)">
-        <span class="tag" *ngIf="curso.tag">{{ curso.tag }}</span>
+      <article class="course-card" *ngFor="let curso of cursos()">
+        <span class="badge-top">
+          <app-status-badge [label]="getStatusBadge(curso.statusAprovacao).text" [status]="getStatusBadge(curso.statusAprovacao).status" />
+        </span>
 
         <div class="course-icon">
-          <img [src]="curso.logo" [alt]="curso.nome" />
+          <img [src]="curso.logo" [alt]="curso.nome" (error)="onLogoError($event)" />
         </div>
 
         <div class="card-content">
-          <span class="title-section">
+          <div class="title-section">
             <h3>{{ curso.nome }}</h3>
-            <div class="description" *ngIf="curso.descricao">
-              {{ curso.descricao }}
-            </div>
-          </span>
+            <p class="description" *ngIf="curso.descricao">{{ curso.descricao }}</p>
+          </div>
 
           <div class="card-footer">
-            <span class="status-badge" [ngClass]="getStatusBadge(curso.statusAprovacao).class">
-              {{ getStatusBadge(curso.statusAprovacao).text }}
-            </span>
-
-            <button class="delete-button" (click)="handleDelete(curso.id, $event)" title="Excluir curso">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                <line x1="10" y1="11" x2="10" y2="17"></line>
-                <line x1="14" y1="11" x2="14" y2="17"></line>
-              </svg>
+            <button class="btn-gerenciar" type="button" (click)="goToGerenciar(curso)">
+              <span class="material-icons" aria-hidden="true">settings</span>
+              Gerenciar curso
             </button>
+
+            <div class="card-actions">
+              <button
+                class="action-btn danger"
+                type="button"
+                (click)="confirmarExcluir(curso)"
+                [attr.aria-label]="'Excluir curso ' + curso.nome"
+                title="Excluir curso"
+              >
+                <span class="material-icons" aria-hidden="true">delete</span>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </article>
     </div>
 
-    <div class="create-curso-section" *ngIf="!isLoading() && cursos().length > 0">
-      <app-button buttonText="Criar Curso" buttonSize="large" buttonLevel="primary" buttonType="button" (click)="router.navigate(['/curso/criar'])">
-      </app-button>
-    </div>
+    <!-- Empty state -->
+    <app-empty-state
+      *ngIf="!isLoading() && cursos().length === 0 && !error()"
+      title="Nenhum curso criado"
+      description="Você ainda não criou nenhum curso. Comece criando o seu primeiro!"
+      icon="school"
+      actionText="Criar curso"
+      (action)="router.navigate(['/curso/criar'])"
+    />
 
-    <div class="empty-state" *ngIf="!isLoading() && cursos().length === 0">
-      <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-      </svg>
-      <h2>Nenhum curso criado</h2>
-      <p>Você ainda não criou nenhum curso. Comece criando seu primeiro curso!</p>
-      <app-button buttonText="Criar Curso" buttonSize="medium" buttonLevel="primary" buttonType="button" (click)="router.navigate(['/curso/criar'])">
-      </app-button>
-    </div>
-
+    <!-- Erro com tentar novamente -->
     <div class="error-state" *ngIf="error()">
       <p>{{ error() }}</p>
-      <button class="retry-button" (click)="loadMeusCursos()">Tentar Novamente</button>
+      <button class="retry-button" type="button" (click)="loadMeusCursos()">Tentar Novamente</button>
     </div>
   </main>
 </div>
@@ -68,3 +73,12 @@
 <div class="loading" *ngIf="isLoading()">
   <app-loader></app-loader>
 </div>
+
+<app-confirm-modal
+  [isOpen]="modalExcluir().aberto"
+  title="Excluir Curso"
+  [message]="modalExcluir().mensagem"
+  variant="danger"
+  (confirm)="executarExclusao()"
+  (cancel)="fecharModalExcluir()"
+/>

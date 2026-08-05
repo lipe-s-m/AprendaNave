@@ -1,0 +1,12 @@
+./zero-funcao sc 1e-10 23 26
+
+Zero da funcao
+metodos implementados em C
+Metodo: sc
+Refinamento e criterio de parada: 1e-10
+x(0) ou a=23.0000000000000000
+x(1) ou b=26.0000000000000000
+*** Metodo da Secante ***
+Error: 1.000000e-010
+TEM RAIZ REAL <-*********
+Erro: Divisao por zero.

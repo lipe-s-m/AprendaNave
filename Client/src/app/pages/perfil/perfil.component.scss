@@ -1,190 +1,188 @@
+@use "./../../scss/variables";
+
 .background {
   min-height: 100dvh;
   height: 100%;
   width: 100%;
   background-color: var(--background-quinary);
 }
-.container {
+
+.perfil-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  gap: variables.$espaco-6;
+  max-width: 100rem;
+}
+
+// ── Faixa de resumo ──
+
+.perfil-resumo {
+  display: flex;
   align-items: center;
-  padding: 1.6rem;
-  gap: 4rem;
+  gap: variables.$espaco-5;
+  flex-wrap: wrap;
 
-  section {
-    width: 100%;
-    max-width: 70rem;
+  .avatar {
+    width: 12rem;
+    height: 12rem;
+    border-radius: 25%;
+    object-fit: cover;
+    background: var(--background-octonary);
+    border: 0.3rem solid var(--border-color);
+  }
 
-    .title-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-left: 1.6rem;
-      margin-right: 1.6rem;
-      margin-bottom: 0.4rem;
+  .resumo-info {
+    flex: 1;
+    min-width: 20rem;
 
-      @media (max-width: 768px) {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-      }
+    .page-subtitle {
+      margin-top: variables.$espaco-1;
     }
 
-    .title {
-      font-size: 2.4rem;
-      font-weight: 800;
-      color: var(--accent-primary);
-      text-transform: capitalize;
-      margin: 0;
-    }
-
-    .btn-edit {
+    .resumo-stats {
       display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1.5rem;
-      background: var(--accent-primary);
-      color: var(--text-on-accent);
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: "Nunito", sans-serif;
+      flex-wrap: wrap;
+      gap: variables.$espaco-3;
+      margin-top: variables.$espaco-3;
 
-      .material-icons {
-        font-size: 18px;
-      }
+      .stat {
+        display: inline-flex;
+        align-items: center;
+        gap: variables.$espaco-1;
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        background: var(--surface-elevated);
+        border-radius: variables.$borda-radius-card;
+        padding: variables.$espaco-1 variables.$espaco-2;
 
-      &:hover {
-        background: var(--accent-primary-shadow);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(78, 168, 222, 0.3);
-      }
-
-      &:active {
-        transform: translateY(0);
+        .material-icons {
+          font-size: 1.8rem;
+          color: var(--accent-primary);
+        }
       }
     }
   }
-  .content {
+
+  @media (max-width: 767px) {
+    flex-direction: column;
+    align-items: flex-start;
+
+    app-button {
+      width: 100%;
+    }
+  }
+}
+
+// ── Conquistas ──
+
+.conquistas {
+  display: flex;
+  flex-direction: column;
+  gap: variables.$espaco-4;
+
+  .page-title {
+    text-transform: capitalize;
+  }
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: variables.$espaco-6;
+  width: 100%;
+}
+
+.conquistas-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: variables.$espaco-4;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.card {
+  display: flex;
+  align-items: flex-start;
+  gap: variables.$espaco-4;
+  padding: variables.$espaco-4;
+  background: var(--surface-card);
+  border: 1px solid var(--border-color);
+  border-radius: variables.$borda-radius;
+  box-shadow: variables.$sombra-card;
+  transition:
+    transform variables.$transicao-rapida,
+    box-shadow variables.$transicao-rapida;
+
+  &:hover {
+    transform: translateY(-0.2rem);
+    box-shadow: variables.$sombra-card-hover;
+  }
+
+  // Bloqueadas com opacidade menor, mas contraste suficiente
+  &.bloqueada {
+    opacity: 0.65;
+  }
+
+  .logo {
+    flex: 0 0 6rem;
+    width: 6rem;
+    height: 6rem;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .info-text {
+    flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 1.6rem;
-    width: 100%;
-    border: 0.3rem rgba(55, 70, 79, 0.685) solid;
-    border-radius: 1.6rem;
-    background-color: var(--background-senary);
+    gap: variables.$espaco-1;
 
-    &.perfil {
-      align-items: start;
-      padding: 1.6rem 1.6rem 2.4rem 1.6rem;
-
-      .image {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        max-width: 50rem;
-        margin: 0 auto;
-        height: 22rem;
-        border-radius: 1.6rem;
-        img {
-          height: 90%;
-          border-radius: 25%;
-        }
-      }
-      .info-text {
-        display: flex;
-        flex-direction: column;
-        gap: 0.6rem;
-
-        .user-bio {
-          color: var(--text-primary);
-          font-size: 1.6rem;
-          font-weight: 500;
-          opacity: 0.9;
-        }
-      }
+    h3 {
+      margin: 0;
+      font-size: variables.$fonte-tamanho-h3;
+      color: var(--accent-primary);
     }
-    &.conquistas {
-      align-items: start;
 
-      .lista {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        list-style: none;
-        .card {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 1.4rem 1rem;
-          width: 100%;
-          border-bottom: 0.3rem rgba(55, 70, 79, 0.685) solid;
-          gap: 1.6rem;
-          &:hover {
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            transform: translateY(-2px);
-            cursor: pointer;
-          }
-          .logo {
-            width: 12rem;
-            width: 10rem;
-            img {
-              width: 100%;
-              height: 100%;
-              object-fit: contain;
-            }
-            border-radius: 1.6rem;
-          }
-          .info-text {
-            width: 100%;
-            h1 {
-              color: var(--accent-primary);
-            }
-            p {
-              color: var(--text-primary);
-            }
-            h2 {
-              &.completo {
-                color: var(--success-color);
-              }
-              &.incompleto {
-                color: var(--error-color);
-              }
-            }
-          }
-        }
-        .info {
-          color: var(--text-primary);
-          font-size: 1.8rem;
-          padding: 1rem;
-          font-weight: 700;
-          opacity: 0.8;
-        }
-      }
-      .image {
-        width: 100%;
-        height: 22rem;
-        border-radius: 1.6rem;
-        background-color: rgb(255, 255, 255);
+    p {
+      margin: 0;
+      font-size: 1.4rem;
+      color: var(--text-secondary);
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: variables.$espaco-2;
+      margin-top: variables.$espaco-1;
+
+      .recompensa {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--success-color);
+        white-space: nowrap;
       }
     }
   }
 }
-.bottom {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  margin-top: -1rem;
+
+.info {
+  color: var(--text-primary);
+  font-size: variables.$fonte-tamanho-h3;
+  padding: variables.$espaco-4;
+  font-weight: 700;
+  opacity: 0.8;
 }

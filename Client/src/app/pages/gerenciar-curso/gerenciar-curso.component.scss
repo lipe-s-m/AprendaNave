@@ -1,0 +1,368 @@
+@use "./../../scss/variables";
+
+.gerenciar-header {
+  margin-bottom: variables.$espaco-5;
+
+  .btn-voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: variables.$espaco-1;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.4rem;
+    font-family: variables.$fonte-principal;
+    cursor: pointer;
+    padding: variables.$espaco-1 0;
+    transition: color variables.$transicao-rapida;
+
+    .material-icons {
+      font-size: 1.6rem;
+    }
+
+    &:hover {
+      color: var(--text-primary);
+    }
+  }
+
+  .header-meta {
+    display: flex;
+    align-items: center;
+    gap: variables.$espaco-3;
+    margin-top: variables.$espaco-1;
+
+    .page-subtitle {
+      margin: 0;
+    }
+  }
+}
+
+.painel-curso {
+  margin-bottom: variables.$espaco-5;
+
+  .painel-toggle {
+    display: flex;
+    align-items: center;
+    gap: variables.$espaco-2;
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: variables.$fonte-tamanho-h3;
+    font-weight: 700;
+    font-family: variables.$fonte-principal;
+    cursor: pointer;
+    padding: 0;
+    text-align: left;
+
+    .material-icons {
+      font-size: 2rem;
+      color: var(--text-muted);
+    }
+  }
+}
+
+.form-curso {
+  display: flex;
+  flex-direction: column;
+  gap: variables.$espaco-4;
+  max-width: 68rem;
+  margin-top: variables.$espaco-4;
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: variables.$espaco-3;
+
+  .btn-status {
+    font-size: 1.4rem;
+    color: var(--text-muted);
+  }
+}
+
+// ── Seção de módulos ──
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: variables.$espaco-4;
+  margin-bottom: variables.$espaco-4;
+  flex-wrap: wrap;
+
+  .section-title {
+    display: flex;
+    align-items: baseline;
+    gap: variables.$espaco-3;
+
+    h2 {
+      margin: 0;
+      font-size: variables.$fonte-tamanho-h2;
+      color: var(--text-primary);
+    }
+
+    .section-count {
+      font-size: 1.4rem;
+      color: var(--text-muted);
+    }
+  }
+
+  @media (max-width: 767px) {
+    flex-direction: column;
+    align-items: stretch;
+
+    app-button {
+      width: 100%;
+    }
+  }
+}
+
+.modulo-card {
+  border: 1px solid var(--border-color);
+  border-radius: variables.$borda-radius-card;
+  margin-bottom: variables.$espaco-3;
+  overflow: hidden;
+  background: var(--surface-card);
+  transition: box-shadow variables.$transicao-rapida;
+
+  &:hover {
+    box-shadow: variables.$sombra-card;
+  }
+}
+
+.modulo-header {
+  display: flex;
+  align-items: center;
+  gap: variables.$espaco-3;
+  width: 100%;
+  padding: variables.$espaco-4 variables.$espaco-4;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: variables.$fonte-principal;
+  transition: background-color variables.$transicao-rapida;
+
+  &:hover {
+    background: var(--surface-card-hover);
+  }
+
+  .modulo-ordem {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    background: var(--surface-elevated);
+    color: var(--text-muted);
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+
+  .modulo-info {
+    display: flex;
+    flex-direction: column;
+    gap: variables.$espaco-1;
+    flex: 1;
+    color: var(--text-primary);
+
+    strong {
+      font-size: variables.$fonte-tamanho-p;
+    }
+
+    .modulo-meta {
+      font-size: 1.4rem;
+      color: var(--text-muted);
+    }
+  }
+
+  .expand-icon {
+    color: var(--text-muted);
+    font-size: 2rem;
+  }
+}
+
+// ── Aulas ──
+
+.aulas-list {
+  padding: variables.$espaco-3 variables.$espaco-4 variables.$espaco-4;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: variables.$espaco-2;
+  background: var(--surface-card-hover);
+}
+
+.aula-item {
+  display: flex;
+  align-items: center;
+  gap: variables.$espaco-3;
+  padding: variables.$espaco-2 0;
+  border-bottom: 1px solid var(--border-color-light);
+
+  .aula-ordem {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--surface-elevated);
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  .aula-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    flex: 1;
+    min-width: 0;
+    color: var(--text-primary);
+
+    strong {
+      font-size: variables.$fonte-tamanho-p;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .aula-yt {
+      font-size: 1.4rem;
+      color: var(--text-muted);
+      font-family: monospace;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .aula-duracao {
+    font-size: 1.4rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .aula-actions {
+    display: flex;
+    gap: variables.$espaco-1;
+  }
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3.6rem;
+  min-height: 3.6rem;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: variables.$borda-radius-input;
+  cursor: pointer;
+  color: var(--text-primary);
+  font-size: 1.6rem;
+  transition:
+    background-color variables.$transicao-rapida,
+    color variables.$transicao-rapida;
+
+  .material-icons {
+    font-size: 1.8rem;
+  }
+
+  &:hover {
+    background: var(--background-secondary);
+  }
+
+  &.danger:hover {
+    color: var(--error-color);
+    border-color: var(--error-color);
+  }
+}
+
+.add-aula {
+  app-empty-state {
+    padding: variables.$espaco-3 0;
+  }
+}
+
+// ── Modais ──
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: variables.$espaco-4;
+}
+
+.modal-content {
+  background: var(--surface-card);
+  border: 1px solid var(--border-color);
+  border-radius: variables.$borda-radius;
+  padding: variables.$espaco-5;
+  max-width: 52rem;
+  // Largo o suficiente no mobile
+  width: calc(100% - 3.2rem);
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: variables.$sombra-card;
+
+  h3 {
+    margin: 0 0 variables.$espaco-1;
+    font-size: variables.$fonte-tamanho-h3;
+    color: var(--text-primary);
+    font-family: variables.$fonte-principal;
+  }
+
+  .modal-desc {
+    margin: 0 0 variables.$espaco-4;
+    font-size: 1.4rem;
+    color: var(--text-muted);
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: variables.$espaco-3;
+  }
+
+  .form-row {
+    display: flex;
+    gap: variables.$espaco-3;
+
+    @media (max-width: 767px) {
+      flex-direction: column;
+    }
+  }
+}
+
+.modal-actions {
+  display: flex;
+  gap: variables.$espaco-3;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: variables.$espaco-2;
+  flex-wrap: wrap;
+}
+
+// ── Estados ──
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: variables.$espaco-7;
+}
+
+.error {
+  text-align: center;
+  color: var(--error-color);
+  padding: variables.$espaco-5;
+  font-size: variables.$fonte-tamanho-p;
+}

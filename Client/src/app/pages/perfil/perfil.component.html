@@ -3,75 +3,74 @@
     <app-subheader />
   </header>
 
-  <div class="container">
-    <section class="perfil">
-      <div class="title-row">
-        <h1 class="title">perfil</h1>
-      </div>
-      <div class="content perfil">
-        <div class="image">
-          <img
-            [src]="userSignal()?.fotoPerfil || 'assets/avatar-default.svg'"
-            alt="imagem do Usuario"
-          />
-        </div>
-        <div class="info-text" *ngIf="userSignal() as user">
-          <h1>Olá, {{ user.nome }}!</h1>
-          <p class="user-bio">Bio: {{ user.bio }}</p>
-        </div>
-        <div class="bottom">
-          <h2>Navecoins: {{ userSignal()?.pontos }}</h2>
-          <app-button
-            (click)="openEditModal()"
-            type="button"
-            buttonText="Editar"
-            buttonSize="small"
-          ></app-button>
+  <div class="page-container perfil-container">
+    <!-- Faixa de resumo -->
+    <section class="perfil-resumo panel">
+      <img
+        class="avatar"
+        [src]="userSignal()?.fotoPerfil || 'assets/avatar-default.svg'"
+        [alt]="'Foto de perfil de ' + (userSignal()?.nome || 'usuário')"
+      />
+      <div class="resumo-info">
+        <h1 class="page-title">Olá, {{ userSignal()?.nome }}!</h1>
+        <p class="page-subtitle" *ngIf="userSignal()?.bio">Bio: {{ userSignal()?.bio }}</p>
+        <div class="resumo-stats">
+          <span class="stat">
+            <span class="material-icons" aria-hidden="true">toll</span>
+            {{ userSignal()?.pontos ?? 0 }} Navecoins
+          </span>
+          <span class="stat">
+            <span class="material-icons" aria-hidden="true">emoji_events</span>
+            {{ conquistasDesbloqueadas() }} de {{ conquistas().length }} conquistas
+          </span>
         </div>
       </div>
+      <app-button
+        (click)="openEditModal()"
+        type="button"
+        buttonText="Editar"
+        buttonSize="small"
+      ></app-button>
     </section>
 
+    <!-- Conquistas -->
     <section class="conquistas">
-      <h1 class="title">Conquistas</h1>
-      <div class="content conquistas">
-        <ul class="lista">
-          <li class="card">
-            <div class="logo">
-              <img src="assets/flag-green.svg" alt="" />
+      <h2 class="page-title">Conquistas</h2>
+
+      <div class="loading" *ngIf="isLoadingConquistas()"><app-loader /></div>
+
+      <div class="conquistas-grid" *ngIf="!isLoadingConquistas() && conquistas().length > 0">
+        <article
+          class="card"
+          *ngFor="let c of conquistas()"
+          [class.bloqueada]="!c.desbloqueada"
+        >
+          <div class="logo">
+            <img
+              [src]="c.desbloqueada ? 'assets/flag-green.svg' : 'assets/flag-red.svg'"
+              [alt]="(c.desbloqueada ? 'Conquista desbloqueada: ' : 'Conquista bloqueada: ') + c.nome"
+            />
+          </div>
+          <div class="info-text">
+            <h3>{{ c.nome }}</h3>
+            <p>{{ c.descricao }}</p>
+            <div class="card-footer">
+              <app-status-badge
+                [label]="c.desbloqueada ? 'Desbloqueada' : 'Bloqueada'"
+                [status]="c.desbloqueada ? 'success' : 'neutral'"
+              />
+              <span class="recompensa" *ngIf="c.desbloqueada">+{{ c.pontos }} pts</span>
             </div>
-            <div class="info-text">
-              <h1>Explorador de Trilha</h1>
-              <p>
-                Complete todas as aulas do módulo: Fundamentos da Matemática
-              </p>
-              <h2 class="completo">Completo!</h2>
-            </div>
-          </li>
-          <li class="card">
-            <div class="logo">
-              <img src="assets/flag-red.svg" alt="" />
-            </div>
-            <div class="info-text">
-              <h1>Aprendiz de Matemática</h1>
-              <p>Complete o quiz: Fundamentos da Matemática</p>
-              <h2 class="incompleto">Incompleto!</h2>
-            </div>
-          </li>
-          <li class="card">
-            <div class="logo">
-              <img src="assets/flag-red.svg" alt="" />
-            </div>
-            <div class="info-text">
-              <h1>Rei das Contas</h1>
-              <p>Acerte todas as questões do quiz: Fundamentos da Matemática</p>
-              <h2 class="incompleto">Incompleto!</h2>
-            </div>
-          </li>
-          <li>
-            <p class="info">Mais Conquistas em breve...</p>
-          </li>
-        </ul>
+          </div>
+        </article>
       </div>
+
+      <app-empty-state
+        *ngIf="!isLoadingConquistas() && conquistas().length === 0"
+        title="Nenhuma conquista disponível"
+        description="Em breve novas conquistas chegam por aqui."
+        icon="flag"
+      />
     </section>
   </div>
 

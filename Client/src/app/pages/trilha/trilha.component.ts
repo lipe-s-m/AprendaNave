@@ -10,6 +10,8 @@ import { SubheaderComponent } from '../../shared/components/subheader/subheader.
 import { ModuloService } from '../../services/modulo/modulo.service';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { NavigationStateService } from '../../services/navigation-state/navigation-state.service';
+import { AulaService } from '../../services/aula/aula.service';
+import { ModuloProgresso } from '../../shared/interfaces/user.interface';
 
 @Component({
   selector: 'app-trilha',
@@ -26,6 +28,7 @@ export class TrilhaComponent implements OnInit, OnDestroy {
   error: string | null = null;
   moduloSelecionado: any = null;
   statusModulo: string = 'PENDENTE';
+  private progressoMap: Map<number, ModuloProgresso> = new Map();
   private subscription: Subscription | null = null;
 
   get trilhaId(): number | null {
@@ -41,7 +44,8 @@ export class TrilhaComponent implements OnInit, OnDestroy {
     private router: Router,
     private moduloService: ModuloService,
     private toastr: ToastrService,
-    private navigationStateService: NavigationStateService
+    private navigationStateService: NavigationStateService,
+    private aulaService: AulaService
   ) {}
 
   ngOnInit(): void {
@@ -74,7 +78,19 @@ export class TrilhaComponent implements OnInit, OnDestroy {
     this.moduloService.getModulos(id).subscribe({
       next: (trilha) => {
         this.trilha = trilha?.sort((a, b) => a.ordem - b.ordem);
-        this.isLoading = false;
+        // Buscar progresso real do servidor e fazer merge
+        this.aulaService.getUserProgress().subscribe({
+          next: (progress) => {
+            this.progressoMap = new Map(
+              progress.modulosProgresso.map((p) => [p.idModulo, p])
+            );
+            this.isLoading = false;
+          },
+          error: () => {
+            // Guest ou sem progresso — seguir sem dados de progresso
+            this.isLoading = false;
+          },
+        });
       },
       error: (err) => {
         this.error = 'Erro ao carregar a trilha: ' + err.message;
@@ -132,8 +148,10 @@ export class TrilhaComponent implements OnInit, OnDestroy {
         event?.target instanceof HTMLElement &&
         (event.target as HTMLElement).tagName === 'BUTTON';
 
+      const status = this.getModuloProgressoStatus(modulo.id);
+
       // Se o módulo já está em andamento ou concluído, redireciona direto para a página do módulo
-      if (modulo.status === 'EM_ANDAMENTO' || modulo.status === 'CONCLUIDO') {
+      if (status === 'EM_ANDAMENTO' || status === 'CONCLUIDO') {
         this.navegarParaModulo(modulo);
         return;
       }
@@ -236,6 +254,16 @@ export class TrilhaComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Retorna o status de progresso do usuário para um módulo.
+   * Fonte da verdade: servidor (GET /user/progresso).
+   * Fallback: 'NAO_INICIADO' se não houver progresso registrado.
+   */
+  getModuloProgressoStatus(moduloId: number): string {
+    const p = this.progressoMap.get(moduloId);
+    return p ? p.status : 'NAO_INICIADO';
+  }
+
   getNivelClass(nivel?: string): string {
     switch (nivel) {
       case 'INICIANTE':
@@ -247,5 +275,15 @@ export class TrilhaComponent implements OnInit, OnDestroy {
       default:
         return 'nivel-iniciante';
     }
+  }
+
+  /**
+   * Rótulo de aulas para a trilha pública (apenas aprovadas):
+   * "1 aula", "4 aulas" ou "Sem aulas disponíveis" quando não há.
+   */
+  aulasLabel(modulo: any): string {
+    const qtd = modulo?.quantidadeAulas ?? 0;
+    if (qtd === 0) return 'Sem aulas disponíveis';
+    return `${qtd} ${qtd === 1 ? 'aula' : 'aulas'}`;
   }
 }

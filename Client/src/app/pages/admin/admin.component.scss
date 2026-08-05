@@ -1,0 +1,151 @@
+@use "./../../scss/variables";
+
+.page-header {
+  margin-bottom: variables.$espaco-5;
+}
+
+.tabs {
+  display: flex;
+  gap: variables.$espaco-1;
+  margin-bottom: variables.$espaco-4;
+  // Em mobile, scroll horizontal controlado sem quebrar o layout
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.tab {
+  flex: 0 0 auto;
+  padding: variables.$espaco-3 variables.$espaco-4;
+  min-height: 4.4rem;
+  border: none;
+  border-radius: variables.$borda-radius-card variables.$borda-radius-card 0 0;
+  background: var(--surface-card);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: variables.$fonte-tamanho-p;
+  font-weight: 600;
+  font-family: variables.$fonte-principal;
+  transition:
+    background-color variables.$transicao-rapida,
+    color variables.$transicao-rapida;
+
+  &:hover {
+    background: var(--surface-card-hover);
+    color: var(--text-primary);
+  }
+
+  &.active {
+    background: var(--surface-elevated);
+    color: var(--text-primary);
+    border-bottom: 0.2rem solid var(--accent-primary);
+  }
+}
+
+.card {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: variables.$espaco-4;
+  background: var(--surface-card);
+  border: 1px solid var(--border-color);
+  border-radius: variables.$borda-radius-card;
+  padding: variables.$espaco-4;
+  margin-bottom: variables.$espaco-2;
+  box-shadow: variables.$sombra-card;
+  flex-wrap: wrap;
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    gap: variables.$espaco-1;
+    flex: 1;
+    min-width: 24rem;
+    color: var(--text-primary);
+
+    .info-top {
+      display: flex;
+      align-items: center;
+      gap: variables.$espaco-2;
+      flex-wrap: wrap;
+
+      strong {
+        font-size: variables.$fonte-tamanho-h4;
+      }
+    }
+
+    .meta {
+      font-size: 1.4rem;
+      color: var(--text-muted);
+    }
+
+    .descricao {
+      font-size: 1.4rem;
+      color: var(--text-secondary);
+      margin: 0;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  }
+
+  .actions {
+    display: flex;
+    gap: variables.$espaco-2;
+    flex-wrap: wrap;
+
+    @media (max-width: 767px) {
+      width: 100%;
+
+      app-button {
+        flex: 1;
+      }
+    }
+  }
+}
+
+.empty {
+  color: var(--text-muted);
+  text-align: center;
+  padding: variables.$espaco-6;
+  font-size: variables.$fonte-tamanho-p;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: variables.$espaco-7;
+}
+
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: variables.$espaco-6 variables.$espaco-4;
+  text-align: center;
+
+  p {
+    color: var(--error-color);
+    font-size: variables.$fonte-tamanho-p;
+    margin-bottom: variables.$espaco-4;
+  }
+
+  .retry-button {
+    background-color: var(--accent-primary);
+    color: var(--text-on-accent);
+    border: none;
+    border-radius: variables.$borda-radius-input;
+    padding: variables.$espaco-2 variables.$espaco-4;
+    min-height: 4.4rem;
+    font-size: variables.$fonte-tamanho-p;
+    font-weight: 600;
+    font-family: variables.$fonte-principal;
+    cursor: pointer;
+    transition: transform variables.$transicao-rapida;
+
+    &:hover {
+      transform: translateY(-0.2rem);
+    }
+  }
+}

@@ -1,22 +1,75 @@
 @use "./../../../scss/variables";
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: variables.$espaco-1;
+  width: 100%;
+}
+
+.input-label {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
 input,
 textarea {
-  padding: 1.6rem;
-  border-radius: variables.$borda-radius;
-  border: 0.24rem solid #e4e4e446;
-  background-color: #5e48794d;
+  padding: variables.$espaco-4;
+  border-radius: variables.$borda-radius-input;
+  border: 0.24rem solid var(--input-border);
+  background-color: var(--input-background);
   font-size: variables.$fonte-tamanho-p;
-  color: #fff;
+  color: var(--text-primary);
+  font-family: variables.$fonte-principal;
+  transition:
+    border-color variables.$transicao-rapida,
+    box-shadow variables.$transicao-rapida;
+
   &.large {
     width: 100%;
     min-width: 26rem;
     max-width: 40rem;
   }
 
+  // Inputs de uma linha têm área de toque mínima de 4.4rem
+  min-height: 4.4rem;
+  // textarea sem altura artificialmente curta
+  min-height: auto;
+
   &::placeholder {
-    color: #ffffffde;
+    color: var(--input-placeholder);
   }
-  &:focus {
-    border-color: variables.$cor-button-primary-dark;
+
+  &:focus,
+  &:focus-visible {
+    border-color: var(--accent-primary);
+    outline: none;
   }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &.has-error,
+  &[aria-invalid="true"] {
+    border-color: var(--error-color);
+  }
+}
+
+textarea {
+  resize: vertical;
+}
+
+.input-hint {
+  font-size: 1.4rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.input-error {
+  font-size: 1.4rem;
+  color: var(--error-color);
+  margin: 0;
 }

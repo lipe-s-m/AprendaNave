@@ -20,11 +20,11 @@
         <div class="modulo-header">
           <h3 class="modulo-title">{{ modulo.nome }}</h3>
         </div>
-        <p class="modulo-description">{{ modulo.quantidadeAulas }} aulas · {{ modulo.quantidadeHoras }}h</p>
+        <p class="modulo-description">{{ aulasLabel(modulo) }} · {{ modulo.quantidadeHoras }}h</p>
         <!-- <div class="modulo-status" [class.concluido]="modulo.status === 'CONCLUIDO'" [class.em-andamento]="modulo.status === 'EM_ANDAMENTO'">
           <span>{{statusModulo}}</span>
         </div> -->
-        <app-button [buttonText]="getButtonText(modulo.status)" buttonTheme="dark" (click)="$event.stopPropagation(); iniciarOuContinuarModulo(modulo, $event)">
+        <app-button [buttonText]="getButtonText(getModuloProgressoStatus(modulo.id))" buttonTheme="dark" (click)="$event.stopPropagation(); iniciarOuContinuarModulo(modulo, $event)">
         </app-button>
       </div>
     </div>
@@ -45,8 +45,8 @@
       <h2>{{ moduloSelecionado!.nome }}</h2>
     </div>
     <div class="modal-body">
-      <p class="modal-info"><span>Status:</span> {{ getStatusText(moduloSelecionado!.status) }}</p>
-      <p class="modal-info"><span>Aulas:</span> {{ moduloSelecionado!.aulas }}</p>
+      <p class="modal-info"><span>Status:</span> {{ getStatusText(getModuloProgressoStatus(moduloSelecionado!.id)) }}</p>
+      <p class="modal-info"><span>Aulas:</span> {{ aulasLabel(moduloSelecionado) }}</p>
       <p class="modal-info"><span>Duração estimada:</span> {{ moduloSelecionado!.duracao }}</p>
       <p class="modal-description">
         {{ moduloSelecionado!.descricao || 'Informações detalhadas sobre este módulo serão adicionadas em breve.' }}
@@ -54,10 +54,10 @@
     </div>
     <div class="modal-footer">
       <button class="modal-btn secondary" (click)="fecharModal()">CANCELAR</button>
-      <button class="modal-btn primary" *ngIf="moduloSelecionado!.status !== 'CONCLUIDO'" (click)="confirmarIniciarModulo()">
-        {{ moduloSelecionado!.status === 'EM_ANDAMENTO' ? 'CONTINUAR' : 'INICIAR' }}
+      <button class="modal-btn primary" *ngIf="getModuloProgressoStatus(moduloSelecionado!.id) !== 'CONCLUIDO'" (click)="confirmarIniciarModulo()">
+        {{ getModuloProgressoStatus(moduloSelecionado!.id) === 'EM_ANDAMENTO' ? 'CONTINUAR' : 'INICIAR' }}
       </button>
-      <button class="modal-btn primary" *ngIf="moduloSelecionado!.status === 'CONCLUIDO'" (click)="confirmarIniciarModulo()">
+      <button class="modal-btn primary" *ngIf="getModuloProgressoStatus(moduloSelecionado!.id) === 'CONCLUIDO'" (click)="confirmarIniciarModulo()">
         REVISAR MÓDULO
       </button>
     </div>
