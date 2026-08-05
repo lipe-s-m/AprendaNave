@@ -129,6 +129,61 @@ describe('POST /cursos/:cursoId/modulos — sem quantidadeAulas como dado de neg
   })
 })
 
+describe('POST — ordem automática (pilha: total + 1)', () => {
+  it('cria módulo sem ordem usando total de módulos + 1', async () => {
+    prismaMock.curso.findFirst.mockResolvedValue({ autor_id: 1 }) // isCursoOwner
+    prismaMock.modulo.count.mockResolvedValue(3) // já existem 3 módulos
+    prismaMock.modulo.create.mockResolvedValue(fakeModulo({ id: 10, ordem: 4 }))
+    prismaMock.aula.findMany.mockResolvedValue([])
+
+    const res = await appCursos.request('http://localhost/cursos/1/modulos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Cookie: authCookie(1) },
+      body: JSON.stringify({ nome: 'Novo', descricao: 'Desc', nivel: 1, cursoId: 1 }),
+    })
+
+    expect(res.status).toBe(201)
+    const dataArg = prismaMock.modulo.create.mock.calls[0][0].data
+    expect(dataArg.ordem).toBe(4) // count 3 + 1
+  })
+
+  it('cria aula sem ordem usando total de aulas + 1', async () => {
+    prismaMock.modulo.findFirst.mockResolvedValue({ ...fakeModulo(), curso: { autor_id: 1 } }) // isModuloOwner
+    prismaMock.aula.count.mockResolvedValue(2) // já existem 2 aulas
+    prismaMock.aula.create.mockResolvedValue({
+      id: 3, titulo: 'Aula 3', descricao: 'Desc', ordem: 3, duracao: null,
+      video_youtube_id: 'abc', status: 'Pendente', modulo_id: 1,
+    })
+
+    const res = await appModulos.request('http://localhost/modulos/1/aulas', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Cookie: authCookie(1) },
+      body: JSON.stringify({ titulo: 'Aula 3', descricao: 'Desc', videoYoutubeId: 'abc', idModulo: 1 }),
+    })
+
+    expect(res.status).toBe(201)
+    const dataArg = prismaMock.aula.create.mock.calls[0][0].data
+    expect(dataArg.ordem).toBe(3) // count 2 + 1
+  })
+
+  it('ordem explícita no body continua funcionando (compatibilidade)', async () => {
+    prismaMock.curso.findFirst.mockResolvedValue({ autor_id: 1 }) // isCursoOwner
+    prismaMock.modulo.count.mockResolvedValue(5)
+    prismaMock.modulo.create.mockResolvedValue(fakeModulo({ id: 10, ordem: 2 }))
+    prismaMock.aula.findMany.mockResolvedValue([])
+
+    const res = await appCursos.request('http://localhost/cursos/1/modulos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Cookie: authCookie(1) },
+      body: JSON.stringify({ nome: 'Novo', descricao: 'Desc', ordem: 2, nivel: 1, cursoId: 1 }),
+    })
+
+    expect(res.status).toBe(201)
+    const dataArg = prismaMock.modulo.create.mock.calls[0][0].data
+    expect(dataArg.ordem).toBe(2) // body prevalece sobre o count
+  })
+})
+
 describe('PUT /modulos/:id — quantidadeAulas é ignorada', () => {
   it('editar com quantidadeAulas: 999 não altera a fonte de verdade', async () => {
     prismaMock.modulo.findFirst.mockResolvedValue(fakeModulo({ curso: { autor_id: 1 } }))

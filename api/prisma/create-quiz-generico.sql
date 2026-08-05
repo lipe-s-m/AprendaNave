@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS quiz (
   titulo VARCHAR(100) NOT NULL,
   descricao VARCHAR(255),
   nota_minima INTEGER NOT NULL DEFAULT 70 CHECK (nota_minima BETWEEN 1 AND 100),
+  tempo_por_questao_segundos INTEGER CHECK (tempo_por_questao_segundos BETWEEN 5 AND 300),
   status VARCHAR(20) NOT NULL DEFAULT 'Pendente' CHECK (status IN ('Pendente', 'Aprovado', 'Rejeitado')),
   criado_por_id INTEGER NOT NULL REFERENCES aluno(id) ON DELETE CASCADE,
   criado_em TIMESTAMPTZ NOT NULL DEFAULT NOW(),

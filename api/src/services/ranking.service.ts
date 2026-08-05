@@ -27,9 +27,6 @@ async function obterValoresPorCategoria(slug: RankingSlug): Promise<RankingValor
       const guestPorId = new Map(guests.map((g) => [g.id, g.nome]))
       const melhores = new Map<string, RankingValor>()
 
-      for (const score of atuais) {
-        melhores.set(`aluno:${score.id_aluno}`, { idAluno: score.id_aluno, valor: score.pontos, origem: 'aluno' })
-      }
       for (const score of legados) {
         // Regra de desambiguação: somente é convidado se ID E nome coincidirem.
         // Se houver colisão de ID mas o nome não coincidir, é tratado como aluno.
@@ -38,6 +35,16 @@ async function obterValoresPorCategoria(slug: RankingSlug): Promise<RankingValor
         const anterior = melhores.get(chave)
         if (!anterior || score.pontos > anterior.valor) {
           melhores.set(chave, { idAluno: score.id_aluno, valor: score.pontos, origem, nomeReferencia: score.nome_aluno })
+        }
+      }
+      for (const score of atuais) {
+        // Um registro legado confirmado como guest tem prioridade sobre a linha
+        // sem nome da tabela nova. Isso evita duplicar "guest 21" e "aluno 21".
+        if (melhores.has(`guest:${score.id_aluno}`)) continue
+        const chave = `aluno:${score.id_aluno}`
+        const anterior = melhores.get(chave)
+        if (!anterior || score.pontos > anterior.valor) {
+          melhores.set(chave, { idAluno: score.id_aluno, valor: score.pontos, origem: 'aluno' })
         }
       }
       return [...melhores.values()]
@@ -90,7 +97,7 @@ export async function obterRanking(slug: RankingSlug, currentUserId: number | nu
   const montarEntrada = (item: RankingValor & { posicao: number }): RankingEntrada => {
     const aluno = item.origem === 'aluno' ? alunoPorId.get(item.idAluno) : undefined
     const guest = item.origem === 'guest' ? guestPorId.get(item.idAluno) : undefined
-    return { posicao: item.posicao, idAluno: item.idAluno, nomeAluno: guest?.nome ?? item.nomeReferencia ?? aluno?.nome ?? 'Aluno', fotoPerfil: aluno?.foto_perfil ?? null, valor: item.valor }
+    return { posicao: item.posicao, idAluno: item.idAluno, nomeAluno: guest?.nome ?? aluno?.nome ?? item.nomeReferencia ?? 'Aluno', fotoPerfil: aluno?.foto_perfil ?? null, valor: item.valor }
   }
   const entradas = comPosicoes.slice(0, limite).map(montarEntrada)
   const entradaDoUsuario = currentUserId === null ? undefined : comPosicoes.find((v) => v.origem === 'aluno' && v.idAluno === currentUserId)

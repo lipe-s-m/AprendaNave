@@ -197,7 +197,7 @@ cursosRoutes.get('/:cursoId/modulos', async (c) => {
       where.status = 'Aprovado'
     }
 
-    const modulos = await prisma.modulo.findMany({ where })
+    const modulos = await prisma.modulo.findMany({ where, orderBy: { ordem: 'asc' } })
 
     // Contagem dinâmica a partir de `aula` (fonte da verdade), em lote
     const contagens = await obterContagensAulasPorModulo(modulos.map((m) => m.id))
@@ -245,12 +245,17 @@ cursosRoutes.post('/:cursoId/modulos', authRequired, async (c) => {
 
     const body = await c.req.json()
 
+    // A ordem é opcional no create: quando ausente, empilha no final
+    // (total de módulos existentes + 1). O criador pode reordenar depois
+    // com os botões subir/descer (PUT /modulos/:id).
+    const totalModulos = await prisma.modulo.count({ where: { curso_id: cursoId } })
+
     const modulo = await prisma.modulo.create({
       data: {
         nome: body.nome,
         descricao: body.descricao,
         curso_id: body.cursoId,
-        ordem: body.ordem,
+        ordem: body.ordem ?? totalModulos + 1,
         nivel: body.nivel,
         // Coluna legada: NÃO é fonte de verdade. A contagem é calculada
         // dinamicamente a partir da tabela `aula` na resposta.

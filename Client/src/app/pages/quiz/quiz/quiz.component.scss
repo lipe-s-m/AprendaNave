@@ -1,149 +1,112 @@
-.background {
-  min-height: 100dvh;
-  height: 100%;
-  width: 100%;
-  background-color: var(--background-quinary);
-}
-.modal-init-game-background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  backdrop-filter: blur(4px);
-  .modal-init-game-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1.6rem;
-    padding: 2rem;
-    background-color: var(--background-senary);
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    width: 90%;
-    max-width: 60rem;
-    min-height: 25rem;
-    position: relative;
-    overflow: hidden;
-    animation: modalFadeIn 0.3s ease;
-    border: 1px solid var(--border-color);
-    h2 {
-      font-size: 3rem;
-    }
-    p {
-      font-size: 2rem;
-      text-align: center;
-      color: var(--text-primary);
-    }
-    .contagem-regressiva {
-      font-size: 4.8rem;
-      font-weight: bold;
-      color: var(--accent-primary);
-    }
-  }
-}
+@use "./../../../scss/variables";
+
 .container {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  padding: 1rem;
+  padding: variables.$espaco-4;
 
   h1 {
-    margin: 2rem auto;
+    margin: variables.$espaco-5 auto;
   }
-  .game {
-    width: 80%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    h1 {
-      text-align: center;
-    }
-    .info {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: end;
-      margin-bottom: 1.6rem;
-      p {
-        font-size: 2rem;
-        color: var(--text-primary);
-        margin-bottom: 1.6rem;
-        text-align: end;
+}
 
-        &.tempo-restante {
-          color: var(--accent-primary);
-          font-size: 2.4rem;
-        }
-      }
-    }
-    .content-game {
-      display: flex;
-      flex-direction: column;
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: variables.$espaco-4;
+  background-color: var(--background-senary);
+  width: 100%;
+  max-width: 55rem;
+  padding: variables.$espaco-5;
+  border-radius: variables.$borda-radius;
+
+  p {
+    color: var(--text-primary);
+    font-size: variables.$fonte-tamanho-p;
+    text-align: center;
+  }
+}
+
+// ── Alternativas ──
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: variables.$espaco-3;
+  width: 100%;
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: variables.$espaco-3;
+    width: 100%;
+    min-height: 4.8rem;
+    padding: variables.$espaco-3 variables.$espaco-4;
+    border: 0.1rem solid var(--border-color);
+    border-radius: variables.$borda-radius-card;
+    background-color: var(--surface-card);
+    color: var(--text-primary);
+    font-family: variables.$fonte-principal;
+    font-size: variables.$fonte-tamanho-p;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      background-color variables.$transicao-rapida,
+      border-color variables.$transicao-rapida,
+      transform variables.$transicao-rapida;
+
+    .letra {
+      flex: 0 0 3.2rem;
+      height: 3.2rem;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 2.4rem;
-      max-width: 35rem;
+      border-radius: 50%;
+      background-color: var(--surface-elevated);
+      color: var(--text-muted);
+      font-size: variables.$fonte-tamanho-h5;
+      font-weight: 700;
+      transition:
+        background-color variables.$transicao-rapida,
+        color variables.$transicao-rapida;
     }
-    .options {
-      display: flex;
-      flex-direction: column;
-      gap: 1.6rem;
+
+    &:hover {
+      background-color: var(--surface-card-hover);
+      border-color: var(--focus-ring);
+    }
+
+    &:active {
+      transform: translateY(0.1rem);
+    }
+
+    &.active {
+      background-color: var(--status-info-background);
+      border-color: var(--accent-primary);
+
+      .letra {
+        background-color: var(--accent-primary);
+        color: var(--text-on-accent);
+      }
     }
   }
-  .content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1.6rem;
-    background-color: #130d37;
-    background-color: var(--background-senary);
-    // background-color: transparent;
-    width: 100%;
-    max-width: 55rem;
-    padding: 2.4rem;
-    border-radius: 1.6rem;
+}
 
-    .content-text {
-      display: flex;
-      flex-direction: column;
-      font-size: 1.6rem;
-      line-height: 1.4;
-      gap: 1.6rem;
-      .dificuldades {
-        display: flex;
-        gap: 1.6rem;
-        justify-content: center;
-        button {
-          padding: 0.6rem 1.4rem;
-          font-size: 1.6rem;
-          border: 2px solid var(--accent-secondary);
-          border-radius: 0.8rem;
-          background-color: var(--accent-secondary);
-          color: var(--text-on-accent);
-          cursor: pointer;
-          transition: background-color 0.3s ease;
-          &.active {
-            background-color: var(--select-primary);
-            border: 2px solid var(--select-primary);
-          }
-          &:hover {
-            border: 2px solid var(--select-primary);
-          }
-        }
-      }
-      p {
-        color: var(--text-primary);
-      }
-    }
+// ── Ações (navegação entre questões) ──
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: variables.$espaco-3;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
   }
 }

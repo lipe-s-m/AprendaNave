@@ -11,10 +11,13 @@
     <app-button buttonText="Voltar" buttonLevel="secondary" buttonTheme="dark" buttonSize="large" (click)="voltar()" />
   </section>
   <section class="content" *ngIf="tentativa() && !resultado()">
-    <p>Questão {{ indice() + 1 }} de {{ tentativa()!.questoes.length }}</p>
+    <p>Questão {{ indice() + 1 }} de {{ tentativa()!.questoes.length }} <strong *ngIf="tempoRestante() !== null">· {{ tempoRestante() }}s</strong></p>
     <h1>{{ questaoAtual()?.enunciado }}</h1>
     <div class="options">
-      <button *ngFor="let alternativa of questaoAtual()?.alternativas" class="option" [class.active]="selecionada(alternativa.id)" (click)="selecionar(alternativa.id)">{{ alternativa.texto }}</button>
+      <button *ngFor="let alternativa of questaoAtual()?.alternativas; let i = index" class="option" [class.active]="selecionada(alternativa.id)" [attr.aria-pressed]="selecionada(alternativa.id)" (click)="selecionar(alternativa.id)">
+        <span class="letra" aria-hidden="true">{{ letra(i) }}</span>
+        {{ alternativa.texto }}
+      </button>
     </div>
     <div class="actions">
       <app-button buttonText="Anterior" buttonLevel="secondary" buttonTheme="dark" [buttonDisabled]="indice() === 0" (click)="anterior()" />
@@ -26,6 +29,7 @@
     <p>Você acertou <strong>{{ r.acertos }} de {{ r.totalQuestoes }}</strong> questões ({{ r.percentual }}%).</p>
     <p *ngIf="r.navecoinsGanhos > 0">Você ganhou <strong>{{ r.navecoinsGanhos }} Navecoins</strong>!</p>
     <p *ngIf="r.aprovado && r.navecoinsGanhos === 0">Você já havia recebido a recompensa pela primeira aprovação deste quiz.</p>
+    <article class="feedback" *ngFor="let correcao of r.correcoes; let i = index"><h2>{{ i + 1 }}. {{ correcao.enunciado }}</h2><p><strong>Resposta correta:</strong> {{ correcao.alternativaCorretaTexto }}</p><p *ngIf="correcao.explicacao"><strong>Explicação:</strong> {{ correcao.explicacao }}</p></article>
     <app-button buttonText="Voltar ao módulo" buttonLevel="primary" buttonTheme="dark" (click)="voltar()" />
   </section>
 </main>

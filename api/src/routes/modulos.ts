@@ -121,7 +121,7 @@ modulosRoutes.get('/:moduloId/aulas', async (c) => {
       where.status = 'Aprovado'
     }
 
-    const aulas = await prisma.aula.findMany({ where })
+    const aulas = await prisma.aula.findMany({ where, orderBy: { ordem: 'asc' } })
 
     return c.json(
       aulas.map((aula) => ({
@@ -181,7 +181,13 @@ modulosRoutes.post('/:moduloId/aulas', authRequired, async (c) => {
       return c.json('IDs incompativeis.', 404)
     }
 
-    if (body.ordem < 1) {
+    // A ordem é opcional no create: quando ausente, empilha no final
+    // (total de aulas existentes + 1). O criador pode reordenar depois
+    // com os botões subir/descer (PUT /aulas/:id).
+    const totalAulas = await prisma.aula.count({ where: { modulo_id: moduloId } })
+    const ordem = body.ordem ?? totalAulas + 1
+
+    if (ordem < 1) {
       return c.json('A ordem deve ser maior ou igual a 1', 400)
     }
 
@@ -189,7 +195,7 @@ modulosRoutes.post('/:moduloId/aulas', authRequired, async (c) => {
       data: {
         titulo: body.titulo,
         descricao: body.descricao,
-        ordem: body.ordem,
+        ordem,
         duracao: body.duracao ?? null,
         video_youtube_id: body.videoYoutubeId,
         modulo_id: body.idModulo,

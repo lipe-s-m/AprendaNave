@@ -27,7 +27,7 @@ quizRoutes.get('/modulos/:moduloId/quiz/gerenciar', authRequired, async (c) => {
   const moduloId = numero(c.req.param('moduloId')!)
   const userId = await garantirDonoModulo(c, moduloId)
   if (!userId) return c.json({ error: 'Sem permissão para este módulo' }, 403)
-  const quiz = await obterQuizDoCriador(moduloId, userId)
+  const quiz = await obterQuizDoCriador(moduloId)
   return c.json({ quiz })
 })
 
@@ -37,8 +37,8 @@ quizRoutes.post('/modulos/:moduloId/quiz', authRequired, async (c) => {
     const userId = await garantirDonoModulo(c, moduloId)
     if (!userId) return c.json({ error: 'Sem permissão para este módulo' }, 403)
     const body = await c.req.json()
-    if (!body.titulo?.trim() || !Number.isInteger(body.notaMinima ?? 70) || (body.notaMinima ?? 70) < 1 || (body.notaMinima ?? 70) > 100) return c.json({ error: 'Dados do quiz inválidos' }, 400)
-    const quiz = await prisma.quiz.create({ data: { id_modulo: moduloId, criado_por_id: userId, titulo: body.titulo.trim(), descricao: body.descricao?.trim() || null, nota_minima: body.notaMinima ?? 70 } })
+    if (!body.titulo?.trim() || !Number.isInteger(body.notaMinima ?? 70) || (body.notaMinima ?? 70) < 1 || (body.notaMinima ?? 70) > 100 || (body.tempoPorQuestaoSegundos !== null && body.tempoPorQuestaoSegundos !== undefined && (!Number.isInteger(body.tempoPorQuestaoSegundos) || body.tempoPorQuestaoSegundos < 5 || body.tempoPorQuestaoSegundos > 300))) return c.json({ error: 'Dados do quiz inválidos' }, 400)
+    const quiz = await prisma.quiz.create({ data: { id_modulo: moduloId, criado_por_id: userId, titulo: body.titulo.trim(), descricao: body.descricao?.trim() || null, nota_minima: body.notaMinima ?? 70, tempo_por_questao_segundos: body.tempoPorQuestaoSegundos ?? null } })
     return c.json(serializarQuiz(quiz), 201)
   } catch (error: any) {
     if (error?.code === 'P2002') return c.json({ error: 'Este módulo já possui um quiz' }, 409)
@@ -52,7 +52,8 @@ quizRoutes.put('/modulos/:moduloId/quiz', authRequired, async (c) => {
   if (!userId) return c.json({ error: 'Sem permissão para este módulo' }, 403)
   const body = await c.req.json()
   if (body.notaMinima !== undefined && (!Number.isInteger(body.notaMinima) || body.notaMinima < 1 || body.notaMinima > 100)) return c.json({ error: 'Nota mínima inválida' }, 400)
-  const quiz = await prisma.quiz.updateMany({ where: { id_modulo: moduloId, criado_por_id: userId }, data: { ...(body.titulo !== undefined ? { titulo: String(body.titulo).trim() } : {}), ...(body.descricao !== undefined ? { descricao: body.descricao?.trim() || null } : {}), ...(body.notaMinima !== undefined ? { nota_minima: body.notaMinima } : {}), status: 'Pendente', atualizado_em: new Date() } })
+  if (body.tempoPorQuestaoSegundos !== undefined && body.tempoPorQuestaoSegundos !== null && (!Number.isInteger(body.tempoPorQuestaoSegundos) || body.tempoPorQuestaoSegundos < 5 || body.tempoPorQuestaoSegundos > 300)) return c.json({ error: 'O tempo deve estar entre 5 e 300 segundos' }, 400)
+  const quiz = await prisma.quiz.updateMany({ where: { id_modulo: moduloId }, data: { ...(body.titulo !== undefined ? { titulo: String(body.titulo).trim() } : {}), ...(body.descricao !== undefined ? { descricao: body.descricao?.trim() || null } : {}), ...(body.notaMinima !== undefined ? { nota_minima: body.notaMinima } : {}), ...(body.tempoPorQuestaoSegundos !== undefined ? { tempo_por_questao_segundos: body.tempoPorQuestaoSegundos } : {}), status: 'Pendente', atualizado_em: new Date() } })
   if (!quiz.count) return c.json({ error: 'Quiz não encontrado' }, 404)
   return c.json({ ok: true, status: 'Pendente' })
 })
@@ -61,7 +62,7 @@ quizRoutes.delete('/modulos/:moduloId/quiz', authRequired, async (c) => {
   const moduloId = numero(c.req.param('moduloId')!)
   const userId = await garantirDonoModulo(c, moduloId)
   if (!userId) return c.json({ error: 'Sem permissão para este módulo' }, 403)
-  const result = await prisma.quiz.deleteMany({ where: { id_modulo: moduloId, criado_por_id: userId, status: { not: 'Aprovado' } } })
+  const result = await prisma.quiz.deleteMany({ where: { id_modulo: moduloId, status: { not: 'Aprovado' } } })
   if (!result.count) return c.json({ error: 'Somente quizzes pendentes ou rejeitados podem ser excluídos' }, 400)
   return c.json({ ok: true })
 })
@@ -70,7 +71,7 @@ quizRoutes.post('/modulos/:moduloId/quiz/enviar-aprovacao', authRequired, async 
   const moduloId = numero(c.req.param('moduloId')!)
   const userId = await garantirDonoModulo(c, moduloId)
   if (!userId) return c.json({ error: 'Sem permissão para este módulo' }, 403)
-  const quiz = await prisma.quiz.findFirst({ where: { id_modulo: moduloId, criado_por_id: userId } })
+  const quiz = await prisma.quiz.findFirst({ where: { id_modulo: moduloId } })
   if (!quiz) return c.json({ error: 'Quiz não encontrado' }, 404)
   const validacao = await validarQuizParaEnvio(quiz.id, false)
   if (!validacao.valida) return c.json({ error: `Adicione ao menos 5 questões válidas; há ${validacao.quantidade}.` }, 400)
@@ -82,8 +83,8 @@ quizRoutes.post('/quizzes/:quizId/questoes', authRequired, async (c) => {
   try {
     const quizId = idQuiz(c.req.param('quizId')!)
     const userId = getCurrentUserId(c)!
-    const quiz = await prisma.quiz.findFirst({ where: { id: quizId, criado_por_id: userId } })
-    if (!quiz) return c.json({ error: 'Sem permissão para este quiz' }, 403)
+    const quiz = await prisma.quiz.findFirst({ where: { id: quizId } })
+    if (!quiz || !(await isModuloOwner(userId, quiz.id_modulo))) return c.json({ error: 'Sem permissão para este quiz' }, 403)
     const body = await c.req.json()
     const alternativas = validarAlternativas(body.alternativas)
     if (!body.enunciado?.trim() || !alternativas) return c.json({ error: 'A questão precisa de enunciado e exatamente 4 alternativas, com uma correta' }, 400)
@@ -97,8 +98,8 @@ quizRoutes.post('/quizzes/:quizId/questoes', authRequired, async (c) => {
 quizRoutes.put('/quizzes/:quizId/questoes/:questaoId', authRequired, async (c) => {
   try {
     const quizId = idQuiz(c.req.param('quizId')!), questaoId = idQuiz(c.req.param('questaoId')!), userId = getCurrentUserId(c)!
-    const quiz = await prisma.quiz.findFirst({ where: { id: quizId, criado_por_id: userId } })
-    if (!quiz) return c.json({ error: 'Sem permissão para este quiz' }, 403)
+    const quiz = await prisma.quiz.findFirst({ where: { id: quizId } })
+    if (!quiz || !(await isModuloOwner(userId, quiz.id_modulo))) return c.json({ error: 'Sem permissão para este quiz' }, 403)
     const body = await c.req.json(), alternativas = validarAlternativas(body.alternativas)
     if (!body.enunciado?.trim() || !alternativas) return c.json({ error: 'Dados da questão inválidos' }, 400)
     await prisma.$transaction([
@@ -112,8 +113,8 @@ quizRoutes.put('/quizzes/:quizId/questoes/:questaoId', authRequired, async (c) =
 
 quizRoutes.delete('/quizzes/:quizId/questoes/:questaoId', authRequired, async (c) => {
   const quizId = idQuiz(c.req.param('quizId')!), questaoId = idQuiz(c.req.param('questaoId')!), userId = getCurrentUserId(c)!
-  const quiz = await prisma.quiz.findFirst({ where: { id: quizId, criado_por_id: userId } })
-  if (!quiz) return c.json({ error: 'Sem permissão para este quiz' }, 403)
+  const quiz = await prisma.quiz.findFirst({ where: { id: quizId } })
+  if (!quiz || !(await isModuloOwner(userId, quiz.id_modulo))) return c.json({ error: 'Sem permissão para este quiz' }, 403)
   const deleted = await prisma.quiz_questao.deleteMany({ where: { id: questaoId, id_quiz: quizId } })
   if (!deleted.count) return c.json({ error: 'Questão não encontrada' }, 404)
   await prisma.quiz.update({ where: { id: quizId }, data: { status: 'Pendente', atualizado_em: new Date() } })
@@ -123,12 +124,12 @@ quizRoutes.delete('/quizzes/:quizId/questoes/:questaoId', authRequired, async (c
 // ----- Jogador -----
 quizRoutes.get('/modulos/:moduloId/quiz/status', authRequired, async (c) => {
   const moduloId = numero(c.req.param('moduloId')!), userId = getCurrentUserId(c)!
-  const quiz = await prisma.quiz.findFirst({ where: { id_modulo: moduloId, status: 'Aprovado' }, select: { id: true, titulo: true, descricao: true, nota_minima: true } })
+  const quiz = await prisma.quiz.findFirst({ where: { id_modulo: moduloId, status: 'Aprovado' }, select: { id: true, titulo: true, descricao: true, nota_minima: true, tempo_por_questao_segundos: true } })
   if (!quiz) return c.json({ disponivel: false, possuiQuiz: false })
   const [totalAulas, aulasConcluidas, resumo] = await Promise.all([
     prisma.aula.count({ where: { modulo_id: moduloId, status: 'Aprovado' } }), prisma.aluno_aula_progresso.count({ where: { id_aluno: userId, id_modulo: moduloId } }), prisma.aluno_modulo_quiz.findUnique({ where: { id_aluno_id_modulo: { id_aluno: userId, id_modulo: moduloId } } }),
   ])
-  return c.json({ possuiQuiz: true, disponivel: aulasConcluidas >= totalAulas, aulasPendentes: Math.max(0, totalAulas - aulasConcluidas), quiz: { id: paraNumero(quiz.id), titulo: quiz.titulo, descricao: quiz.descricao, notaMinima: quiz.nota_minima }, resumo: resumo && { melhorPercentual: resumo.melhor_percentual, tentativasRealizadas: resumo.tentativas_realizadas, aprovado: !!resumo.primeira_aprovacao_em } })
+  return c.json({ possuiQuiz: true, disponivel: aulasConcluidas >= totalAulas, aulasPendentes: Math.max(0, totalAulas - aulasConcluidas), quiz: { id: paraNumero(quiz.id), titulo: quiz.titulo, descricao: quiz.descricao, notaMinima: quiz.nota_minima, tempoPorQuestaoSegundos: quiz.tempo_por_questao_segundos }, resumo: resumo && { melhorPercentual: resumo.melhor_percentual, tentativasRealizadas: resumo.tentativas_realizadas, aprovado: !!resumo.primeira_aprovacao_em } })
 })
 
 quizRoutes.post('/modulos/:moduloId/quiz/tentativas', authRequired, async (c) => {

@@ -39,6 +39,7 @@ export class AdminComponent implements OnInit {
   });
   quizzesPendentes = signal<any[]>([]);
   questoesPendentes = signal<any[]>([]);
+  cursosGerenciaveis = signal<any[]>([]);
 
   modalRejeitar = signal<{ aberto: boolean; tipo: string; id: number; nome: string }>({
     aberto: false, tipo: '', id: 0, nome: '',
@@ -65,10 +66,15 @@ export class AdminComponent implements OnInit {
     });
     this.http.get<any[]>(`${this.apiUrl}/admin/quizzes/pendentes`).subscribe({ next: (quizzes) => this.quizzesPendentes.set(quizzes), error: () => this.quizzesPendentes.set([]) });
     this.http.get<any[]>(`${this.apiUrl}/admin/questoes/pendentes`).subscribe({ next: (questoes) => this.questoesPendentes.set(questoes), error: () => this.questoesPendentes.set([]) });
+    this.http.get<any[]>(`${this.apiUrl}/admin/cursos`).subscribe({ next: (cursos) => this.cursosGerenciaveis.set(cursos), error: () => this.cursosGerenciaveis.set([]) });
   }
 
   setAba(aba: string): void {
     this.abaAtiva.set(aba);
+  }
+
+  gerenciarCurso(cursoId: number): void {
+    this.router.navigate(['/curso', cursoId, 'gerenciar']);
   }
 
   aprovar(tipo: string, id: number): void {

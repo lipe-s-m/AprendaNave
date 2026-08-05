@@ -46,6 +46,9 @@
     <button class="tab" type="button" role="tab" [class.active]="abaAtiva() === 'questoes'" [attr.aria-selected]="abaAtiva() === 'questoes'" (click)="setAba('questoes')">
       Questões ({{ questoesPendentes().length }})
     </button>
+    <button class="tab" type="button" role="tab" [class.active]="abaAtiva() === 'gerenciar'" [attr.aria-selected]="abaAtiva() === 'gerenciar'" (click)="setAba('gerenciar')">
+      Gerenciar conteúdos
+    </button>
   </div>
 
   <!-- Quizzes -->
@@ -64,6 +67,15 @@
       <div class="actions"><app-button buttonText="Aprovar" [buttonVariant]="'success'" [buttonDisabled]="processando() !== null" (click)="aprovar('questoes', item.id)" /><app-button buttonText="Rejeitar" [buttonVariant]="'danger'" [buttonDisabled]="processando() !== null" (click)="pedirRejeicao('questoes', item)" /></div>
     </article>
     <app-empty-state *ngIf="questoesPendentes().length === 0" title="Nenhuma questão pendente" description="Nenhuma questão aguardando revisão." icon="check_circle_outline" />
+  </div>
+
+  <!-- Modo God: o administrador abre o mesmo editor completo usado pelo criador. -->
+  <div class="list" *ngIf="abaAtiva() === 'gerenciar' && !isLoading() && !error()">
+    <article class="card" *ngFor="let curso of cursosGerenciaveis()">
+      <div class="info"><div class="info-top"><app-status-badge [label]="curso.status" [status]="curso.status === 'Aprovado' ? 'success' : curso.status === 'Rejeitado' ? 'error' : 'warning'" /><strong>{{ curso.nome }}</strong></div><span class="meta">Autor: {{ curso.autorNome }}</span><p class="descricao">{{ curso.descricao }}</p></div>
+      <div class="actions"><app-button buttonText="Editar conteúdo" [buttonVariant]="'primary'" (click)="gerenciarCurso(curso.id)" /></div>
+    </article>
+    <app-empty-state *ngIf="cursosGerenciaveis().length === 0" title="Nenhum curso encontrado" description="Ainda não há conteúdos para gerenciar." icon="school" />
   </div>
 
   <div class="loading" *ngIf="isLoading()"><app-loader /></div>

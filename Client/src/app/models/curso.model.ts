@@ -49,7 +49,9 @@ export interface CreateCursoDto {
 export interface CreateModuloDto {
   nome: string;
   descricao: string;
-  ordem: number;
+  // A ordem NÃO é informada na criação: o servidor empilha no final
+  // (total de módulos + 1). Reordenação via setas (PUT /modulos/:id).
+  ordem?: number;
   nivel: number;
   // A quantidade de aulas NÃO é enviada: o servidor calcula dinamicamente
   // a partir da tabela `aula`.
@@ -60,7 +62,9 @@ export interface CreateModuloDto {
 export interface CreateAulaDto {
   titulo: string;
   descricao: string;
-  ordem: number;
+  // A ordem NÃO é informada na criação: o servidor empilha no final
+  // (total de aulas + 1). Reordenação via setas (PUT /aulas/:id).
+  ordem?: number;
   duracao?: number;
   videoYoutubeId: string;
   idModulo: number;

@@ -132,12 +132,18 @@
   }
 }
 
+.modulo-top {
+  display: flex;
+  align-items: stretch;
+}
+
 .modulo-header {
   display: flex;
   align-items: center;
   gap: variables.$espaco-3;
-  width: 100%;
-  padding: variables.$espaco-4 variables.$espaco-4;
+  flex: 1;
+  min-width: 0;
+  padding: variables.$espaco-4;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -182,6 +188,25 @@
   .expand-icon {
     color: var(--text-muted);
     font-size: 2rem;
+  }
+}
+
+// Botões de reordenação (subir/descer) ao lado do header do módulo
+.modulo-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: variables.$espaco-1;
+  padding: variables.$espaco-2;
+  border-left: 1px solid var(--border-color-light);
+
+  .icon-btn {
+    min-width: 3.2rem;
+    min-height: 3.2rem;
+
+    .material-icons {
+      font-size: 1.6rem;
+    }
   }
 }
 
@@ -280,6 +305,11 @@
   &.danger:hover {
     color: var(--error-color);
     border-color: var(--error-color);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
 }
 

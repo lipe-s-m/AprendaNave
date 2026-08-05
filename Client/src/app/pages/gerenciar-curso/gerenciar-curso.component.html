@@ -57,29 +57,53 @@
     </div>
 
     <div class="modulos-list" *ngIf="modulos().length > 0; else semModulos">
-      <div class="modulo-card" *ngFor="let modulo of modulos()">
-        <button
-          class="modulo-header"
-          type="button"
-          (click)="toggleModulo(modulo.id)"
-          [attr.aria-expanded]="moduloExpandido() === modulo.id"
-        >
-          <span class="modulo-ordem" aria-hidden="true">{{ modulo.ordem }}</span>
-          <span class="modulo-info">
-            <strong>{{ modulo.nome }}</strong>
-            <span class="modulo-meta">
-              {{ resumoAulas(modulo) }} · {{ horasDoModulo(modulo) }} · Nível {{ modulo.nivel }}
+      <div class="modulo-card" *ngFor="let modulo of modulos(); let i = index">
+        <div class="modulo-top">
+          <button
+            class="modulo-header"
+            type="button"
+            (click)="toggleModulo(modulo.id)"
+            [attr.aria-expanded]="moduloExpandido() === modulo.id"
+          >
+            <span class="modulo-ordem" aria-hidden="true">{{ modulo.ordem }}</span>
+            <span class="modulo-info">
+              <strong>{{ modulo.nome }}</strong>
+              <span class="modulo-meta">
+                {{ resumoAulas(modulo) }} · {{ horasDoModulo(modulo) }} · Nível {{ modulo.nivel }}
+              </span>
             </span>
+            <app-status-badge [label]="modulo.status" [status]="statusTipo(modulo.status)" />
+            <span class="material-icons expand-icon" aria-hidden="true">
+              {{ moduloExpandido() === modulo.id ? 'expand_less' : 'expand_more' }}
+            </span>
+          </button>
+          <span class="modulo-actions">
+            <button
+              class="icon-btn"
+              type="button"
+              (click)="moverModulo(modulo, -1)"
+              [disabled]="reordenando() || i === 0"
+              [attr.aria-label]="'Subir módulo ' + modulo.nome"
+              title="Subir módulo"
+            >
+              <span class="material-icons" aria-hidden="true">arrow_upward</span>
+            </button>
+            <button
+              class="icon-btn"
+              type="button"
+              (click)="moverModulo(modulo, 1)"
+              [disabled]="reordenando() || i === modulos().length - 1"
+              [attr.aria-label]="'Descer módulo ' + modulo.nome"
+              title="Descer módulo"
+            >
+              <span class="material-icons" aria-hidden="true">arrow_downward</span>
+            </button>
           </span>
-          <app-status-badge [label]="modulo.status" [status]="statusTipo(modulo.status)" />
-          <span class="material-icons expand-icon" aria-hidden="true">
-            {{ moduloExpandido() === modulo.id ? 'expand_less' : 'expand_more' }}
-          </span>
-        </button>
+        </div>
 
         <!-- Aulas do módulo (expandido) -->
         <div class="aulas-list" *ngIf="moduloExpandido() === modulo.id">
-          <div class="aula-item" *ngFor="let aula of aulasPorModulo(modulo.id)">
+          <div class="aula-item" *ngFor="let aula of aulasPorModulo(modulo.id); let j = index">
             <span class="aula-ordem" aria-hidden="true">{{ aula.ordemAula }}</span>
             <span class="aula-info">
               <strong>{{ aula.tituloAula }}</strong>
@@ -87,6 +111,26 @@
             </span>
             <span class="aula-duracao" *ngIf="aula.duracaoAula">{{ aula.duracaoAula }} min</span>
             <span class="aula-actions">
+              <button
+                class="icon-btn"
+                type="button"
+                (click)="moverAula(aula, modulo.id, -1)"
+                [disabled]="reordenando() || j === 0"
+                [attr.aria-label]="'Subir aula ' + aula.tituloAula"
+                title="Subir aula"
+              >
+                <span class="material-icons" aria-hidden="true">arrow_upward</span>
+              </button>
+              <button
+                class="icon-btn"
+                type="button"
+                (click)="moverAula(aula, modulo.id, 1)"
+                [disabled]="reordenando() || j === aulasPorModulo(modulo.id).length - 1"
+                [attr.aria-label]="'Descer aula ' + aula.tituloAula"
+                title="Descer aula"
+              >
+                <span class="material-icons" aria-hidden="true">arrow_downward</span>
+              </button>
               <button
                 class="icon-btn"
                 type="button"
@@ -150,11 +194,10 @@
       <app-input label="Nome" inputName="nomeModulo" placeholder="Ex.: Operações Básicas" formControlName="nome" />
       <app-input label="Descrição" inputName="descricaoModulo" inputType="textarea" placeholder="O que o aluno vai aprender" formControlName="descricao" />
       <div class="form-row">
-        <app-input label="Ordem" inputName="ordem" placeholder="1" inputType="number" formControlName="ordem" />
         <app-input label="Nível (1-5)" inputName="nivel" placeholder="1" inputType="number" formControlName="nivel" />
-      </div>
-      <app-input label="Horas (opcional)" inputName="quantidadeHoras" placeholder="0" inputType="number" formControlName="quantidadeHoras" hint="A quantidade de aulas é calculada automaticamente ao adicionar aulas." />
-      <div class="modal-actions">
+         <app-input label="Horas (opcional)" inputName="quantidadeHoras" placeholder="0" inputType="number" formControlName="quantidadeHoras" hint="A ordem é automática: novos módulos vão para o final e podem ser reordenados com as setas." />
+       </div>
+       <div class="modal-actions">
         <app-button buttonText="Cancelar" [buttonVariant]="'ghost'" (click)="fecharModalModulo()" />
         <app-button
           [buttonText]="salvandoModulo() ? 'Salvando…' : 'Salvar'"
@@ -183,8 +226,7 @@
       <app-input label="Descrição" inputName="descricaoAula" inputType="textarea" placeholder="Resumo da aula" formControlName="descricao" />
       <app-input label="YouTube Video ID" inputName="videoYoutubeId" placeholder="dQw4w9WgXcQ" formControlName="videoYoutubeId" hint="A parte final da URL, ex.: watch?v=VIDEO_ID" />
       <div class="form-row">
-        <app-input label="Ordem" inputName="ordemAula" placeholder="1" inputType="number" formControlName="ordem" />
-        <app-input label="Duração (min, opcional)" inputName="duracao" placeholder="10" inputType="number" formControlName="duracao" />
+        <app-input label="Duração (min, opcional)" inputName="duracao" placeholder="10" inputType="number" formControlName="duracao" hint="A ordem é automática: novas aulas vão para o final e podem ser reordenadas com as setas." />
       </div>
       <div class="modal-actions">
         <app-button buttonText="Cancelar" [buttonVariant]="'ghost'" (click)="fecharModalAula()" />

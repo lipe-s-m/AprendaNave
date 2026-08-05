@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { CursoService } from '../../services/curso/curso.service';
@@ -38,6 +39,7 @@ export class GerenciarCursoComponent implements OnInit, OnDestroy {
   salvandoModulo = signal(false);
   salvandoAula = signal(false);
   painelCursoRecolhido = signal(false);
+  reordenando = signal(false);
 
   curso = signal<Curso | null>(null);
 
@@ -72,10 +74,11 @@ export class GerenciarCursoComponent implements OnInit, OnDestroy {
 
   // A quantidade de aulas NÃO é informada pelo criador: o servidor calcula
   // dinamicamente a partir da tabela `aula`.
+  // A ordem NÃO é informada pelo criador: o servidor empilha no final
+  // (total + 1) e a reordenação é feita pelas setas subir/descer.
   formModulo = new FormGroup({
     nome: new FormControl('', [Validators.required]),
     descricao: new FormControl('', [Validators.required]),
-    ordem: new FormControl(1, [Validators.required, Validators.min(1)]),
     nivel: new FormControl(1, [Validators.required, Validators.min(1)]),
     quantidadeHoras: new FormControl(0),
   });
@@ -84,7 +87,6 @@ export class GerenciarCursoComponent implements OnInit, OnDestroy {
     titulo: new FormControl('', [Validators.required]),
     descricao: new FormControl('', [Validators.required]),
     videoYoutubeId: new FormControl('', [Validators.required]),
-    ordem: new FormControl(1, [Validators.required, Validators.min(1)]),
     duracao: new FormControl<number | null>(null),
   });
 
@@ -231,12 +233,11 @@ export class GerenciarCursoComponent implements OnInit, OnDestroy {
       this.formModulo.patchValue({
         nome: modulo.nome,
         descricao: modulo.descricao,
-        ordem: modulo.ordem,
         nivel: modulo.nivel,
         quantidadeHoras: modulo.quantidadeHoras || 0,
       });
     } else {
-      this.formModulo.reset({ ordem: 1, nivel: 1, quantidadeHoras: 0 });
+      this.formModulo.reset({ nivel: 1, quantidadeHoras: 0 });
     }
     this.modalModuloAberto.set(true);
     this.focarModal();
@@ -255,7 +256,7 @@ export class GerenciarCursoComponent implements OnInit, OnDestroy {
     const data: CreateModuloDto = {
       nome: this.formModulo.value.nome!,
       descricao: this.formModulo.value.descricao!,
-      ordem: Number(this.formModulo.value.ordem),
+      // Sem `ordem`: o servidor empilha no final (total + 1).
       nivel: Number(this.formModulo.value.nivel),
       quantidadeHoras: Number(this.formModulo.value.quantidadeHoras) || 0,
       cursoId: this.cursoId(),
@@ -312,11 +313,10 @@ export class GerenciarCursoComponent implements OnInit, OnDestroy {
         titulo: aula.tituloAula,
         descricao: aula.descricaoAula,
         videoYoutubeId: aula.videoYoutubeIdAula,
-        ordem: aula.ordemAula,
         duracao: aula.duracaoAula || null,
       });
     } else {
-      this.formAula.reset({ ordem: 1, duracao: null });
+      this.formAula.reset({ duracao: null });
     }
     this.modalAulaAberto.set(true);
     this.focarModal();
@@ -336,7 +336,7 @@ export class GerenciarCursoComponent implements OnInit, OnDestroy {
       titulo: this.formAula.value.titulo!,
       descricao: this.formAula.value.descricao!,
       videoYoutubeId: this.formAula.value.videoYoutubeId!,
-      ordem: Number(this.formAula.value.ordem),
+      // Sem `ordem`: o servidor empilha no final (total + 1).
       duracao: this.formAula.value.duracao ? Number(this.formAula.value.duracao) : undefined,
       idModulo: this.aulaModuloId()!,
     };
@@ -364,6 +364,55 @@ export class GerenciarCursoComponent implements OnInit, OnDestroy {
       aberto: true, tipo: 'aula', id: aula.idAula,
       titulo: 'Excluir Aula',
       mensagem: `Tem certeza que deseja excluir "${aula.tituloAula}"?`,
+    });
+  }
+
+  // ── Reordenação (setas subir/descer) ──
+
+  /**
+   * Sobe/desce um módulo trocando a ordem com o vizinho da direção.
+   * O servidor é a fonte da verdade; a lista vem ordenada por `ordem` (asc).
+   */
+  moverModulo(modulo: any, direcao: -1 | 1): void {
+    const ordenados = [...this.modulos()].sort((a, b) => a.ordem - b.ordem);
+    const idx = ordenados.findIndex((m) => m.id === modulo.id);
+    const vizinho = ordenados[idx + direcao];
+    if (!vizinho || this.reordenando()) return;
+
+    this.reordenando.set(true);
+    forkJoin([
+      this.cursoService.updateModulo(modulo.id, { ordem: vizinho.ordem }),
+      this.cursoService.updateModulo(vizinho.id, { ordem: modulo.ordem }),
+    ]).subscribe({
+      next: () => this.toastr.success('Ordem atualizada!', 'Sucesso'),
+      error: () => this.toastr.error('Erro ao reordenar módulo', 'Erro'),
+      complete: () => {
+        this.reordenando.set(false);
+        this.recarregarModulos();
+      },
+    });
+  }
+
+  /**
+   * Sobe/desce uma aula trocando a ordem com a aula vizinha da direção.
+   */
+  moverAula(aula: any, moduloId: number, direcao: -1 | 1): void {
+    const ordenadas = [...this.aulasPorModulo(moduloId)].sort((a, b) => a.ordemAula - b.ordemAula);
+    const idx = ordenadas.findIndex((a) => a.idAula === aula.idAula);
+    const vizinho = ordenadas[idx + direcao];
+    if (!vizinho || this.reordenando()) return;
+
+    this.reordenando.set(true);
+    forkJoin([
+      this.cursoService.updateAula(aula.idAula, { ordem: vizinho.ordemAula }),
+      this.cursoService.updateAula(vizinho.idAula, { ordem: aula.ordemAula }),
+    ]).subscribe({
+      next: () => this.toastr.success('Ordem atualizada!', 'Sucesso'),
+      error: () => this.toastr.error('Erro ao reordenar aula', 'Erro'),
+      complete: () => {
+        this.reordenando.set(false);
+        this.carregarAulas(moduloId);
+      },
     });
   }
 

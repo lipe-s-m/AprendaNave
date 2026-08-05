@@ -5,9 +5,9 @@ import { environment } from '../../../environments/environment';
 
 export interface QuizAlternativa { id: number; texto: string; correta?: boolean; ordem?: number; }
 export interface QuizQuestao { id: number; enunciado: string; explicacao?: string | null; ordem?: number; status?: string; alternativas: QuizAlternativa[]; }
-export interface Quiz { id: number; moduloId?: number; titulo: string; descricao?: string | null; notaMinima: number; status?: string; questoes?: QuizQuestao[]; }
+export interface Quiz { id: number; moduloId?: number; titulo: string; descricao?: string | null; notaMinima: number; tempoPorQuestaoSegundos?: number | null; status?: string; questoes?: QuizQuestao[]; }
 export interface QuizTentativa { tentativaId: string; quiz: Quiz; questoes: QuizQuestao[]; }
-export interface ResultadoQuiz { tentativaId: string; acertos: number; totalQuestoes: number; percentual: number; aprovado: boolean; navecoinsGanhos: number; }
+export interface ResultadoQuiz { tentativaId: string; acertos: number; totalQuestoes: number; percentual: number; aprovado: boolean; navecoinsGanhos: number; correcoes: { questaoId: number; enunciado: string; explicacao?: string | null; alternativaCorretaId?: number; alternativaCorretaTexto?: string }[]; }
 
 @Injectable({ providedIn: 'root' })
 export class QuizService {

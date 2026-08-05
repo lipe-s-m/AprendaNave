@@ -166,6 +166,8 @@ describe('GET /rankings/desafio-matematica — melhor pontuação', () => {
       { id: 1n, id_aluno: 1, categoria: 'desafio-matematica', pontos: 42, criado_em: new Date(), atualizado_em: null },
       { id: 2n, id_aluno: 2, categoria: 'desafio-matematica', pontos: 37, criado_em: new Date(), atualizado_em: null },
     ])
+    // Caminho legado (desafio_jcc) também é consultado pela categoria
+    prismaMock.desafio_jcc.findMany.mockResolvedValue([])
     prismaMock.aluno.findMany.mockResolvedValue([
       { id: 1, nome: 'Ana', foto_perfil: 'https://img.com/ana.png' },
       { id: 2, nome: 'Bruno', foto_perfil: null },

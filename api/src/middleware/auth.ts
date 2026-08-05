@@ -36,22 +36,22 @@ export async function authRequired(c: Context, next: Next) {
 
 /** Verifica se userId é dono do curso. Retorna true se for owner OU admin. */
 export async function isCursoOwner(userId: number, cursoId: number): Promise<boolean> {
-  const curso = await prisma.curso.findFirst({
-    where: { id: cursoId },
-    select: { autor_id: true },
-  })
+  const [curso, aluno] = await Promise.all([
+    prisma.curso.findFirst({ where: { id: cursoId }, select: { autor_id: true } }),
+    prisma.aluno.findFirst({ where: { id: userId }, select: { cargo: true } }),
+  ])
   if (!curso) return false
-  return curso.autor_id === userId
+  return curso.autor_id === userId || aluno?.cargo === 'Admin'
 }
 
 /** Verifica se userId é dono do curso pai do módulo. */
 export async function isModuloOwner(userId: number, moduloId: number): Promise<boolean> {
-  const modulo = await prisma.modulo.findFirst({
-    where: { id: moduloId },
-    select: { curso: { select: { autor_id: true } } },
-  })
+  const [modulo, aluno] = await Promise.all([
+    prisma.modulo.findFirst({ where: { id: moduloId }, select: { curso: { select: { autor_id: true } } } }),
+    prisma.aluno.findFirst({ where: { id: userId }, select: { cargo: true } }),
+  ])
   if (!modulo) return false
-  return modulo.curso.autor_id === userId
+  return modulo.curso.autor_id === userId || aluno?.cargo === 'Admin'
 }
 
 /** Middleware que exige que o usuário seja admin (cargo === 'Admin'). */
@@ -76,10 +76,10 @@ export async function adminRequired(c: Context, next: Next) {
 
 /** Verifica se userId é dono do curso pai (via módulo → curso) da aula. */
 export async function isAulaOwner(userId: number, aulaId: number): Promise<boolean> {
-  const aula = await prisma.aula.findFirst({
-    where: { id: aulaId },
-    select: { modulo: { select: { curso: { select: { autor_id: true } } } } },
-  })
+  const [aula, aluno] = await Promise.all([
+    prisma.aula.findFirst({ where: { id: aulaId }, select: { modulo: { select: { curso: { select: { autor_id: true } } } } } }),
+    prisma.aluno.findFirst({ where: { id: userId }, select: { cargo: true } }),
+  ])
   if (!aula) return false
-  return aula.modulo.curso.autor_id === userId
+  return aula.modulo.curso.autor_id === userId || aluno?.cargo === 'Admin'
 }

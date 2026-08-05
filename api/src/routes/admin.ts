@@ -8,6 +8,15 @@ export const adminRoutes = new Hono()
 // Todas as rotas exigem admin
 adminRoutes.use('*', adminRequired)
 
+// GET /admin/cursos - catálogo completo para o modo de edição do administrador.
+adminRoutes.get('/cursos', async (c) => {
+  const cursos = await prisma.curso.findMany({ orderBy: [{ status: 'asc' }, { nome: 'asc' }] })
+  return c.json(cursos.map((curso) => ({
+    id: curso.id, nome: curso.nome, logo: curso.logo, descricao: curso.descricao,
+    autorNome: curso.autor_nome, autorId: curso.autor_id, status: curso.status,
+  })))
+})
+
 // GET /admin/pendentes — todos os itens pendentes (cursos, módulos, aulas)
 adminRoutes.get('/pendentes', async (c) => {
   try {

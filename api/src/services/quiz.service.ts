@@ -33,9 +33,10 @@ export function validarAlternativas(alternativas: unknown): AlternativaEntrada[]
   return normalizadas
 }
 
-export async function obterQuizDoCriador(moduloId: number, userId: number) {
+/** A autorização já é feita pela rota (dono do módulo ou Admin). */
+export async function obterQuizDoCriador(moduloId: number) {
   const quiz = await prisma.quiz.findFirst({
-    where: { id_modulo: moduloId, criado_por_id: userId },
+    where: { id_modulo: moduloId },
     include: { questoes: { include: { alternativas: { orderBy: { ordem: 'asc' } } }, orderBy: { ordem: 'asc' } } },
   })
   return quiz && serializarQuiz(quiz, true)
@@ -48,6 +49,7 @@ export function serializarQuiz(quiz: any, incluirCorreta = false) {
     titulo: quiz.titulo,
     descricao: quiz.descricao,
     notaMinima: quiz.nota_minima,
+    tempoPorQuestaoSegundos: quiz.tempo_por_questao_segundos,
     status: quiz.status,
     criadoEm: quiz.criado_em,
     atualizadoEm: quiz.atualizado_em,
@@ -90,10 +92,13 @@ export async function criarTentativa(moduloId: number, userId: number) {
     id: paraNumero(q.id), enunciado: q.enunciado, explicacao: q.explicacao,
     alternativas: embaralhar(q.alternativas).map((a) => ({ id: paraNumero(a.id), texto: a.texto, correta: a.correta })),
   }))
+  const expiraEm = quiz.tempo_por_questao_segundos
+    ? new Date(Date.now() + quiz.tempo_por_questao_segundos * snapshot.length * 1000)
+    : null
   const tentativa = await prisma.quiz_tentativa.create({
-    data: { id: randomUUID(), id_aluno: userId, id_quiz: quiz.id, id_modulo: moduloId, perguntas_snapshot: snapshot },
+    data: { id: randomUUID(), id_aluno: userId, id_quiz: quiz.id, id_modulo: moduloId, perguntas_snapshot: snapshot, expira_em: expiraEm },
   })
-  return { tentativaId: tentativa.id, quiz: { id: paraNumero(quiz.id), titulo: quiz.titulo, descricao: quiz.descricao, notaMinima: quiz.nota_minima }, questoes: ocultarGabarito(snapshot) }
+  return { tentativaId: tentativa.id, quiz: { id: paraNumero(quiz.id), titulo: quiz.titulo, descricao: quiz.descricao, notaMinima: quiz.nota_minima, tempoPorQuestaoSegundos: quiz.tempo_por_questao_segundos }, questoes: ocultarGabarito(snapshot) }
 }
 
 function ocultarGabarito(snapshot: QuestaoSnapshot[]) {
@@ -116,6 +121,10 @@ export async function finalizarTentativa(moduloId: number, tentativaId: string, 
   if (!tentativa) throw new Error('TENTATIVA_NAO_ENCONTRADA')
   if (tentativa.status === 'FINALIZADA') return resultadoTentativa(tentativa)
   if (tentativa.status !== 'EM_ANDAMENTO') throw new Error('TENTATIVA_EXPIRADA')
+  if (tentativa.expira_em && tentativa.expira_em.getTime() < Date.now()) {
+    await prisma.quiz_tentativa.update({ where: { id: tentativaId }, data: { status: 'EXPIRADA' } })
+    throw new Error('TENTATIVA_EXPIRADA')
+  }
 
   const snapshot = tentativa.perguntas_snapshot as unknown as QuestaoSnapshot[]
   const mapaRespostas = new Map<number, number>()
@@ -163,5 +172,15 @@ export async function finalizarTentativa(moduloId: number, tentativaId: string, 
 }
 
 function resultadoTentativa(tentativa: any) {
-  return { tentativaId: tentativa.id, acertos: tentativa.acertos, totalQuestoes: tentativa.total_questoes, percentual: tentativa.percentual, aprovado: tentativa.aprovado, navecoinsGanhos: tentativa.navecoins_ganhos, finalizadaEm: tentativa.finalizada_em }
+  const snapshot = tentativa.perguntas_snapshot as QuestaoSnapshot[]
+  return {
+    tentativaId: tentativa.id, acertos: tentativa.acertos, totalQuestoes: tentativa.total_questoes, percentual: tentativa.percentual, aprovado: tentativa.aprovado, navecoinsGanhos: tentativa.navecoins_ganhos, finalizadaEm: tentativa.finalizada_em,
+    correcoes: snapshot.map((questao) => ({
+      questaoId: questao.id,
+      enunciado: questao.enunciado,
+      explicacao: questao.explicacao,
+      alternativaCorretaId: questao.alternativas.find((a) => a.correta)?.id,
+      alternativaCorretaTexto: questao.alternativas.find((a) => a.correta)?.texto,
+    })),
+  }
 }

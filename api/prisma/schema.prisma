@@ -206,6 +206,7 @@ model quiz {
   titulo             String          @db.VarChar(100)
   descricao          String?         @db.VarChar(255)
   nota_minima        Int             @default(70)
+  tempo_por_questao_segundos Int?
   status             String          @default("Pendente") @db.VarChar(20)
   criado_por_id      Int
   criado_em          DateTime        @default(now()) @db.Timestamptz()
