@@ -146,7 +146,18 @@ aulasRoutes.post('/:aulaId/concluir', authRequired, async (c) => {
     let moduloStatus = 'EM_ANDAMENTO'
     let statusProgresso = 1
 
-    if (aulasConcluidas >= totalAulas && totalAulas > 0) {
+    // Um quiz só passa a integrar a conclusão quando já está aprovado. Quizzes em
+    // rascunho, pendentes ou rejeitados não podem bloquear o aluno.
+    const quizAprovado = await prisma.quiz.findFirst({
+      where: { id_modulo: moduloId, status: 'Aprovado' },
+      select: { id: true },
+    })
+    const quizConcluido = !quizAprovado || !!(await prisma.aluno_modulo_quiz.findUnique({
+      where: { id_aluno_id_modulo: { id_aluno: userId, id_modulo: moduloId } },
+      select: { primeira_aprovacao_em: true },
+    }))?.primeira_aprovacao_em
+
+    if (aulasConcluidas >= totalAulas && totalAulas > 0 && quizConcluido) {
       moduloStatus = 'CONCLUIDO'
       statusProgresso = 2
     }

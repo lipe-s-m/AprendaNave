@@ -1,7 +1,74 @@
 import { Hono } from 'hono'
 import prisma from '../lib/prisma'
+import { getCurrentUserId, authRequired } from '../middleware/auth'
+import { RANKING_CATEGORIAS, getRankingCategoria } from '../lib/ranking-categorias'
+import { obterRanking, registrarMelhorPontuacao } from '../services/ranking.service'
 
 export const rankingRoutes = new Hono()
+
+// ─────────────────────────────────────────────────────────────
+// NOVO FLUXO DE RANKING GAMIFICADO (2026-08-05)
+// Rotas estáticas ANTES de /:slug para evitar conflito de rota.
+// ─────────────────────────────────────────────────────────────
+
+// GET /rankings/categorias - catálogo público de categorias
+rankingRoutes.get('/categorias', (c) => {
+  return c.json(
+    RANKING_CATEGORIAS.map((cat) => ({
+      slug: cat.slug,
+      nome: cat.nome,
+      descricao: cat.descricao,
+      icone: cat.icone,
+      unidade: cat.unidade,
+    }))
+  )
+})
+
+// POST /rankings/desafio-matematica/resultado - registra melhor score (auth)
+rankingRoutes.post('/desafio-matematica/resultado', authRequired, async (c) => {
+  try {
+    const userId = getCurrentUserId(c)!
+    const body = await c.req.json()
+    const pontos = body.pontos
+
+    // O servidor ignora qualquer idAluno/nome enviado pelo cliente:
+    // o dono do score é sempre o usuário do cookie JWT.
+    const resultado = await registrarMelhorPontuacao(userId, 'desafio-matematica', pontos)
+    return c.json(resultado, 201)
+  } catch (ex: any) {
+    if (ex?.message?.startsWith('Pontuação inválida')) {
+      return c.json({ error: ex.message }, 400)
+    }
+    return c.json({ error: 'Erro ao registrar pontuação' }, 500)
+  }
+})
+
+// GET /rankings/:slug?limite=20 - ranking de uma categoria (público)
+rankingRoutes.get('/:slug', async (c) => {
+  const slug = c.req.param('slug')
+  const categoria = getRankingCategoria(slug)
+  if (!categoria) {
+    return c.json({ error: 'Categoria de ranking não encontrada.' }, 404)
+  }
+
+  // Limite normalizado silenciosamente: inteiro entre 1 e 50, default 20
+  const limiteRaw = parseInt(c.req.query('limite') ?? '20')
+  const limite = Number.isNaN(limiteRaw) ? 20 : Math.min(50, Math.max(1, limiteRaw))
+
+  const userId = getCurrentUserId(c) // opcional — página pública
+
+  try {
+    const resposta = await obterRanking(categoria.slug, userId, limite)
+    return c.json(resposta)
+  } catch (ex) {
+    return c.json({ error: 'Erro ao carregar ranking' }, 500)
+  }
+})
+
+// ─────────────────────────────────────────────────────────────
+// ENDPOINTS LEGADOS — manter temporariamente por compatibilidade.
+// O frontend já parou de usá-los; remover numa release futura.
+// ─────────────────────────────────────────────────────────────
 
 // GET /rankings/modalidade/ranking?modalidade=X - top 5
 rankingRoutes.get('/modalidade/ranking', async (c) => {

@@ -40,6 +40,30 @@
     >
       Aulas ({{ pendentes().aulas.length }})
     </button>
+    <button class="tab" type="button" role="tab" [class.active]="abaAtiva() === 'quizzes'" [attr.aria-selected]="abaAtiva() === 'quizzes'" (click)="setAba('quizzes')">
+      Quizzes ({{ quizzesPendentes().length }})
+    </button>
+    <button class="tab" type="button" role="tab" [class.active]="abaAtiva() === 'questoes'" [attr.aria-selected]="abaAtiva() === 'questoes'" (click)="setAba('questoes')">
+      Questões ({{ questoesPendentes().length }})
+    </button>
+  </div>
+
+  <!-- Quizzes -->
+  <div class="list" *ngIf="abaAtiva() === 'quizzes' && !isLoading() && !error()">
+    <article class="card" *ngFor="let item of quizzesPendentes()">
+      <div class="info"><div class="info-top"><app-status-badge label="Pendente" status="warning" /><strong>{{ item.titulo }}</strong></div><span class="meta">Módulo: {{ item.moduloNome }} · Curso: {{ item.cursoNome }}</span><p class="descricao">{{ item.questoes.length }} questão(ões) · nota mínima {{ item.notaMinima }}%</p></div>
+      <div class="actions"><app-button buttonText="Aprovar" [buttonVariant]="'success'" [buttonDisabled]="processando() !== null" (click)="aprovar('quizzes', item.id)" /><app-button buttonText="Rejeitar" [buttonVariant]="'danger'" [buttonDisabled]="processando() !== null" (click)="pedirRejeicao('quizzes', item)" /></div>
+    </article>
+    <app-empty-state *ngIf="quizzesPendentes().length === 0" title="Nenhum quiz pendente" description="Nenhum quiz aguardando revisão." icon="check_circle_outline" />
+  </div>
+
+  <!-- Questões -->
+  <div class="list" *ngIf="abaAtiva() === 'questoes' && !isLoading() && !error()">
+    <article class="card" *ngFor="let item of questoesPendentes()">
+      <div class="info"><div class="info-top"><app-status-badge label="Pendente" status="warning" /><strong>{{ item.enunciado }}</strong></div><span class="meta">Quiz: {{ item.quizTitulo }} · Módulo: {{ item.moduloNome }}</span><ol class="descricao"><li *ngFor="let alternativa of item.alternativas" [class.correct]="alternativa.correta">{{ alternativa.texto }}</li></ol></div>
+      <div class="actions"><app-button buttonText="Aprovar" [buttonVariant]="'success'" [buttonDisabled]="processando() !== null" (click)="aprovar('questoes', item.id)" /><app-button buttonText="Rejeitar" [buttonVariant]="'danger'" [buttonDisabled]="processando() !== null" (click)="pedirRejeicao('questoes', item)" /></div>
+    </article>
+    <app-empty-state *ngIf="questoesPendentes().length === 0" title="Nenhuma questão pendente" description="Nenhuma questão aguardando revisão." icon="check_circle_outline" />
   </div>
 
   <div class="loading" *ngIf="isLoading()"><app-loader /></div>
@@ -155,7 +179,7 @@
 <!-- Confirmação de rejeição -->
 <app-confirm-modal
   [isOpen]="modalRejeitar().aberto"
-  [title]="'Rejeitar ' + (modalRejeitar().tipo === 'cursos' ? 'curso' : modalRejeitar().tipo === 'modulos' ? 'módulo' : 'aula') + '?'"
+  [title]="'Rejeitar ' + (modalRejeitar().tipo === 'cursos' ? 'curso' : modalRejeitar().tipo === 'modulos' ? 'módulo' : modalRejeitar().tipo === 'aulas' ? 'aula' : modalRejeitar().tipo === 'quizzes' ? 'quiz' : 'questão') + '?'"
   [message]="'O item \'' + modalRejeitar().nome + '\' ficará Rejeitado. O autor poderá editá-lo e enviar novamente.'"
   confirmText="Rejeitar"
   variant="danger"

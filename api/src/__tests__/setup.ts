@@ -10,8 +10,10 @@ export const prismaMock = {
   desafio_jcc: { findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn() },
   ranking: { findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn() },
   guest_user: { findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn() },
-  aluno_aula_progresso: { findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn() },
-  aluno_modulo_progresso: { findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn() },
+  aluno_aula_progresso: { findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), groupBy: vi.fn() },
+  aluno_modulo_progresso: { findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), groupBy: vi.fn() },
+  aluno_conquista: { findFirst: vi.fn(), findMany: vi.fn(), groupBy: vi.fn() },
+  ranking_melhor_pontuacao: { findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn() },
 }
 
 vi.mock('../lib/prisma', () => ({ default: prismaMock }))

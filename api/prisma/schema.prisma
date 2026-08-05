@@ -23,6 +23,10 @@ model aluno {
   aluno_aula_progresso   aluno_aula_progresso[]
   ranking                ranking[]
   aluno_conquista        aluno_conquista[]
+  ranking_melhor_pontuacao ranking_melhor_pontuacao[]
+  quizzes_criados        quiz[]
+  quiz_tentativa         quiz_tentativa[]
+  aluno_modulo_quiz      aluno_modulo_quiz[]
 
   @@map("aluno")
 }
@@ -59,6 +63,9 @@ model modulo {
   aula                   aula[]
   aluno_modulo_progresso aluno_modulo_progresso[]
   aluno_aula_progresso   aluno_aula_progresso[]
+  quiz                   quiz?
+  quiz_tentativa         quiz_tentativa[]
+  aluno_modulo_quiz      aluno_modulo_quiz[]
 
   @@index([curso_id], map: "ix_modulo_curso_id")
   @@map("modulo")
@@ -176,4 +183,111 @@ model aluno_conquista {
 
   @@unique([id_aluno, id_conquista])
   @@map("aluno_conquista")
+}
+
+model ranking_melhor_pontuacao {
+  id            BigInt    @id @default(autoincrement())
+  id_aluno      Int
+  categoria     String    @db.VarChar(50)
+  pontos        Int
+  criado_em     DateTime  @default(now()) @db.Timestamptz()
+  atualizado_em DateTime? @db.Timestamptz()
+
+  aluno aluno @relation(fields: [id_aluno], references: [id], onDelete: Cascade)
+
+  @@unique([id_aluno, categoria], map: "ranking_melhor_pontuacao_aluno_categoria_unica")
+  @@index([categoria, pontos], map: "ranking_melhor_pontuacao_categoria_pontos_idx")
+  @@map("ranking_melhor_pontuacao")
+}
+
+model quiz {
+  id                 BigInt          @id @default(autoincrement())
+  id_modulo          Int             @unique
+  titulo             String          @db.VarChar(100)
+  descricao          String?         @db.VarChar(255)
+  nota_minima        Int             @default(70)
+  status             String          @default("Pendente") @db.VarChar(20)
+  criado_por_id      Int
+  criado_em          DateTime        @default(now()) @db.Timestamptz()
+  atualizado_em      DateTime?       @db.Timestamptz()
+
+  modulo             modulo          @relation(fields: [id_modulo], references: [id], onDelete: Cascade)
+  criado_por         aluno           @relation(fields: [criado_por_id], references: [id], onDelete: Cascade)
+  questoes           quiz_questao[]
+  tentativas         quiz_tentativa[]
+
+  @@index([id_modulo, status])
+  @@map("quiz")
+}
+
+model quiz_questao {
+  id                 BigInt             @id @default(autoincrement())
+  id_quiz            BigInt
+  enunciado          String
+  explicacao         String?
+  ordem              Int
+  status             String             @default("Pendente") @db.VarChar(20)
+  criado_em          DateTime           @default(now()) @db.Timestamptz()
+  atualizado_em      DateTime?          @db.Timestamptz()
+
+  quiz               quiz               @relation(fields: [id_quiz], references: [id], onDelete: Cascade)
+  alternativas       quiz_alternativa[]
+
+  @@unique([id_quiz, ordem])
+  @@index([id_quiz, status])
+  @@map("quiz_questao")
+}
+
+model quiz_alternativa {
+  id                 BigInt        @id @default(autoincrement())
+  id_questao         BigInt
+  texto              String
+  correta            Boolean       @default(false)
+  ordem              Int
+
+  questao            quiz_questao @relation(fields: [id_questao], references: [id], onDelete: Cascade)
+
+  @@unique([id_questao, ordem])
+  @@index([id_questao])
+  @@map("quiz_alternativa")
+}
+
+model quiz_tentativa {
+  id                  String   @id @db.Uuid
+  id_aluno            Int
+  id_quiz             BigInt
+  id_modulo           Int
+  perguntas_snapshot  Json
+  iniciada_em         DateTime @default(now()) @db.Timestamptz()
+  finalizada_em       DateTime? @db.Timestamptz()
+  expira_em           DateTime? @db.Timestamptz()
+  acertos             Int?
+  total_questoes      Int?
+  percentual          Int?
+  aprovado            Boolean?
+  navecoins_ganhos    Int      @default(0)
+  status              String   @default("EM_ANDAMENTO") @db.VarChar(20)
+
+  aluno               aluno    @relation(fields: [id_aluno], references: [id], onDelete: Cascade)
+  quiz                quiz     @relation(fields: [id_quiz], references: [id], onDelete: Cascade)
+  modulo              modulo   @relation(fields: [id_modulo], references: [id], onDelete: Cascade)
+
+  @@index([id_aluno, id_quiz, iniciada_em])
+  @@map("quiz_tentativa")
+}
+
+model aluno_modulo_quiz {
+  id_aluno             Int
+  id_modulo            Int
+  melhor_percentual    Int      @default(0)
+  melhor_acertos       Int      @default(0)
+  tentativas_realizadas Int     @default(0)
+  primeira_aprovacao_em DateTime? @db.Timestamptz()
+  ultima_tentativa_em  DateTime @default(now()) @db.Timestamptz()
+
+  aluno                aluno   @relation(fields: [id_aluno], references: [id], onDelete: Cascade)
+  modulo               modulo  @relation(fields: [id_modulo], references: [id], onDelete: Cascade)
+
+  @@id([id_aluno, id_modulo])
+  @@map("aluno_modulo_quiz")
 }

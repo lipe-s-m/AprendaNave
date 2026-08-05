@@ -17,6 +17,8 @@ import { CriarCursoComponent } from './pages/criar-curso/criar-curso.component';
 import { MeusCursosComponent } from './pages/meus-cursos/meus-cursos.component';
 import { GerenciarCursoComponent } from './pages/gerenciar-curso/gerenciar-curso.component';
 import { AdminComponent } from './pages/admin/admin.component';
+import { RankingComponent } from './pages/ranking/ranking.component';
+import { GerenciarQuizComponent } from './pages/gerenciar-quiz/gerenciar-quiz.component';
 
 export const routes: Routes = [
   { path: '', component: StartComponent, pathMatch: 'full' },
@@ -39,6 +41,7 @@ export const routes: Routes = [
     component: GerenciarCursoComponent,
     canActivate: [authGuard],
   },
+  { path: 'curso/:cursoId/modulo/:moduloId/quiz/gerenciar', component: GerenciarQuizComponent, canActivate: [authGuard] },
   {
     path: 'meus-cursos',
     component: MeusCursosComponent,
@@ -71,6 +74,10 @@ export const routes: Routes = [
   {
     path: 'desafio-matematica',
     component: DesafioMatematicaComponent,
+  },
+  {
+    path: 'ranking',
+    component: RankingComponent,
   },
   {
     path: 'aprendabot',

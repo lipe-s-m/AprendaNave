@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import prisma from '../lib/prisma'
 import { adminRequired } from '../middleware/auth'
+import { serializarQuiz, validarQuizParaEnvio } from '../services/quiz.service'
 
 export const adminRoutes = new Hono()
 
@@ -129,4 +130,58 @@ adminRoutes.patch('/aulas/:id/rejeitar', async (c) => {
   } catch (ex) {
     return c.json({ error: 'Erro ao rejeitar aula' }, 400)
   }
+})
+
+// ── Quiz e questões ──
+
+adminRoutes.get('/quizzes/pendentes', async (c) => {
+  const quizzes = await prisma.quiz.findMany({
+    where: { status: 'Pendente' },
+    include: { modulo: { include: { curso: { select: { nome: true, status: true } } } }, questoes: { include: { alternativas: true }, orderBy: { ordem: 'asc' } } },
+    orderBy: { criado_em: 'asc' },
+  })
+  return c.json(quizzes.map((quiz) => ({ ...serializarQuiz(quiz, true), moduloNome: quiz.modulo.nome, moduloStatus: quiz.modulo.status, cursoNome: quiz.modulo.curso.nome, cursoStatus: quiz.modulo.curso.status })))
+})
+
+adminRoutes.patch('/quizzes/:id/aprovar', async (c) => {
+  try {
+    const id = BigInt(c.req.param('id'))
+    const quiz = await prisma.quiz.findFirst({ where: { id }, include: { modulo: { include: { curso: true } } } })
+    if (!quiz) return c.json({ error: 'Quiz não encontrado' }, 404)
+    if (quiz.modulo.status !== 'Aprovado' || quiz.modulo.curso.status !== 'Aprovado') return c.json({ error: 'O curso e o módulo do quiz devem estar aprovados' }, 400)
+    const validacao = await validarQuizParaEnvio(id, true)
+    if (!validacao.valida) return c.json({ error: `Aprove ao menos 5 questões válidas antes do quiz; há ${validacao.quantidade}.` }, 400)
+    await prisma.quiz.update({ where: { id }, data: { status: 'Aprovado', atualizado_em: new Date() } })
+    return c.json({ ok: true })
+  } catch { return c.json({ error: 'Erro ao aprovar quiz' }, 400) }
+})
+
+adminRoutes.patch('/quizzes/:id/rejeitar', async (c) => {
+  try { await prisma.quiz.update({ where: { id: BigInt(c.req.param('id')) }, data: { status: 'Rejeitado', atualizado_em: new Date() } }); return c.json({ ok: true }) }
+  catch { return c.json({ error: 'Erro ao rejeitar quiz' }, 400) }
+})
+
+adminRoutes.get('/questoes/pendentes', async (c) => {
+  const questoes = await prisma.quiz_questao.findMany({
+    where: { status: 'Pendente' },
+    include: { alternativas: { orderBy: { ordem: 'asc' } }, quiz: { include: { modulo: { include: { curso: { select: { nome: true, status: true } } } } } } },
+    orderBy: { criado_em: 'asc' },
+  })
+  return c.json(questoes.map((q) => ({ id: Number(q.id), quizId: Number(q.id_quiz), enunciado: q.enunciado, explicacao: q.explicacao, status: q.status, alternativas: q.alternativas.map((a) => ({ id: Number(a.id), texto: a.texto, correta: a.correta })), quizTitulo: q.quiz.titulo, moduloNome: q.quiz.modulo.nome, moduloStatus: q.quiz.modulo.status, cursoNome: q.quiz.modulo.curso.nome, cursoStatus: q.quiz.modulo.curso.status })))
+})
+
+adminRoutes.patch('/questoes/:id/aprovar', async (c) => {
+  try {
+    const questao = await prisma.quiz_questao.findFirst({ where: { id: BigInt(c.req.param('id')) }, include: { alternativas: true, quiz: { include: { modulo: { include: { curso: true } } } } } })
+    if (!questao) return c.json({ error: 'Questão não encontrada' }, 404)
+    if (questao.quiz.modulo.status !== 'Aprovado' || questao.quiz.modulo.curso.status !== 'Aprovado') return c.json({ error: 'O curso e o módulo da questão devem estar aprovados' }, 400)
+    if (questao.alternativas.length !== 4 || questao.alternativas.filter((a) => a.correta).length !== 1) return c.json({ error: 'A questão deve ter quatro alternativas e uma correta' }, 400)
+    await prisma.quiz_questao.update({ where: { id: questao.id }, data: { status: 'Aprovado', atualizado_em: new Date() } })
+    return c.json({ ok: true })
+  } catch { return c.json({ error: 'Erro ao aprovar questão' }, 400) }
+})
+
+adminRoutes.patch('/questoes/:id/rejeitar', async (c) => {
+  try { await prisma.quiz_questao.update({ where: { id: BigInt(c.req.param('id')) }, data: { status: 'Rejeitado', atualizado_em: new Date() } }); return c.json({ ok: true }) }
+  catch { return c.json({ error: 'Erro ao rejeitar questão' }, 400) }
 })

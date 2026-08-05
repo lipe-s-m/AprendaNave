@@ -11,6 +11,7 @@ import { rankingRoutes } from './routes/ranking'
 import { guestsRoutes } from './routes/guests'
 import { adminRoutes } from './routes/admin'
 import { conquistasRoutes } from './routes/conquistas'
+import { quizRoutes } from './routes/quiz'
 
 const app = new Hono()
 
@@ -29,6 +30,7 @@ app.get('/', (c) => c.text('Hello World!'))
 app.route('/auth', authRoutes)
 app.route('/user', userRoutes)
 app.route('/cursos', cursosRoutes)
+app.route('/', quizRoutes)
 app.route('/modulos', modulosRoutes)
 app.route('/aulas', aulasRoutes)
 app.route('/desafio/desafio-jcc', desafioJccRoutes)

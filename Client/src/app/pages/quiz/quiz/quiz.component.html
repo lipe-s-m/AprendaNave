@@ -1,63 +1,31 @@
-<div class="background">
-  <app-subheader />
-  <div class="container" *ngIf="modulo$ | async as modulo">
-    <h1>{{modulo.nome}}</h1>
-    <div class="content" *ngIf="!inGame">
-
-      <div class="content-text">
-        <p>Caso acerte 7 questões, você receberá <strong>{{1000/getDificuldade()}} Navecoins</strong></p>
-        <p>Caso acerte 9 questões, você receberá <strong>{{1500/getDificuldade()}} Navecoins</strong></p>
-        <p>Caso acerte 10 questões, você receberá <strong>{{2000/getDificuldade()}} Navecoins</strong></p>
-        <p>Caso acerte menos que 7 questões, você <strong>não receberá Navecoins</strong>, e poderá repetir o teste</p>
-        <hr>
-        <div class="dificuldades">
-          <button (click)="setDificuldade('facil')" [class.active]="dificuldade === 'facil'">Fácil</button>
-          <button (click)="setDificuldade('medio')" [class.active]="dificuldade === 'medio'">Médio</button>
-          <button (click)="setDificuldade('dificil')" [class.active]="dificuldade === 'dificil'">Difícil</button>
-        </div>
-        <p>Você terá até <strong>{{getDificuldade()}} segundos</strong> para responder cada questão.</p>
-        <hr>
-        <p style="margin: 0 auto"><strong>Boa sorte!</strong></p>
-      </div>
-      <app-button buttonText="iniciar" buttonLevel="primary" buttonTheme="dark" buttonSize="large" (click)="handlerInitializingGame()" />
-      <app-button buttonText="Voltar" buttonLevel="secondary" buttonTheme="dark" buttonSize="large" (click)="voltarParaTrilha()" />
+<app-subheader />
+<main class="container">
+  <app-loader *ngIf="carregando()" />
+  <section class="content" *ngIf="!carregando() && !tentativa() && !resultado()">
+    <h1>{{ status()?.quiz?.titulo || 'Teste final' }}</h1>
+    <p>{{ status()?.quiz?.descricao || 'Mostre o que aprendeu neste módulo.' }}</p>
+    <p *ngIf="status()?.possuiQuiz">Nota mínima: <strong>{{ status()?.quiz?.notaMinima }}%</strong>. As Navecoins são concedidas uma única vez na primeira aprovação.</p>
+    <p *ngIf="!status()?.possuiQuiz">Este módulo ainda não possui um quiz final aprovado.</p>
+    <p *ngIf="status()?.possuiQuiz && !status()?.disponivel">Conclua as {{ status()?.aulasPendentes }} aula(s) pendente(s) para liberar o quiz.</p>
+    <app-button buttonText="Iniciar quiz" buttonLevel="primary" buttonTheme="dark" buttonSize="large" [buttonDisabled]="!status()?.disponivel || iniciando()" (click)="iniciar()" />
+    <app-button buttonText="Voltar" buttonLevel="secondary" buttonTheme="dark" buttonSize="large" (click)="voltar()" />
+  </section>
+  <section class="content" *ngIf="tentativa() && !resultado()">
+    <p>Questão {{ indice() + 1 }} de {{ tentativa()!.questoes.length }}</p>
+    <h1>{{ questaoAtual()?.enunciado }}</h1>
+    <div class="options">
+      <button *ngFor="let alternativa of questaoAtual()?.alternativas" class="option" [class.active]="selecionada(alternativa.id)" (click)="selecionar(alternativa.id)">{{ alternativa.texto }}</button>
     </div>
-    <div class="game" *ngIf="inGame">
-      <div class="info">
-        <p class="pontos"><strong>{{questionIndex}}/10</strong></p>
-        <p class="tempo-restante"><strong>{{tempoRestante}}</strong></p>
-      </div>
-      <div class="content-game">
-        <h1>{{number1}} {{this.resultOp()}} {{number2}} = ?</h1>
-        <div class="options">
-          <app-button *ngFor="let q of questions" buttonText="{{q}}" buttonLevel="primary" buttonTheme="dark" buttonSize="large" (click)="checkAnswer(q)" />
-        </div>
-      </div>
+    <div class="actions">
+      <app-button buttonText="Anterior" buttonLevel="secondary" buttonTheme="dark" [buttonDisabled]="indice() === 0" (click)="anterior()" />
+      <app-button [buttonText]="indice() + 1 === tentativa()!.questoes.length ? 'Finalizar' : 'Próxima'" buttonLevel="primary" buttonTheme="dark" [buttonDisabled]="!respostas().has(questaoAtual()?.id || 0) || finalizando()" (click)="proxima()" />
     </div>
-
-    <div class="modal-init-game-background" *ngIf="initializingGame">
-      <div class="modal-init-game-content">
-        <h2>Prepare-se!</h2>
-        <p>O quiz começará em:</p>
-        <p class="contagem-regressiva">{{contagemRegressiva}}</p>
-      </div>
-    </div>
-    <div class="modal-init-game-background" *ngIf="resetingGame">
-      <div *ngIf="ganhou && !inGame" class="modal-init-game-content">
-        <h2>Parabéns!</h2>
-        <p>Você completou o quiz com sucesso!</p>
-        <p class="contagem-regressiva">😃</p>
-        <app-button buttonText="Concluir" buttonLevel="primary" buttonBackgroundColor="#06923E" buttonTextColor="white" (click)="moduloConcluido()"></app-button>
-
-      </div>
-
-      <div *ngIf="!ganhou && !inGame" class="modal-init-game-content">
-        <h2>Que pena!</h2>
-        <p>Você não completou o quiz com sucesso, tente novamente!</p>
-        <p class="contagem-regressiva">😞</p>
-        <app-button buttonText="tente novamente" buttonLevel="primary" buttonBackgroundColor="#BF092F" buttonTextColor="white" (click)="refazerQuiz()"></app-button>
-
-      </div>
-
-    </div>
-  </div>
+  </section>
+  <section class="content" *ngIf="resultado() as r">
+    <h1>{{ r.aprovado ? 'Quiz concluído!' : 'Continue praticando!' }}</h1>
+    <p>Você acertou <strong>{{ r.acertos }} de {{ r.totalQuestoes }}</strong> questões ({{ r.percentual }}%).</p>
+    <p *ngIf="r.navecoinsGanhos > 0">Você ganhou <strong>{{ r.navecoinsGanhos }} Navecoins</strong>!</p>
+    <p *ngIf="r.aprovado && r.navecoinsGanhos === 0">Você já havia recebido a recompensa pela primeira aprovação deste quiz.</p>
+    <app-button buttonText="Voltar ao módulo" buttonLevel="primary" buttonTheme="dark" (click)="voltar()" />
+  </section>
+</main>

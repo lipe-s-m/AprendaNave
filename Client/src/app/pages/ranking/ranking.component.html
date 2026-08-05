@@ -1,0 +1,104 @@
+<app-subheader />
+
+<div class="page-container">
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">Ranking</h1>
+      <p class="page-subtitle">Compare seu progresso e conquiste o topo.</p>
+    </div>
+  </header>
+
+  <!-- Seletor de categoria (chips roláveis no mobile) -->
+  <div class="chips" role="group" aria-label="Categorias do ranking">
+    <button
+      class="chip"
+      type="button"
+      *ngFor="let cat of categorias()"
+      [class.active]="categoriaSelecionada() === cat.slug"
+      [attr.aria-pressed]="categoriaSelecionada() === cat.slug"
+      (click)="selecionarCategoria(cat.slug)"
+    >
+      <span class="material-icons" aria-hidden="true">{{ cat.icone }}</span>
+      {{ cat.nome }}
+    </button>
+  </div>
+
+  <div class="loading" *ngIf="isLoading()"><app-loader /></div>
+
+  <div class="error-state" *ngIf="error()">
+    <p>{{ error() }}</p>
+    <button class="retry-button" type="button" (click)="selecionarCategoria(categoriaSelecionada())">
+      Tentar Novamente
+    </button>
+  </div>
+
+  <ng-container *ngIf="!isLoading() && !error() && ranking() as rankingAtual">
+    <!-- Categoria vazia -->
+    <app-empty-state
+      *ngIf="rankingAtual.entradas.length === 0"
+      [title]="'Nenhum participante em ' + rankingAtual.categoria.nome"
+      description="Seja o primeiro a aparecer aqui!"
+      [icon]="rankingAtual.categoria.icone"
+      [actionText]="emptyActionText()"
+      (action)="emptyAction()"
+    />
+
+    <ng-container *ngIf="rankingAtual.entradas.length > 0">
+      <!-- Pódio: Top 3 -->
+      <section class="podio" aria-label="Pódio dos três primeiros colocados">
+        <article
+          class="podio-card"
+          *ngFor="let entrada of podium()"
+          [class.primeiro]="entrada.posicao === 1"
+          [class.voce]="ehVoce(entrada)"
+        >
+          <span class="medalha" [attr.aria-label]="entrada.posicao + 'º lugar'">{{ medalha(entrada.posicao) }}</span>
+          <div class="avatar" *ngIf="entrada.fotoPerfil; else iniciaisFallback">
+            <img [src]="entrada.fotoPerfil" [alt]="'Foto de ' + entrada.nomeAluno" />
+          </div>
+          <ng-template #iniciaisFallback>
+            <div class="avatar avatar-iniciais" [attr.aria-hidden]="true">{{ iniciais(entrada.nomeAluno) }}</div>
+          </ng-template>
+          <strong class="nome">{{ entrada.nomeAluno }}</strong>
+          <span class="valor">{{ entrada.valor }} {{ rankingAtual.categoria.unidade }}</span>
+          <span class="badge-voce" *ngIf="ehVoce(entrada)">Você</span>
+        </article>
+      </section>
+
+      <!-- Lista: posições 4+ -->
+      <section class="lista panel" *ngIf="demais().length > 0" aria-label="Demais posições">
+        <article
+          class="linha"
+          *ngFor="let entrada of demais()"
+          [class.voce]="ehVoce(entrada)"
+        >
+          <span class="posicao">{{ entrada.posicao }}º</span>
+          <div class="avatar" *ngIf="entrada.fotoPerfil; else iniciaisListaFallback">
+            <img [src]="entrada.fotoPerfil" [alt]="'Foto de ' + entrada.nomeAluno" />
+          </div>
+          <ng-template #iniciaisListaFallback>
+            <div class="avatar avatar-iniciais" [attr.aria-hidden]="true">{{ iniciais(entrada.nomeAluno) }}</div>
+          </ng-template>
+          <strong class="nome">{{ entrada.nomeAluno }}</strong>
+          <span class="badge-voce" *ngIf="ehVoce(entrada)">Você</span>
+          <span class="valor">{{ entrada.valor }} {{ rankingAtual.categoria.unidade }}</span>
+        </article>
+      </section>
+
+      <!-- Seu desempenho (fora do Top N exibido) -->
+      <section class="seu-desempenho panel" *ngIf="seuDesempenhoSeparado()">
+        <div class="info-text">
+          <h2>Seu desempenho</h2>
+          <p>
+            Você está em <strong>{{ rankingAtual.meuRanking!.posicao }}º lugar</strong>
+            • {{ rankingAtual.meuRanking!.valor }} {{ rankingAtual.categoria.unidade }}
+          </p>
+        </div>
+        <button class="btn-jogar" type="button" *ngIf="categoriaSelecionada() === 'desafio-matematica'" (click)="jogarDesafio()">
+          <span class="material-icons" aria-hidden="true">sports_esports</span>
+          Jogar desafio
+        </button>
+      </section>
+    </ng-container>
+  </ng-container>
+</div>

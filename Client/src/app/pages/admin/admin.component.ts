@@ -37,6 +37,8 @@ export class AdminComponent implements OnInit {
   pendentes = signal<{ cursos: any[]; modulos: any[]; aulas: any[] }>({
     cursos: [], modulos: [], aulas: [],
   });
+  quizzesPendentes = signal<any[]>([]);
+  questoesPendentes = signal<any[]>([]);
 
   modalRejeitar = signal<{ aberto: boolean; tipo: string; id: number; nome: string }>({
     aberto: false, tipo: '', id: 0, nome: '',
@@ -61,6 +63,8 @@ export class AdminComponent implements OnInit {
         this.isLoading.set(false);
       },
     });
+    this.http.get<any[]>(`${this.apiUrl}/admin/quizzes/pendentes`).subscribe({ next: (quizzes) => this.quizzesPendentes.set(quizzes), error: () => this.quizzesPendentes.set([]) });
+    this.http.get<any[]>(`${this.apiUrl}/admin/questoes/pendentes`).subscribe({ next: (questoes) => this.questoesPendentes.set(questoes), error: () => this.questoesPendentes.set([]) });
   }
 
   setAba(aba: string): void {

@@ -1,0 +1,321 @@
+@use "./../../scss/variables";
+
+.page-header {
+  margin-bottom: variables.$espaco-5;
+}
+
+// ── Chips de categoria ──
+
+.chips {
+  display: flex;
+  gap: variables.$espaco-2;
+  margin-bottom: variables.$espaco-5;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  padding-bottom: variables.$espaco-1;
+}
+
+.chip {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: variables.$espaco-1;
+  min-height: 4.4rem;
+  padding: variables.$espaco-2 variables.$espaco-3;
+  border: 1px solid var(--border-color);
+  border-radius: 2rem;
+  background: var(--surface-card);
+  color: var(--text-muted);
+  font-size: 1.4rem;
+  font-weight: 600;
+  font-family: variables.$fonte-principal;
+  cursor: pointer;
+  transition:
+    background-color variables.$transicao-rapida,
+    color variables.$transicao-rapida,
+    border-color variables.$transicao-rapida;
+
+  .material-icons {
+    font-size: 1.6rem;
+  }
+
+  &:hover {
+    background: var(--surface-card-hover);
+    color: var(--text-primary);
+  }
+
+  &.active {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: var(--text-on-accent);
+  }
+}
+
+// ── Pódio (Top 3) ──
+
+.podio {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: variables.$espaco-3;
+  margin-bottom: variables.$espaco-5;
+  align-items: end;
+}
+
+.podio-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: variables.$espaco-1;
+  padding: variables.$espaco-4 variables.$espaco-2;
+  background: var(--surface-card);
+  border: 1px solid var(--border-color);
+  border-radius: variables.$borda-radius;
+  box-shadow: variables.$sombra-card;
+  text-align: center;
+  min-width: 0;
+  position: relative;
+  transition: transform variables.$transicao-padrao;
+
+  // Posição textual sempre presente (não depende só de cor/emoji)
+  .medalha {
+    font-size: 3.2rem;
+    line-height: 1;
+  }
+
+  .nome {
+    font-size: 1.4rem;
+    color: var(--text-primary);
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .valor {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--accent-primary);
+  }
+
+  &.primeiro {
+    background: var(--surface-elevated);
+    border-color: var(--accent-primary);
+    transform: scale(1.04);
+  }
+
+  &.voce {
+    outline: 0.2rem solid var(--accent-primary);
+    outline-offset: 0.2rem;
+  }
+
+  .badge-voce {
+    position: absolute;
+    top: variables.$espaco-1;
+    right: variables.$espaco-1;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-on-accent);
+    background: var(--accent-primary);
+    border-radius: 1rem;
+    padding: 0.1rem 0.6rem;
+  }
+
+  @media (max-width: 767px) {
+    padding: variables.$espaco-3 variables.$espaco-1;
+  }
+}
+
+// ── Avatar com fallback de iniciais ──
+
+.avatar {
+  width: 4.4rem;
+  height: 4.4rem;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--background-octonary);
+  flex: 0 0 auto;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.avatar-iniciais {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--accent-primary);
+}
+
+// ── Lista (posições 4+) ──
+
+.lista {
+  padding: variables.$espaco-2;
+  margin-bottom: variables.$espaco-5;
+}
+
+.linha {
+  display: flex;
+  align-items: center;
+  gap: variables.$espaco-3;
+  padding: variables.$espaco-2 variables.$espaco-3;
+  border-bottom: 1px solid var(--border-color-light);
+  min-height: 5.6rem;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .posicao {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    min-width: 3.4rem;
+  }
+
+  .avatar {
+    width: 3.6rem;
+    height: 3.6rem;
+  }
+
+  .nome {
+    flex: 1;
+    min-width: 0;
+    font-size: 1.6rem;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .valor {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+
+  &.voce {
+    background: var(--surface-elevated);
+    border-left: 0.3rem solid var(--accent-primary);
+    border-radius: variables.$borda-radius-input;
+  }
+
+  .badge-voce {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--accent-primary);
+    background: var(--status-info-background);
+    border-radius: 1rem;
+    padding: 0.1rem 0.6rem;
+    white-space: nowrap;
+  }
+}
+
+// ── Seu desempenho ──
+
+.seu-desempenho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: variables.$espaco-4;
+  flex-wrap: wrap;
+  background: var(--surface-elevated);
+
+  .info-text {
+    h2 {
+      margin: 0 0 variables.$espaco-1;
+      font-size: variables.$fonte-tamanho-h2;
+      color: var(--text-primary);
+    }
+
+    p {
+      margin: 0;
+      font-size: 1.6rem;
+      color: var(--text-secondary);
+
+      strong {
+        color: var(--accent-primary);
+      }
+    }
+  }
+
+  .btn-jogar {
+    display: inline-flex;
+    align-items: center;
+    gap: variables.$espaco-1;
+    min-height: 4.4rem;
+    padding: variables.$espaco-2 variables.$espaco-4;
+    border: none;
+    border-radius: variables.$borda-radius-input;
+    background: var(--accent-primary);
+    color: var(--text-on-accent);
+    font-size: 1.6rem;
+    font-weight: 700;
+    font-family: variables.$fonte-principal;
+    cursor: pointer;
+    transition:
+      transform variables.$transicao-rapida,
+      box-shadow variables.$transicao-rapida;
+
+    .material-icons {
+      font-size: 1.8rem;
+    }
+
+    &:hover {
+      transform: translateY(-0.2rem);
+      box-shadow: variables.$sombra-card;
+    }
+  }
+
+  @media (max-width: 767px) {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+}
+
+// ── Estados ──
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: variables.$espaco-7;
+}
+
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: variables.$espaco-6 variables.$espaco-4;
+  text-align: center;
+
+  p {
+    color: var(--error-color);
+    font-size: variables.$fonte-tamanho-p;
+    margin-bottom: variables.$espaco-4;
+  }
+
+  .retry-button {
+    background-color: var(--accent-primary);
+    color: var(--text-on-accent);
+    border: none;
+    border-radius: variables.$borda-radius-input;
+    padding: variables.$espaco-2 variables.$espaco-4;
+    min-height: 4.4rem;
+    font-size: variables.$fonte-tamanho-p;
+    font-weight: 600;
+    font-family: variables.$fonte-principal;
+    cursor: pointer;
+    transition: transform variables.$transicao-rapida;
+
+    &:hover {
+      transform: translateY(-0.2rem);
+    }
+  }
+}

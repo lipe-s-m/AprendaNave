@@ -220,6 +220,10 @@ export class GerenciarCursoComponent implements OnInit, OnDestroy {
     }
   }
 
+  gerenciarQuiz(moduloId: number): void {
+    this.router.navigate(['/curso', this.cursoId(), 'modulo', moduloId, 'quiz', 'gerenciar']);
+  }
+
   abrirModalModulo(modulo?: any): void {
     this.ultimoFoco = document.activeElement as HTMLElement | null;
     this.editandoModulo.set(modulo || null);

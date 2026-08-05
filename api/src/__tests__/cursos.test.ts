@@ -94,13 +94,20 @@ describe('GET /cursos/me', () => {
 })
 
 describe('GET /cursos/:cursoId/modulos/aprovados', () => {
-  it('retorna modulos com shape camelCase', async () => {
+  it('retorna modulos com shape camelCase (contagem dinâmica de aulas)', async () => {
     const now = new Date()
     prismaMock.modulo.findMany.mockResolvedValue([{
       id: 1, nome: 'Fundamentos', descricao: 'Basico', ordem: 1, nivel: 1,
-      quantidade_aulas: 4, quantidade_horas: 2, playlist: null,
+      quantidade_aulas: 0, quantidade_horas: 2, playlist: null,
       status: 'Aprovado', curso_id: 1, created_at: now, last_updated_at: now,
     }])
+    // Fonte da verdade: 4 aulas aprovadas no banco (coluna legada não conta)
+    prismaMock.aula.findMany.mockResolvedValue([
+      { id: 1, modulo_id: 1, status: 'Aprovado' },
+      { id: 2, modulo_id: 1, status: 'Aprovado' },
+      { id: 3, modulo_id: 1, status: 'Aprovado' },
+      { id: 4, modulo_id: 1, status: 'Aprovado' },
+    ])
 
     const res = await app.request('http://localhost/cursos/1/modulos/aprovados')
     expect(res.status).toBe(200)

@@ -1,5 +1,5 @@
 import { AuthService } from './../../services/auth/auth.service';
-import { DesafioJccService } from './../../services/desafio-jcc/desafio-jcc.service';
+import { RankingService } from './../../services/ranking/ranking.service';
 import { Component, inject, Input, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QuizService } from '../../services/quiz/quiz.service';
@@ -41,7 +41,6 @@ export class DesafioMatematicaComponent {
   questionIndex: number = 0;
   ganhou: boolean = false;
   dificuldade: string = 'medio';
-  maiorPontuacaoUser: number = 0;
   private userService = inject(UserService);
   userSignal: WritableSignal<User | null>;
   currentUser: User | null = null;
@@ -52,8 +51,8 @@ export class DesafioMatematicaComponent {
     private quizService: QuizService,
     private toastr: ToastrService,
     private router: Router,
-    private desafioJccService: DesafioJccService,
     private authService: AuthService,
+    private rankingService: RankingService,
     private mathGameService: MathGameService
   ) {
     this.userSignal = this.userService.getUserSignal();
@@ -198,36 +197,44 @@ export class DesafioMatematicaComponent {
         );
         this.resetingGame = true;
         this.inGame = false;
-        this.maiorPontuacaoUser = Number(
-          sessionStorage.getItem('maiorPontuacaoDesafioJcc')
-        );
-        if (
-          this.maiorPontuacaoUser === null ||
-          this.points > this.maiorPontuacaoUser
-        ) {
-          this.atualizarPontuacaoNoServidor();
-        }
+        this.registrarRecorde();
         return;
       }
       this.nextQuestion();
     }
   }
-  atualizarPontuacaoNoServidor(): void {
-    sessionStorage.setItem('maiorPontuacaoDesafioJcc', this.points.toString());
 
-    if (this.currentUser && typeof this.currentUser.id === 'number') {
-      if (this.nomeQuiz === 'Desafio Matemática') {
-        this.desafioJccService
-          .updatePontuacao(
-            this.points,
-            this.currentUser.id,
-            this.currentUser.nome
-          )
-          .subscribe({
-            next: () => {},
-          });
-      }
+  /**
+   * Registra o melhor score no ranking (o servidor decide se houve recorde).
+   * Visitantes não entram no ranking — recebem CTA de cadastro.
+   */
+  private registrarRecorde(): void {
+    const user = this.userSignal();
+    if (!user || typeof user.id !== 'number') {
+      this.toastr.info(
+        'Crie uma conta para registrar seu recorde e entrar no ranking.'
+      );
+      return;
     }
+
+    this.rankingService.registrarResultadoDesafioMatematica(this.points).subscribe({
+      next: (res) => {
+        if (res.melhorou) {
+          this.toastr.success(
+            `Novo recorde! Você fez ${this.points} pontos.`,
+            'Recorde!'
+          );
+        } else {
+          this.toastr.info(
+            `Sua melhor marca continua em ${res.melhorPontuacao} pontos. Continue tentando!`
+          );
+        }
+      },
+      error: () => {
+        // Partida continua válida visualmente — erro discreto, não trava o jogo
+        this.toastr.error('Não foi possível registrar sua pontuação.');
+      },
+    });
   }
   nextQuestion() {
     this.questionIndex += 1;
