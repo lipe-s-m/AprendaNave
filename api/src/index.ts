@@ -12,6 +12,7 @@ import { guestsRoutes } from './routes/guests'
 import { adminRoutes } from './routes/admin'
 import { conquistasRoutes } from './routes/conquistas'
 import { quizRoutes } from './routes/quiz'
+import { desafioEventosRoutes } from './routes/desafio-eventos'
 
 const app = new Hono()
 
@@ -20,7 +21,7 @@ app.use('*', cors({
   origin: ['http://localhost:4200', 'https://aprendanave.vercel.app'],
   credentials: true,
   allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization'],
+  allowHeaders: ['Content-Type', 'Authorization', 'X-Desafio-Session'],
 }))
 
 // Health check
@@ -34,6 +35,7 @@ app.route('/', quizRoutes)
 app.route('/modulos', modulosRoutes)
 app.route('/aulas', aulasRoutes)
 app.route('/desafio/desafio-jcc', desafioJccRoutes)
+app.route('/desafio-eventos', desafioEventosRoutes)
 app.route('/rankings', rankingRoutes)
 app.route('/guests', guestsRoutes)
 app.route('/admin', adminRoutes)

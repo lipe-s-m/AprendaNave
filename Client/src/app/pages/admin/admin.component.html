@@ -49,6 +49,9 @@
     <button class="tab" type="button" role="tab" [class.active]="abaAtiva() === 'gerenciar'" [attr.aria-selected]="abaAtiva() === 'gerenciar'" (click)="setAba('gerenciar')">
       Gerenciar conteúdos
     </button>
+    <button class="tab" type="button" role="tab" [class.active]="abaAtiva() === 'eventos'" [attr.aria-selected]="abaAtiva() === 'eventos'" (click)="setAba('eventos')">
+      Eventos
+    </button>
   </div>
 
   <!-- Quizzes -->
@@ -76,6 +79,14 @@
       <div class="actions"><app-button buttonText="Editar conteúdo" [buttonVariant]="'primary'" (click)="gerenciarCurso(curso.id)" /></div>
     </article>
     <app-empty-state *ngIf="cursosGerenciaveis().length === 0" title="Nenhum curso encontrado" description="Ainda não há conteúdos para gerenciar." icon="school" />
+  </div>
+
+  <div class="list" *ngIf="abaAtiva() === 'eventos' && !isLoading() && !error()">
+    <article class="card" *ngFor="let evento of eventosDesafio()">
+      <div class="info"><div class="info-top"><app-status-badge [label]="evento.status" [status]="evento.status === 'ATIVO' ? 'success' : evento.status === 'ENCERRADO' ? 'neutral' : 'warning'" /><strong>{{ evento.nome }}</strong></div><span class="meta">/{{ evento.slug }} · jogo {{ evento.jogoHabilitado ? 'habilitado' : 'encerrado' }}</span><p class="descricao">{{ evento.descricao }}</p></div>
+      <div class="actions"><app-button *ngIf="evento.jogoHabilitado" buttonText="Encerrar jogo" [buttonVariant]="'danger'" [buttonDisabled]="processando() !== null" (click)="encerrarEvento(evento)" /><app-button *ngIf="!evento.jogoHabilitado" buttonText="Retomar jogo" [buttonVariant]="'success'" [buttonDisabled]="processando() !== null" (click)="retomarEvento(evento)" /></div>
+    </article>
+    <app-empty-state *ngIf="eventosDesafio().length === 0" title="Nenhum evento" description="Ainda não há eventos de desafio configurados." icon="emoji_events" />
   </div>
 
   <div class="loading" *ngIf="isLoading()"><app-loader /></div>

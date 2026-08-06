@@ -17,6 +17,30 @@ adminRoutes.get('/cursos', async (c) => {
   })))
 })
 
+// Eventos públicos podem ser encerrados sem apagar o ranking final.
+adminRoutes.get('/desafio-eventos', async (c) => {
+  const eventos = await prisma.desafio_evento.findMany({ orderBy: { criado_em: 'desc' } })
+  return c.json(eventos.map((evento) => ({ id: Number(evento.id), slug: evento.slug, nome: evento.nome, descricao: evento.descricao, status: evento.status, jogoHabilitado: evento.jogo_habilitado, inicioEm: evento.inicio_em, fimEm: evento.fim_em })))
+})
+
+adminRoutes.patch('/desafio-eventos/:id', async (c) => {
+  try {
+    const body = await c.req.json()
+    const statusValidos = ['RASCUNHO', 'ATIVO', 'ENCERRADO']
+    if (body.status !== undefined && !statusValidos.includes(body.status)) return c.json({ error: 'Status inválido' }, 400)
+    const evento = await prisma.desafio_evento.update({ where: { id: BigInt(c.req.param('id')!) }, data: {
+      ...(body.nome !== undefined ? { nome: String(body.nome).trim() } : {}),
+      ...(body.descricao !== undefined ? { descricao: body.descricao ? String(body.descricao).trim() : null } : {}),
+      ...(body.status !== undefined ? { status: body.status } : {}),
+      ...(body.jogoHabilitado !== undefined ? { jogo_habilitado: !!body.jogoHabilitado } : {}),
+      ...(body.inicioEm !== undefined ? { inicio_em: body.inicioEm ? new Date(body.inicioEm) : null } : {}),
+      ...(body.fimEm !== undefined ? { fim_em: body.fimEm ? new Date(body.fimEm) : null } : {}),
+      atualizado_em: new Date(),
+    } })
+    return c.json({ id: Number(evento.id), status: evento.status, jogoHabilitado: evento.jogo_habilitado })
+  } catch { return c.json({ error: 'Não foi possível atualizar o evento' }, 400) }
+})
+
 // GET /admin/pendentes — todos os itens pendentes (cursos, módulos, aulas)
 adminRoutes.get('/pendentes', async (c) => {
   try {

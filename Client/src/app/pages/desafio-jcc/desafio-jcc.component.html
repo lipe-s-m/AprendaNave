@@ -1,45 +1,19 @@
-<header>
-  <app-subheader></app-subheader>
-</header>
+<header><app-subheader></app-subheader></header>
 
-<div class="container" *ngIf="isLogged">
-  <div class="content">
+<main class="container">
+  <section class="content">
     <div class="content-info">
-      <h1>Desafio Matemático</h1>
-      <hr>
-      <div class="details">
-        <p>Bem-vindo ao Desafio Matemático! Prepare-se para testar suas habilidades e conhecimentos adquiridos ao longo do curso de Introdução à Matemática.</p>
-        <p>Este desafio é composto por 1 quiz de matemática que irá desafiar seu raciocínio rápido. <br>Responda as questões antes do tempo acabar, para ganhar pontos e subir no ranking!</p>
-      </div>
-      <app-button buttonText="iniciar" buttonTheme="dark" (click)="iniciarDesafio()"></app-button>
-
+      <h1>Ranking histórico — Desafio JCC</h1>
+      <p>Este é o placar das edições anteriores do Desafio JCC. As partidas desta modalidade foram encerradas para preservar os resultados.</p>
+      <app-button buttonText="Participar do Desafio JCC + AFS" buttonTheme="dark" (click)="irParaDesafioAfs()"></app-button>
     </div>
     <div class="ranking">
-      <h2>Ranking dos Desafiantes</h2>
+      <h2>Ranking dos desafiantes</h2>
       <ol>
         <li *ngFor="let participante of ranking" [class.first]="ranking[0] === participante" [class.second]="ranking[1] === participante" [class.third]="ranking[2] === participante" [class.podio]="ranking[0] === participante || ranking[1] === participante || ranking[2] === participante">
           <span class="nome">{{ participante.nomeAluno }}</span><span class="pontos">{{ participante.pontuacaoAluno }} pontos</span>
         </li>
       </ol>
     </div>
-  </div>
-</div>
-<div class="overlay overlay-info" *ngIf="isLogged === false">
-
-  <div class="info-container">
-
-    <h2 class="info-title">Bem-vindo ao Desafio JCC!</h2>
-    <p>Por favor, insira seu nome de usuário e forma de contato para começar o desafio.</p>
-    <form [formGroup]="formCreateGuestUser">
-      <app-input placeholder="Nome de Usuário..." inputName="nome" inputSize="large" inputType="text" formControlName="nome" />
-      <app-input placeholder="Forma de Contato..." inputName="contato" inputSize="large" inputType="text" formControlName="contato" />
-    </form>
-    <h2 class="info-text">Divirta-se aprendendo e navegando pelo AprendaNave!</h2>
-
-    <app-button buttonText="Começar" buttonTheme="dark" (click)="criarContaVisitante()" aria-label="Fechar informação"></app-button>
-  </div>
-</div>
-
-<div class="loading" *ngIf="isLoading">
-  <app-loader></app-loader>
-</div>
+  </section>
+</main>

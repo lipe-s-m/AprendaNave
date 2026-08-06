@@ -124,6 +124,19 @@ export class ModuloComponent implements OnDestroy {
     return this.aulaService.progresso().todasConcluidas;
   }
 
+  aulasConcluidas(): number {
+    return this.aulas.filter((aula) => aula.concluida).length;
+  }
+
+  progressoPercentual(): number {
+    if (!this.aulas.length) return 0;
+    return Math.round((this.aulasConcluidas() / this.aulas.length) * 100);
+  }
+
+  proximaAula(): AulaViewModel | null {
+    return this.aulas.find((aula) => !aula.concluida) ?? this.aulas[0] ?? null;
+  }
+
   podeConcluirModulo(): boolean {
     return this.modulo?.status !== 'CONCLUIDO' && this.todasAulasConcluidas();
   }

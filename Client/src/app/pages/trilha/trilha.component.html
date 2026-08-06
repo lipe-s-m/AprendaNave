@@ -1,75 +1,27 @@
-<header>
-  <app-subheader />
-</header>
+<app-subheader />
 
-<div class="trilha-container" *ngIf="trilha; else notFound">
-  <header class="trilha-header">
-    <div class="trilha-info">
-      <h1>{{ nomeCurso }}</h1>
-    </div>
-    <!-- <button class="reset-btn" (click)="resetarDados()">Resetar Dados</button> -->
-  </header>
+<main class="trilha-page" *ngIf="trilha; else notFound">
+  <button class="back-link" type="button" (click)="goBack()">← Explorar outras trilhas</button>
 
-  <section class="modulos-section">
-    <h2>Módulos</h2>
-    <div class="modulos-grid">
-      <!-- <div class="modulo-card" [class.em-desenvolvimento]="modulo.id !== 1" *ngFor="let modulo of trilha; let idx = index" (click)="abrirModalModulo(modulo, $event)"> -->
-      <div class="modulo-card" *ngFor="let modulo of trilha; let idx = index" (click)="$event.stopPropagation(); iniciarOuContinuarModulo(modulo, $event)">
-
-        <div class="modulo-number">{{ idx + 1 }}</div>
-        <div class="modulo-header">
-          <h3 class="modulo-title">{{ modulo.nome }}</h3>
-        </div>
-        <p class="modulo-description">{{ aulasLabel(modulo) }} · {{ modulo.quantidadeHoras }}h</p>
-        <!-- <div class="modulo-status" [class.concluido]="modulo.status === 'CONCLUIDO'" [class.em-andamento]="modulo.status === 'EM_ANDAMENTO'">
-          <span>{{statusModulo}}</span>
-        </div> -->
-        <app-button [buttonText]="getButtonText(getModuloProgressoStatus(modulo.id))" buttonTheme="dark" (click)="$event.stopPropagation(); iniciarOuContinuarModulo(modulo, $event)">
-        </app-button>
-      </div>
-    </div>
-    <ng-template [ngIf]="trilha.length === 0">
-      <div>Módulos ainda não implementados!</div>
-    </ng-template>
+  <section class="trilha-hero">
+    <div><p class="eyebrow">TRILHA DE APRENDIZADO</p><h1>{{ nomeCurso || 'Sua trilha' }}</h1><p>Escolha uma etapa, avance no seu ritmo e volte sempre que quiser revisar.</p></div>
+    <div class="progress-orbit" [style.--progress]="progressoPercentual()"><strong>{{ progressoPercentual() }}%</strong><span>concluído</span></div>
   </section>
 
+  <section class="journey-card"><div><p class="eyebrow">SUA JORNADA</p><h2>{{ modulosConcluidos() }}/{{ trilha.length }} módulos concluídos</h2></div><div class="progress-track" aria-hidden="true"><span [style.width.%]="progressoPercentual()"></span></div></section>
 
-</div>
-
-<!-- Modal do Módulo -->
-<div class="modal-backdrop" *ngIf="moduloSelecionado" (click)="fecharModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <button class="modal-close" (click)="fecharModal()">×</button>
-    <div class="modal-header">
-      <div class="modulo-number">{{ getIndexModuloSelecionado() + 1 }}</div>
-      <h2>{{ moduloSelecionado!.nome }}</h2>
-    </div>
-    <div class="modal-body">
-      <p class="modal-info"><span>Status:</span> {{ getStatusText(getModuloProgressoStatus(moduloSelecionado!.id)) }}</p>
-      <p class="modal-info"><span>Aulas:</span> {{ aulasLabel(moduloSelecionado) }}</p>
-      <p class="modal-info"><span>Duração estimada:</span> {{ moduloSelecionado!.duracao }}</p>
-      <p class="modal-description">
-        {{ moduloSelecionado!.descricao || 'Informações detalhadas sobre este módulo serão adicionadas em breve.' }}
-      </p>
-    </div>
-    <div class="modal-footer">
-      <button class="modal-btn secondary" (click)="fecharModal()">CANCELAR</button>
-      <button class="modal-btn primary" *ngIf="getModuloProgressoStatus(moduloSelecionado!.id) !== 'CONCLUIDO'" (click)="confirmarIniciarModulo()">
-        {{ getModuloProgressoStatus(moduloSelecionado!.id) === 'EM_ANDAMENTO' ? 'CONTINUAR' : 'INICIAR' }}
-      </button>
-      <button class="modal-btn primary" *ngIf="getModuloProgressoStatus(moduloSelecionado!.id) === 'CONCLUIDO'" (click)="confirmarIniciarModulo()">
-        REVISAR MÓDULO
+  <section class="modules-section" aria-labelledby="modules-title">
+    <div class="section-heading"><div><p class="eyebrow">ROTEIRO DO CURSO</p><h2 id="modules-title">Escolha sua próxima etapa</h2></div><span>{{ trilha.length }} {{ trilha.length === 1 ? 'módulo' : 'módulos' }}</span></div>
+    <div class="module-list">
+      <button class="module-step" type="button" *ngFor="let modulo of trilha; let idx = index" [class.done]="getModuloProgressoStatus(modulo.id) === 'CONCLUIDO'" [class.in-progress]="getModuloProgressoStatus(modulo.id) === 'EM_ANDAMENTO'" (click)="navegarParaModulo(modulo)">
+        <span class="module-number">{{ getModuloProgressoStatus(modulo.id) === 'CONCLUIDO' ? '✓' : idx + 1 }}</span>
+        <span class="module-copy"><span class="module-title-row"><strong>{{ modulo.nome }}</strong><small>{{ getStatusText(getModuloProgressoStatus(modulo.id)) }}</small></span><span class="module-description">{{ modulo.descricao || 'Uma nova etapa para você explorar.' }}</span><span class="module-meta">{{ aulasLabel(modulo) }} <i>·</i> {{ modulo.quantidadeHoras || 0 }}h</span></span>
+        <span class="module-action">{{ getButtonText(getModuloProgressoStatus(modulo.id)) }} →</span>
       </button>
     </div>
-  </div>
-</div>
+    <div class="empty-modules" *ngIf="trilha.length === 0"><span>✦</span><h3>Esta trilha está sendo preparada</h3><p>Os módulos aparecerão aqui assim que estiverem disponíveis.</p></div>
+  </section>
+</main>
 
-<ng-template #notFound>
-  <div class="notfound">
-    <h2>Trilha não encontrada</h2>
-    <button class="back-btn" (click)="goBack()">Voltar para Home</button>
-  </div>
-</ng-template>
-<div class="loading" *ngIf="isLoading">
-  <app-loader></app-loader>
-</div>
+<ng-template #notFound><div class="notfound"><h2>Trilha não encontrada</h2><button class="back-link" type="button" (click)="goBack()">Voltar para Home</button></div></ng-template>
+<div class="loading" *ngIf="isLoading"><app-loader /></div>

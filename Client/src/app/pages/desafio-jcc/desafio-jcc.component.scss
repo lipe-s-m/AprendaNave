@@ -7,6 +7,9 @@
   padding: 2rem;
   color: var(--text-primary);
   font-size: 1.6rem;
+  min-height: calc(100vh - 7rem);
+  box-sizing: border-box;
+  background: radial-gradient(circle at top, var(--background-quinary), var(--background-primary) 65%);
   .content {
     max-width: 1200px;
 
@@ -28,7 +31,9 @@
       gap: 2rem;
       padding: 2.4rem;
       border-radius: 1.6rem;
-      background-color: var(--background-senary);
+      background: var(--surface-card-gradient);
+      border: 0.1rem solid var(--border-color);
+      box-shadow: 0 1.6rem 4rem rgba(0, 0, 0, 0.2);
       text-align: left;
       h1 {
         font-size: 3.2rem;
@@ -65,10 +70,10 @@
         list-style: none;
         padding: 0;
         margin: 0;
-        background-color: var(--background-senary);
+        background: var(--surface-card-gradient);
         width: 100%;
         border-radius: 1.6rem;
-        border: 0.3rem rgba(55, 70, 79, 0.685) solid;
+        border: 0.1rem solid var(--border-color);
         li {
           padding: 1rem;
           font-size: 1.8rem;

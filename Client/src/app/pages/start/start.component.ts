@@ -30,7 +30,10 @@ export class StartComponent implements OnInit {
   entrarComoUsuario() {
     this.router.navigate(['/login']);
   }
-  entrarComoVisitante() {
+  irParaDesafioJccAfs() {
+    this.router.navigate(['/desafio/jcc-afs-2026']);
+  }
+  verRankingJcc() {
     this.router.navigate(['/desafiojcc']);
   }
 }

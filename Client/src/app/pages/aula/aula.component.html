@@ -1,68 +1,25 @@
 <app-subheader />
-<div class="aula-container" *ngIf="aula; else notFound">
-  <header class="aula-header">
-    <!-- <p class="back" (click)="voltarParaModulo()">x</p> -->
-    <div class="header-info">
-      <h1>{{ aula.tituloAula }}</h1>
-      <div class="header-meta">
-        <!-- Substituir trilha?.nome por curso?.nome -->
-        <p class="trilha-nome">{{ cursoNome }} -> {{ moduloNome }}</p>
 
-      </div>
-    </div>
-  </header>
+<main class="lesson-page" *ngIf="aula; else notFound">
+  <button class="back-link" type="button" (click)="voltarParaModulo()">← Voltar para {{ moduloNome || 'o módulo' }}</button>
 
-  <div class="aula-content">
-    <div class="video-container" *ngIf="videoUrl">
-      <iframe [src]="videoUrl" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
-      </iframe>
+  <section class="lesson-hero">
+    <div><p class="eyebrow">{{ cursoNome || 'SUA TRILHA' }} · {{ moduloNome || 'MÓDULO' }}</p><h1>{{ aula.tituloAula }}</h1><p>{{ aula.descricaoAula || 'Assista com calma e avance para a próxima etapa quando quiser.' }}</p></div>
+    <div class="lesson-progress"><strong>Aula {{ indiceAtual() + 1 }} de {{ aulasListOrdenada().length || 1 }}</strong><span>{{ progressoPercentual() }}% do módulo</span></div>
+  </section>
+
+  <div class="progress-track" aria-hidden="true"><span [style.width.%]="progressoPercentual()"></span></div>
+
+  <section class="study-layout">
+    <div class="study-main">
+      <div class="video-shell" *ngIf="videoUrl"><iframe [src]="videoUrl" title="Vídeo da aula" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+      <div class="lesson-nav"><button type="button" [disabled]="!aulaAnterior" (click)="irParaAulaAnterior()">← <span>{{ aulaAnterior?.tituloAula || 'Aula anterior' }}</span></button><button type="button" class="next" [disabled]="!proximaAula" (click)="irParaProximaAula()"><span>{{ proximaAula?.tituloAula || 'Última aula' }}</span> →</button></div>
     </div>
 
-    <div class="aula-navigation">
-      <app-button buttonText="Aula Anterior" buttonSize="small" buttonLevel="primary" buttonTextColor="white" buttonTheme="dark" buttonType="button" [buttonDisabled]="!aulaAnterior" (click)="irParaAulaAnterior()" *ngIf="aulaAnterior">
-      </app-button>
+    <aside class="playlist"><div class="playlist-heading"><div><p class="eyebrow">NO MÓDULO</p><h2>Seu roteiro</h2></div><span>{{ aulasConcluidas() }}/{{ aulasListOrdenada().length }}</span></div><div class="playlist-items"><button type="button" class="playlist-item" *ngFor="let aulaItem of aulasListOrdenada(); let i = index" [class.current]="aulaItem.idAula === aula.idAula" [class.done]="aulaEstaConcluida(aulaItem.idAula)" [disabled]="aulaItem.idAula === aula.idAula" (click)="irParaAula(aulaItem)"><span>{{ aulaEstaConcluida(aulaItem.idAula) ? '✓' : i + 1 }}</span><span><strong>{{ aulaItem.tituloAula }}</strong><small>{{ aulaItem.idAula === aula.idAula ? 'Você está aqui' : (aulaItem.duracaoAula || 'Aula disponível') }}</small></span></button></div></aside>
+  </section>
 
-      <app-button buttonText="Próxima Aula" buttonSize="small" buttonLevel="primary" buttonTextColor="white" buttonTheme="dark" buttonType="button" [buttonDisabled]="!proximaAula" (click)="irParaProximaAula()" *ngIf="proximaAula">
-      </app-button>
-    </div>
-    <hr>
+  <section class="finish-card" [class.ready]="todasAsAulasConcluidas"><div class="finish-icon">{{ todasAsAulasConcluidas ? '★' : '✦' }}</div><div><p class="eyebrow">PRÓXIMO PASSO</p><h2>{{ todasAsAulasConcluidas ? 'Módulo completo!' : 'Continue no seu ritmo' }}</h2><p>{{ todasAsAulasConcluidas ? 'O desafio final está liberado para você.' : 'Ao concluir todas as aulas, o desafio final será liberado.' }}</p></div><app-button [buttonText]="todasAsAulasConcluidas ? 'Fazer quiz' : 'Voltar ao módulo'" buttonLevel="primary" buttonTheme="dark" (click)="todasAsAulasConcluidas ? irParaTesteFinal() : voltarParaModulo()" /></section>
+</main>
 
-    <div class="aulas-section">
-      <h2>Todas as aulas deste módulo:</h2>
-
-      <div class="aulas-lista">
-        <!-- Timeline conectando as aulas -->
-        <div class="aulas-timeline"></div>
-
-        <!-- Lista de aulas -->
-        <div class="aula-item" *ngFor="let aulaItem of aulasListOrdenada() ; let i = index" [ngClass]="{
-            'aula-concluida': aulaItem.concluida,
-            'aula-atual': aulaItem.idAula === aula.idAula
-          }" (click)="aulaItem.idAula !== aula.idAula && irParaAula(aulaItem)">
-          <div class="aula-play-icon">
-            <i [ngClass]="aulaItem.concluida ? 'fas fa-check' : (aulaItem.idAula === aula.idAula ? 'fas fa-play-circle' : 'fas fa-play')"></i>
-          </div>
-          <div class="aula-info">
-            <h3 class="aula-titulo">{{ aulaItem.tituloAula }}</h3>
-            <p class="aula-duracao">{{ aulaItem.duracaoAula }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div>
-      <app-button (click)="irParaTesteFinal()" buttonText="Realizar teste final!" buttonSize="large" buttonLevel="primary" buttonTextColor="white" buttonTheme="dark" buttonType="button" [buttonDisabled]="!todasAsAulasConcluidas">
-      </app-button>
-    </div>
-  </div>
-</div>
-
-<ng-template #notFound>
-  <div class=" notfound" *ngIf="!isLoading">
-    <h2>{{ error || 'Aula não encontrada' }}</h2>
-    <button class="back-btn" (click)="voltarParaModulo()">Voltar para Módulo</button>
-  </div>
-
-  <div class="loading" *ngIf="isLoading">
-    <app-loader></app-loader>
-  </div>
-</ng-template>
+<ng-template #notFound><div class="notfound" *ngIf="!isLoading"><h2>{{ error || 'Aula não encontrada' }}</h2><button class="back-link" type="button" (click)="voltarParaModulo()">Voltar para Módulo</button></div><div class="loading" *ngIf="isLoading"><app-loader /></div></ng-template>

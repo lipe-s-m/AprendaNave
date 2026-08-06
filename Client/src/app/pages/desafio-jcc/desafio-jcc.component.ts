@@ -48,8 +48,8 @@ export class DesafioJccComponent implements OnInit {
     private authService: AuthService,
     private loginService: LoginService
   ) {}
-  iniciarDesafio(): void {
-    this.router.navigate(['/desafio-matematica']);
+  irParaDesafioAfs(): void {
+    this.router.navigate(['/desafio/jcc-afs-2026']);
   }
   ngOnInit() {
     this.desafioJccService.getRanking().subscribe((data) => {

@@ -1,85 +1,42 @@
-<header>
-  <app-subheader></app-subheader>
-</header>
+<app-subheader />
 
-<div class="modulo-container">
-  <header class="modulo-header">
-    <div class="header-info">
-      <h1>{{ nomeModulo}}</h1>
-      <div class="header-meta">
-        <p class="trilha-nome">Trilha: {{ nomeCurso }}</p>
+<main class="module-page" *ngIf="!isLoading; else loading">
+  <button class="back-link" type="button" (click)="voltarParaTrilha()">← Voltar para a trilha</button>
 
-      </div>
+  <section class="module-hero">
+    <div class="hero-copy">
+      <p class="eyebrow">{{ nomeCurso || 'SUA TRILHA' }}</p>
+      <h1>{{ nomeModulo || 'Módulo' }}</h1>
+      <p class="hero-description">{{ descricaoCurso || 'Continue no seu ritmo e complete cada etapa desta missão.' }}</p>
     </div>
-  </header>
-
-  <div class="modulo-content">
-
-
-    <div class="modulo-descricao">
-      <h2>Sobre este módulo</h2>
-      <p>{{descricaoCurso}}</p>
+    <div class="progress-orbit" [style.--progress]="progressoPercentual()" [attr.aria-label]="progressoPercentual() + '% concluído'">
+      <strong>{{ progressoPercentual() }}%</strong><span>concluído</span>
     </div>
+  </section>
 
-    <div class="aulas-section">
-      <h2>Aulas do módulo</h2>
+  <section class="mission-card">
+    <div class="mission-heading"><div><p class="eyebrow">SUA MISSÃO</p><h2>Avance uma aula por vez</h2></div><span>{{ aulasConcluidas() }}/{{ aulas.length }} aulas</span></div>
+    <div class="progress-track" aria-hidden="true"><span [style.width.%]="progressoPercentual()"></span></div>
+    <p *ngIf="proximaAula() as proxima" class="next-hint">Próxima etapa: <strong>{{ proxima.tituloAula }}</strong></p>
+  </section>
 
-      <div class="aulas-lista">
-        <!-- Timeline conectando as aulas -->
-        <div class="aulas-timeline"></div>
-
-        <!-- Lista de aulas -->
-        <div class="aula-item" *ngFor="let aula of aulas; let i = index" [ngClass]="{'aula-concluida': aula.concluida}" (click)="iniciarAula(aula)">
-          <div class="aula-play-icon">
-            <i [ngClass]="aula.concluida ? 'fas fa-check' : 'fas fa-play'"></i>
-          </div>
-          <div class="aula-info">
-
-            <h3 class="aula-titulo">{{ aula.tituloAula }}</h3>
-            <p class="aula-duracao">{{ aula.duracaoAula }}</p>
-          </div>
-        </div>
-
-        <!-- Se não houver aulas, mostra mensagem -->
-        <p class="no-aulas" *ngIf="!aulas || aulas.length === 0">Nenhuma aula disponível neste módulo.</p>
-      </div>
-    </div>
-    <!-- Botão para iniciar o teste final -->
-    <div class="modulo-actions">
-      <app-button *ngIf="todasAulasConcluidas()" (click)="irParaTesteFinal()" buttonLevel="secondary" buttonTheme="dark" buttonText="Iniciar Teste Final" [buttonDisabled]="!todasAulasConcluidas()">
-      </app-button>
-      <app-button *ngIf="!todasAulasConcluidas()" (click)="irParaTesteFinal()" buttonLevel="secondary" buttonTheme="dark" buttonText="Assistas as aulas para liberar o quiz" [buttonDisabled]="!todasAulasConcluidas()">
-      </app-button>
-    </div>
-    <!-- <div class="modulo-actions">
-      <app-button buttonText="Resetar Aulas" buttonLevel="primary" buttonTheme="dark" (click)="resetarAulas()">
-      </app-button>
-    </div> -->
-    <!--  -->
-    <!-- <div class="modulo-actions">
-      <button class="action-button concluir" (click)="marcarConcluido()" [disabled]="modulo.status === 'CONCLUIDO' || !todasAulasConcluidas()">
-        <ng-container *ngIf="modulo.status === 'CONCLUIDO'; else notConcluido">
-          Módulo Concluído
-        </ng-container>
-        <ng-template #notConcluido>
-          <ng-container *ngIf="todasAulasConcluidas(); else aulasPendentes">
-            Marcar como Concluído
-          </ng-container>
-          <ng-template #aulasPendentes>
-            Complete todas as aulas para liberar o quiz
-          </ng-template>
-        </ng-template>
+  <section class="lessons-section" aria-labelledby="lessons-title">
+    <div class="section-heading"><div><p class="eyebrow">ROTEIRO</p><h2 id="lessons-title">Aulas do módulo</h2></div><span class="lesson-count">{{ aulas.length }} {{ aulas.length === 1 ? 'aula' : 'aulas' }}</span></div>
+    <div class="lesson-list" *ngIf="aulas.length; else emptyLessons">
+      <button class="lesson" type="button" *ngFor="let aula of aulas; let i = index" [class.done]="aula.concluida" (click)="iniciarAula(aula)" [attr.aria-label]="(aula.concluida ? 'Rever' : 'Iniciar') + ' aula ' + aula.tituloAula">
+        <span class="lesson-step">{{ aula.concluida ? '✓' : i + 1 }}</span>
+        <span class="lesson-copy"><strong>{{ aula.tituloAula }}</strong><small>{{ aula.concluida ? 'Concluída — você pode rever quando quiser' : (aula.duracaoAula || 'Pronta para começar') }}</small></span>
+        <span class="lesson-action">{{ aula.concluida ? 'Rever' : 'Começar' }} →</span>
       </button>
-    </div> -->
-  </div>
-</div>
+    </div>
+    <ng-template #emptyLessons><div class="empty-lessons"><span>✦</span><h3>As aulas estão chegando</h3><p>Este módulo ainda não possui aulas disponíveis.</p></div></ng-template>
+  </section>
 
-<ng-template #notFound>
-  <div class="notfound">
-    <h2>Módulo não encontrado</h2>
-    <button class="back-btn" (click)="voltarParaTrilha()">Voltar para Trilha</button>
-  </div>
-</ng-template>
-<div class="loading" *ngIf="isLoading">
-  <app-loader></app-loader>
-</div>
+  <section class="quiz-card" [class.ready]="todasAulasConcluidas()">
+    <div class="quiz-icon">{{ todasAulasConcluidas() ? '★' : '✦' }}</div>
+    <div><p class="eyebrow">DESAFIO FINAL</p><h2>{{ todasAulasConcluidas() ? 'Você liberou o quiz!' : 'O quiz espera no fim da missão' }}</h2><p>{{ todasAulasConcluidas() ? 'Teste o que aprendeu e conquiste suas Navecoins.' : 'Conclua todas as aulas para liberar o desafio final.' }}</p></div>
+    <app-button [buttonText]="todasAulasConcluidas() ? 'Fazer quiz' : 'Continue aprendendo'" buttonLevel="primary" buttonTheme="dark" [buttonDisabled]="!todasAulasConcluidas()" (click)="todasAulasConcluidas() ? irParaTesteFinal() : (proximaAula() && iniciarAula(proximaAula()!))" />
+  </section>
+</main>
+
+<ng-template #loading><div class="loading"><app-loader /></div></ng-template>

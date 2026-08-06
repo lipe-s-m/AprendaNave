@@ -286,4 +286,13 @@ export class TrilhaComponent implements OnInit, OnDestroy {
     if (qtd === 0) return 'Sem aulas disponíveis';
     return `${qtd} ${qtd === 1 ? 'aula' : 'aulas'}`;
   }
+
+  modulosConcluidos(): number {
+    return (this.trilha || []).filter((modulo: Modulo) => this.getModuloProgressoStatus(modulo.id) === 'CONCLUIDO').length;
+  }
+
+  progressoPercentual(): number {
+    if (!this.trilha?.length) return 0;
+    return Math.round((this.modulosConcluidos() / this.trilha.length) * 100);
+  }
 }

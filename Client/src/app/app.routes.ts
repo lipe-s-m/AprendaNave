@@ -13,6 +13,7 @@ import { AprendabotComponent } from './pages/aprendabot/aprendabot.component';
 import { DesafioJccComponent } from './pages/desafio-jcc/desafio-jcc.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { DesafioMatematicaComponent } from './pages/desafio-matematica/desafio-matematica.component';
+import { DesafioEventoComponent } from './pages/desafio-evento/desafio-evento.component';
 import { CriarCursoComponent } from './pages/criar-curso/criar-curso.component';
 import { MeusCursosComponent } from './pages/meus-cursos/meus-cursos.component';
 import { GerenciarCursoComponent } from './pages/gerenciar-curso/gerenciar-curso.component';
@@ -75,6 +76,7 @@ export const routes: Routes = [
     path: 'desafio-matematica',
     component: DesafioMatematicaComponent,
   },
+  { path: 'desafio/:slug', component: DesafioEventoComponent },
   {
     path: 'ranking',
     component: RankingComponent,

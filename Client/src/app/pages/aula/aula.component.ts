@@ -103,6 +103,13 @@ export class AulaComponent implements OnInit, OnDestroy {
 
       this.navState.updateIdContexto(cursoIdNum, moduloIdNum, aulaIdNum);
 
+      // Ao trocar de aula a rota reutiliza este componente e a playlist já está
+      // carregada. Nesse caso, basta buscar a nova aula; não é um ID inválido.
+      if (cursoIdNum !== null && moduloIdNum !== null && aulaIdNum !== null && this.aulasList().length > 0) {
+        this.loadAula(aulaIdNum);
+        return;
+      }
+
       if (cursoIdNum !== null && moduloIdNum !== null && aulaIdNum !== null) {
         if (this.aulasList().length === 0) {
           this.aulaService.getAulas(moduloIdNum).subscribe({
@@ -227,6 +234,7 @@ export class AulaComponent implements OnInit, OnDestroy {
 
   irParaProximaAula(): void {
     if (this.proximaAula && this.cursoId && this.moduloId) {
+      this.navState.setAula(this.proximaAula.idAula);
       this.router.navigate([
         '/aula',
         this.cursoId,
@@ -238,6 +246,7 @@ export class AulaComponent implements OnInit, OnDestroy {
 
   irParaAulaAnterior(): void {
     if (this.aulaAnterior && this.cursoId && this.moduloId) {
+      this.navState.setAula(this.aulaAnterior.idAula);
       this.router.navigate([
         '/aula',
         this.cursoId,
@@ -258,5 +267,23 @@ export class AulaComponent implements OnInit, OnDestroy {
     if (this.cursoId && this.moduloId) {
       this.router.navigate(['/modulo', this.cursoId, this.moduloId]);
     }
+  }
+
+  indiceAtual(): number {
+    if (!this.aula) return 0;
+    return this.aulasListOrdenada().findIndex((item) => item.idAula === this.aula?.idAula);
+  }
+
+  aulasConcluidas(): number {
+    return this.aulasListOrdenada().filter((item) => this.aulaService.isAulaConcluida(item.idAula)).length;
+  }
+
+  progressoPercentual(): number {
+    const total = this.aulasListOrdenada().length;
+    return total ? Math.round((this.aulasConcluidas() / total) * 100) : 0;
+  }
+
+  aulaEstaConcluida(aulaId: number): boolean {
+    return this.aulaService.isAulaConcluida(aulaId);
   }
 }

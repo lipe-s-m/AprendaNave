@@ -157,6 +157,57 @@ model guest_user {
   @@map("guest_user")
 }
 
+model desafio_evento {
+  id                BigInt                         @id @default(autoincrement())
+  slug              String                         @unique @db.VarChar(80)
+  nome              String                         @db.VarChar(120)
+  descricao         String?                        @db.VarChar(300)
+  status            String                         @default("RASCUNHO") @db.VarChar(20)
+  jogo_habilitado   Boolean                        @default(false)
+  inicio_em         DateTime?                      @db.Timestamptz()
+  fim_em            DateTime?                      @db.Timestamptz()
+  criado_em         DateTime                       @default(now()) @db.Timestamptz()
+  atualizado_em     DateTime?                      @db.Timestamptz()
+
+  participantes     desafio_evento_participante[]
+  scores            desafio_evento_score[]
+
+  @@map("desafio_evento")
+}
+
+model desafio_evento_participante {
+  id                 String                 @id @db.Uuid
+  id_evento          BigInt
+  tipo_pessoa        String                 @db.VarChar(10)
+  id_pessoa          Int?
+  nome_snapshot      String                 @db.VarChar(100)
+  token_sessao_hash  String?                @db.VarChar(64)
+  expira_em          DateTime?              @db.Timestamptz()
+  criado_em          DateTime               @default(now()) @db.Timestamptz()
+
+  evento             desafio_evento         @relation(fields: [id_evento], references: [id], onDelete: Cascade)
+  scores             desafio_evento_score[]
+
+  @@unique([id_evento, tipo_pessoa, id_pessoa])
+  @@index([id_evento, token_sessao_hash])
+  @@map("desafio_evento_participante")
+}
+
+model desafio_evento_score {
+  id_evento          BigInt
+  id_participante    String                       @db.Uuid
+  melhor_pontuacao   Int
+  criado_em          DateTime                     @default(now()) @db.Timestamptz()
+  atualizado_em      DateTime?                    @db.Timestamptz()
+
+  evento             desafio_evento               @relation(fields: [id_evento], references: [id], onDelete: Cascade)
+  participante       desafio_evento_participante  @relation(fields: [id_participante], references: [id], onDelete: Cascade)
+
+  @@id([id_evento, id_participante])
+  @@index([id_evento, melhor_pontuacao])
+  @@map("desafio_evento_score")
+}
+
 model conquista {
   id             Int      @id @default(autoincrement())
   nome           String   @db.VarChar(100)

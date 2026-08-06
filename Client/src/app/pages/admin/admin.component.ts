@@ -40,6 +40,7 @@ export class AdminComponent implements OnInit {
   quizzesPendentes = signal<any[]>([]);
   questoesPendentes = signal<any[]>([]);
   cursosGerenciaveis = signal<any[]>([]);
+  eventosDesafio = signal<any[]>([]);
 
   modalRejeitar = signal<{ aberto: boolean; tipo: string; id: number; nome: string }>({
     aberto: false, tipo: '', id: 0, nome: '',
@@ -67,6 +68,7 @@ export class AdminComponent implements OnInit {
     this.http.get<any[]>(`${this.apiUrl}/admin/quizzes/pendentes`).subscribe({ next: (quizzes) => this.quizzesPendentes.set(quizzes), error: () => this.quizzesPendentes.set([]) });
     this.http.get<any[]>(`${this.apiUrl}/admin/questoes/pendentes`).subscribe({ next: (questoes) => this.questoesPendentes.set(questoes), error: () => this.questoesPendentes.set([]) });
     this.http.get<any[]>(`${this.apiUrl}/admin/cursos`).subscribe({ next: (cursos) => this.cursosGerenciaveis.set(cursos), error: () => this.cursosGerenciaveis.set([]) });
+    this.http.get<any[]>(`${this.apiUrl}/admin/desafio-eventos`).subscribe({ next: (eventos) => this.eventosDesafio.set(eventos), error: () => this.eventosDesafio.set([]) });
   }
 
   setAba(aba: string): void {
@@ -75,6 +77,24 @@ export class AdminComponent implements OnInit {
 
   gerenciarCurso(cursoId: number): void {
     this.router.navigate(['/curso', cursoId, 'gerenciar']);
+  }
+
+  encerrarEvento(evento: any): void {
+    if (!confirm(`Encerrar o jogo de "${evento.nome}"? O ranking continuará visível.`)) return;
+    this.processando.set(`evento:${evento.id}`);
+    this.http.patch(`${this.apiUrl}/admin/desafio-eventos/${evento.id}`, { status: 'ENCERRADO', jogoHabilitado: false }).subscribe({
+      next: () => { this.toastr.success('Jogo encerrado; ranking final preservado.'); this.processando.set(null); this.carregarPendentes(); },
+      error: (err) => { this.toastr.error(err.error?.error || 'Não foi possível encerrar o evento.'); this.processando.set(null); },
+    });
+  }
+
+  retomarEvento(evento: any): void {
+    if (!confirm(`Retomar o jogo de "${evento.nome}"? Participantes poderão enviar novas pontuações.`)) return;
+    this.processando.set(`evento:${evento.id}`);
+    this.http.patch(`${this.apiUrl}/admin/desafio-eventos/${evento.id}`, { status: 'ATIVO', jogoHabilitado: true }).subscribe({
+      next: () => { this.toastr.success('Evento retomado; o jogo está liberado novamente.'); this.processando.set(null); this.carregarPendentes(); },
+      error: (err) => { this.toastr.error(err.error?.error || 'Não foi possível retomar o evento.'); this.processando.set(null); },
+    });
   }
 
   aprovar(tipo: string, id: number): void {
