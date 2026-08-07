@@ -68,6 +68,12 @@
         </div>
       </div>
     </div>
+
+    <div class="load-more-courses" *ngIf="temMaisCursos && !isLoading && !error">
+      <button type="button" (click)="carregarMaisCursos()" [disabled]="carregandoMaisCursos">
+        {{ carregandoMaisCursos ? 'Carregando cursos…' : 'Carregar mais cursos' }}
+      </button>
+    </div>
   </main>
 </div>
 <button class="create-course-button" (click)="goToMeusCursos()">

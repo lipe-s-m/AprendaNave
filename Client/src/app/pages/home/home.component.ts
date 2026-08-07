@@ -24,6 +24,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   isDarkMode = true;
   cursos: Curso[] = [];
   isLoading = true;
+  carregandoMaisCursos = false;
+  temMaisCursos = false;
   error: string | null = null;
   qtdDesafiantesJCC: number = 0;
   private themeSubscription?: Subscription;
@@ -64,21 +66,39 @@ export class HomeComponent implements OnInit, OnDestroy {
     localStorage.removeItem('cursos');
   }
 
-  loadCursos(): void {
-    this.isLoading = true;
+  loadCursos(reiniciar = true): void {
+    if (!reiniciar && (!this.temMaisCursos || this.carregandoMaisCursos)) return;
+
+    const pagina = reiniciar ? 1 : this.paginaAtual + 1;
+    if (reiniciar) {
+      this.isLoading = true;
+      this.cursos = [];
+    } else {
+      this.carregandoMaisCursos = true;
+    }
     this.error = null;
 
-    this.cursoSubscription = this.cursoService.getCursos().subscribe({
-      next: (cursos) => {
-        this.cursos = cursos;
+    this.cursoSubscription = this.cursoService.getCursosPaginados(pagina).subscribe({
+      next: ({ cursos, temMais }) => {
+        this.paginaAtual = pagina;
+        this.cursos = reiniciar ? cursos : [...this.cursos, ...cursos];
+        this.temMaisCursos = temMais;
         this.isLoading = false;
+        this.carregandoMaisCursos = false;
       },
       error: (err) => {
         this.error = 'Erro ao carregar cursos: ' + err.message;
         this.isLoading = false;
+        this.carregandoMaisCursos = false;
         this.toastr.error(this.error, 'Erro');
       },
     });
+  }
+
+  private paginaAtual = 1;
+
+  carregarMaisCursos(): void {
+    this.loadCursos(false);
   }
   loadDesafiantesJCC(): void {
     this.isLoading = true;

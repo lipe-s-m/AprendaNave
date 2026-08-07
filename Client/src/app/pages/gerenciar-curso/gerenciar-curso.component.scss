@@ -70,6 +70,88 @@
   margin-top: variables.$espaco-4;
 }
 
+.course-cover-upload {
+  display: flex;
+  flex-direction: column;
+  gap: variables.$espaco-2;
+
+  .cover-label {
+    color: var(--text-primary);
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+
+  .cover-upload-content {
+    display: flex;
+    align-items: center;
+    gap: variables.$espaco-3;
+    min-height: 10rem;
+    padding: variables.$espaco-2;
+    border: 0.2rem dashed var(--border-color);
+    border-radius: variables.$borda-radius-input;
+    background: var(--surface-elevated);
+  }
+
+  .cover-upload-content {
+    img,
+    > .material-icons {
+      width: 7.2rem;
+      height: 7.2rem;
+      flex: 0 0 7.2rem;
+      border-radius: 0.8rem;
+    }
+
+    img {
+      object-fit: cover;
+      border: 0.1rem solid var(--border-color);
+    }
+
+    .material-icons {
+      display: grid;
+      place-items: center;
+      background: var(--background-secondary);
+      color: var(--accent-primary);
+      font-size: 3.2rem;
+    }
+  }
+
+  .cover-upload-copy {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.4rem;
+
+    strong {
+      color: var(--text-primary);
+      font-size: 1.5rem;
+    }
+
+    span {
+      color: var(--text-muted);
+      font-size: 1.3rem;
+    }
+  }
+
+  .cover-upload-trigger {
+    color: var(--accent-primary);
+    font-size: 1.4rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 0.1rem;
+  height: 0.1rem;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
 .form-actions {
   display: flex;
   align-items: center;
@@ -395,4 +477,52 @@
   color: var(--error-color);
   padding: variables.$espaco-5;
   font-size: variables.$fonte-tamanho-p;
+}
+
+// Ajustes de criação: os modais funcionam como folha deslizante no celular,
+// com campos largos e ações fáceis de alcançar com o polegar.
+.modal-content {
+  background: var(--surface-card-gradient);
+
+  .form-row > app-input {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .course-cover-upload .cover-upload-content {
+    align-items: flex-start;
+    flex-wrap: wrap;
+
+    .cover-upload-trigger {
+      margin-left: auto;
+    }
+  }
+
+  .modal-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modal-content {
+    width: 100%;
+    max-width: none;
+    max-height: 88dvh;
+    border-radius: 2rem 2rem 0 0;
+    padding: variables.$espaco-5 variables.$espaco-4;
+    border-bottom: 0;
+  }
+
+  .modal-actions {
+    position: sticky;
+    bottom: calc(-1 * #{variables.$espaco-5});
+    margin: variables.$espaco-3 calc(-1 * #{variables.$espaco-4}) 0;
+    padding: variables.$espaco-3 variables.$espaco-4;
+    background: var(--surface-elevated);
+
+    app-button {
+      flex: 1;
+    }
+  }
 }

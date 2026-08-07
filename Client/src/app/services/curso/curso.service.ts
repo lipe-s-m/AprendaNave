@@ -1,8 +1,13 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Curso, CreateCursoDto, CreateModuloDto, CreateAulaDto } from '../../models/curso.model';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
+
+export interface PaginaCursos {
+  cursos: Curso[];
+  temMais: boolean;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +19,27 @@ export class CursoService {
   // ── Cursos ──
 
   getCursos(): Observable<Curso[]> {
-    return this.http.get<Curso[]>(`${this.apiUrl}/cursos/aprovados`);
+    // Evita que o navegador reutilize uma lista anterior após uma aprovação no admin.
+    return this.http.get<Curso[]>(`${this.apiUrl}/cursos/aprovados`, {
+      params: { cacheBust: Date.now().toString() },
+    });
+  }
+
+  getCursosPaginados(pagina: number): Observable<PaginaCursos> {
+    return this.http
+      .get<Curso[]>(`${this.apiUrl}/cursos/aprovados`, {
+        params: {
+          pagina: pagina.toString(),
+          cacheBust: Date.now().toString(),
+        },
+        observe: 'response',
+      })
+      .pipe(
+        map((resposta: HttpResponse<Curso[]>) => ({
+          cursos: resposta.body ?? [],
+          temMais: resposta.headers.get('X-Has-More') === 'true',
+        }))
+      );
   }
 
   getCursoById(cursoId: number): Observable<Curso> {
@@ -23,6 +48,17 @@ export class CursoService {
 
   createCurso(curso: CreateCursoDto): Observable<Curso> {
     return this.http.post<Curso>(`${this.apiUrl}/cursos`, curso);
+  }
+
+  /** Envia a capa ao Cloudinary e devolve a URL segura para salvar no curso. */
+  uploadLogoCurso(file: File): Observable<{ logoUrl: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.http.post<{ logoUrl: string }>(
+      `${this.apiUrl}/cursos/upload-logo`,
+      formData
+    );
   }
 
   updateCurso(id: number, data: Partial<CreateCursoDto>): Observable<Curso> {

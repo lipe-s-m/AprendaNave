@@ -32,7 +32,33 @@
 
     <form *ngIf="!painelCursoRecolhido()" [formGroup]="formCurso" (ngSubmit)="salvarCurso()" class="form-curso">
       <app-input label="Nome do curso" inputName="nome" placeholder="Ex.: Matemática Divertida" formControlName="nome" />
-      <app-input label="Logo (URL)" inputName="logo" placeholder="https://..." formControlName="logo" />
+      <div class="course-cover-upload">
+        <span class="cover-label">Imagem de capa</span>
+        <div class="cover-upload-content">
+          <img
+            *ngIf="formCurso.controls.logo.value"
+            [src]="formCurso.controls.logo.value"
+            alt="Prévia da capa do curso"
+          />
+          <span *ngIf="!formCurso.controls.logo.value" class="material-icons" aria-hidden="true">image</span>
+          <div class="cover-upload-copy">
+            <strong>{{ enviandoLogo() ? 'Enviando imagem…' : 'Atualize a capa do seu curso' }}</strong>
+            <span>JPG, PNG ou WebP · até 5 MB</span>
+          </div>
+          <input
+            #logoCursoInput
+            id="logo-curso"
+            class="visually-hidden"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            [disabled]="enviandoLogo()"
+            (change)="onLogoCursoSelecionada($event)"
+          />
+          <label class="cover-upload-trigger" for="logo-curso">
+            {{ enviandoLogo() ? 'Enviando…' : 'Trocar imagem' }}
+          </label>
+        </div>
+      </div>
       <app-input label="Descrição" inputName="descricao" inputType="textarea" placeholder="Sobre o que é o curso" formControlName="descricao" />
       <div class="form-actions">
         <span class="btn-status" *ngIf="salvandoCurso()">Salvando…</span>
@@ -40,7 +66,7 @@
           [buttonText]="salvandoCurso() ? 'Salvando…' : 'Salvar alterações'"
           buttonType="submit"
           [buttonVariant]="'primary'"
-          [buttonDisabled]="!formCurso.valid || salvandoCurso()"
+          [buttonDisabled]="!formCurso.valid || salvandoCurso() || enviandoLogo()"
         />
       </div>
     </form>
@@ -224,7 +250,7 @@
     <form [formGroup]="formAula" (ngSubmit)="salvarAula()">
       <app-input label="Título" inputName="titulo" placeholder="Ex.: Soma com números grandes" formControlName="titulo" />
       <app-input label="Descrição" inputName="descricaoAula" inputType="textarea" placeholder="Resumo da aula" formControlName="descricao" />
-      <app-input label="YouTube Video ID" inputName="videoYoutubeId" placeholder="dQw4w9WgXcQ" formControlName="videoYoutubeId" hint="A parte final da URL, ex.: watch?v=VIDEO_ID" />
+      <app-input label="Link ou ID do vídeo no YouTube" inputName="videoYoutubeId" placeholder="https://youtu.be/dQw4w9WgXcQ" formControlName="videoYoutubeId" hint="Cole a URL completa, um link de Shorts ou somente o ID do vídeo. Nós extraímos o ID automaticamente." />
       <div class="form-row">
         <app-input label="Duração (min, opcional)" inputName="duracao" placeholder="10" inputType="number" formControlName="duracao" hint="A ordem é automática: novas aulas vão para o final e podem ser reordenadas com as setas." />
       </div>

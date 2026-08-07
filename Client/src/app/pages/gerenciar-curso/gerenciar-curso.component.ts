@@ -36,6 +36,7 @@ export class GerenciarCursoComponent implements OnInit, OnDestroy {
   isLoading = signal(true);
   error = signal<string | null>(null);
   salvandoCurso = signal(false);
+  enviandoLogo = signal(false);
   salvandoModulo = signal(false);
   salvandoAula = signal(false);
   painelCursoRecolhido = signal(false);
@@ -202,6 +203,39 @@ export class GerenciarCursoComponent implements OnInit, OnDestroy {
     });
   }
 
+  onLogoCursoSelecionada(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    const tiposPermitidos = ['image/jpeg', 'image/png', 'image/webp'];
+    const tamanhoMaximo = 5 * 1024 * 1024;
+    if (!tiposPermitidos.includes(file.type)) {
+      this.toastr.warning('Use uma imagem JPG, PNG ou WebP.', 'Formato inválido');
+      input.value = '';
+      return;
+    }
+    if (file.size > tamanhoMaximo) {
+      this.toastr.warning('A imagem deve ter no máximo 5 MB.', 'Imagem muito grande');
+      input.value = '';
+      return;
+    }
+
+    this.enviandoLogo.set(true);
+    this.cursoService.uploadLogoCurso(file).subscribe({
+      next: ({ logoUrl }) => {
+        this.formCurso.patchValue({ logo: logoUrl });
+        this.toastr.success('Capa enviada. Clique em salvar para aplicar a alteração.', 'Imagem pronta');
+        this.enviandoLogo.set(false);
+      },
+      error: (err) => {
+        this.toastr.error(err.error?.error || 'Não foi possível enviar a imagem.', 'Erro no upload');
+        this.enviandoLogo.set(false);
+        input.value = '';
+      },
+    });
+  }
+
   // ── Módulos ──
 
   carregarModulos(): void {
@@ -329,13 +363,42 @@ export class GerenciarCursoComponent implements OnInit, OnDestroy {
     this.ultimoFoco = null;
   }
 
+  private extrairIdYoutube(valor: string): string | null {
+    const entrada = valor.trim();
+    if (/^[\w-]{11}$/.test(entrada)) return entrada;
+
+    try {
+      const url = new URL(entrada.startsWith('http') ? entrada : `https://${entrada}`);
+      const host = url.hostname.replace('www.', '').replace('m.', '');
+      let id = '';
+
+      if (host === 'youtu.be') id = url.pathname.split('/').filter(Boolean)[0] || '';
+      if (host === 'youtube.com') {
+        id = url.searchParams.get('v') || '';
+        if (!id) {
+          const partes = url.pathname.split('/').filter(Boolean);
+          if (partes[0] === 'embed' || partes[0] === 'shorts' || partes[0] === 'live') id = partes[1] || '';
+        }
+      }
+
+      return /^[\w-]{11}$/.test(id) ? id : null;
+    } catch {
+      return null;
+    }
+  }
+
   salvarAula(): void {
     if (!this.formAula.valid || !this.aulaModuloId()) return;
+    const videoYoutubeId = this.extrairIdYoutube(this.formAula.value.videoYoutubeId || '');
+    if (!videoYoutubeId) {
+      this.toastr.error('Cole um link válido do YouTube ou o ID de 11 caracteres do vídeo.', 'Vídeo inválido');
+      return;
+    }
     this.salvandoAula.set(true);
     const data: CreateAulaDto = {
       titulo: this.formAula.value.titulo!,
       descricao: this.formAula.value.descricao!,
-      videoYoutubeId: this.formAula.value.videoYoutubeId!,
+      videoYoutubeId,
       // Sem `ordem`: o servidor empilha no final (total + 1).
       duracao: this.formAula.value.duracao ? Number(this.formAula.value.duracao) : undefined,
       idModulo: this.aulaModuloId()!,

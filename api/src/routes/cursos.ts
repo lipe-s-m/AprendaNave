@@ -1,7 +1,9 @@
 import { Hono } from 'hono'
+import { randomUUID } from 'crypto'
 import prisma from '../lib/prisma'
 import { getCurrentUserId, authRequired, isCursoOwner } from '../middleware/auth'
 import { mapModuloResponse, obterContagensAulasPorModulo } from '../lib/modulo-response'
+import cloudinary from '../lib/cloudinary'
 
 export const cursosRoutes = new Hono()
 
@@ -43,21 +45,23 @@ cursosRoutes.get('/me', async (c) => {
 // GET /cursos/aprovados - paginated approved courses
 cursosRoutes.get('/aprovados', async (c) => {
   try {
-    const page = parseInt(c.req.query('pagina') || '1')
+    // A Home deve refletir aprovações e remoções imediatamente.
+    c.header('Cache-Control', 'no-store, max-age=0')
+    const page = Math.max(1, parseInt(c.req.query('pagina') || '1') || 1)
     const perPage = 6
 
     const cursos = await prisma.curso.findMany({
       where: { status: 'Aprovado' },
       skip: (page - 1) * perPage,
-      take: perPage,
+      // Busca um item extra somente para informar corretamente se há próxima página.
+      take: perPage + 1,
     })
 
-    if (cursos.length === 0) {
-      return c.json({ message: 'Nenhum curso encontrado.' }, 404)
-    }
+    const temMais = cursos.length > perPage
+    c.header('X-Has-More', String(temMais))
 
     return c.json(
-      cursos.map((curso) => ({
+      cursos.slice(0, perPage).map((curso) => ({
         id: curso.id,
         nome: curso.nome,
         logo: curso.logo,
@@ -107,6 +111,44 @@ cursosRoutes.post('/', async (c) => {
     )
   } catch (ex) {
     return c.json({ error: 'Erro ao criar curso' }, 400)
+  }
+})
+
+// POST /cursos/upload-logo - envia a capa do curso ao Cloudinary (auth required).
+// A rota vem antes de /:id para não ser interpretada como um ID de curso.
+cursosRoutes.post('/upload-logo', authRequired, async (c) => {
+  try {
+    const userId = getCurrentUserId(c)!
+    const formData = await c.req.formData()
+    const file = formData.get('file')
+
+    if (!file || !(file instanceof File)) {
+      return c.json({ error: 'Selecione uma imagem para a capa do curso.' }, 400)
+    }
+
+    const tiposPermitidos = new Set(['image/jpeg', 'image/png', 'image/webp'])
+    if (!tiposPermitidos.has(file.type)) {
+      return c.json({ error: 'Envie uma imagem JPG, PNG ou WebP.' }, 400)
+    }
+
+    const tamanhoMaximo = 5 * 1024 * 1024
+    if (file.size === 0 || file.size > tamanhoMaximo) {
+      return c.json({ error: 'A imagem deve ter no máximo 5 MB.' }, 400)
+    }
+
+    const buffer = Buffer.from(await file.arrayBuffer())
+    const dataUri = `data:${file.type};base64,${buffer.toString('base64')}`
+    const upload = await cloudinary.uploader.upload(dataUri, {
+      folder: 'courses/logos',
+      public_id: `course_${userId}_${randomUUID()}`,
+      resource_type: 'image',
+      transformation: [{ width: 600, height: 600, crop: 'fill', gravity: 'auto' }],
+    })
+
+    return c.json({ logoUrl: upload.secure_url }, 201)
+  } catch (error) {
+    console.error('[POST /cursos/upload-logo] Erro:', error)
+    return c.json({ error: 'Não foi possível enviar a imagem. Tente novamente.' }, 502)
   }
 })
 

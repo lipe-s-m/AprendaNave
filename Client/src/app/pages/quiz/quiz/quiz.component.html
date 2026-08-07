@@ -1,6 +1,7 @@
 <app-subheader />
 <main class="container">
   <app-loader *ngIf="carregando()" />
+
   <section class="content" *ngIf="!carregando() && !tentativa() && !resultado()">
     <h1>{{ status()?.quiz?.titulo || 'Teste final' }}</h1>
     <p>{{ status()?.quiz?.descricao || 'Mostre o que aprendeu neste módulo.' }}</p>
@@ -10,6 +11,7 @@
     <app-button buttonText="Iniciar quiz" buttonLevel="primary" buttonTheme="dark" buttonSize="large" [buttonDisabled]="!status()?.disponivel || iniciando()" (click)="iniciar()" />
     <app-button buttonText="Voltar" buttonLevel="secondary" buttonTheme="dark" buttonSize="large" (click)="voltar()" />
   </section>
+
   <section class="content" *ngIf="tentativa() && !resultado()">
     <p>Questão {{ indice() + 1 }} de {{ tentativa()!.questoes.length }} <strong *ngIf="tempoRestante() !== null">· {{ tempoRestante() }}s</strong></p>
     <h1>{{ questaoAtual()?.enunciado }}</h1>
@@ -24,12 +26,29 @@
       <app-button [buttonText]="indice() + 1 === tentativa()!.questoes.length ? 'Finalizar' : 'Próxima'" buttonLevel="primary" buttonTheme="dark" [buttonDisabled]="!respostas().has(questaoAtual()?.id || 0) || finalizando()" (click)="proxima()" />
     </div>
   </section>
-  <section class="content" *ngIf="resultado() as r">
-    <h1>{{ r.aprovado ? 'Quiz concluído!' : 'Continue praticando!' }}</h1>
-    <p>Você acertou <strong>{{ r.acertos }} de {{ r.totalQuestoes }}</strong> questões ({{ r.percentual }}%).</p>
-    <p *ngIf="r.navecoinsGanhos > 0">Você ganhou <strong>{{ r.navecoinsGanhos }} Navecoins</strong>!</p>
-    <p *ngIf="r.aprovado && r.navecoinsGanhos === 0">Você já havia recebido a recompensa pela primeira aprovação deste quiz.</p>
-    <article class="feedback" *ngFor="let correcao of r.correcoes; let i = index"><h2>{{ i + 1 }}. {{ correcao.enunciado }}</h2><p><strong>Resposta correta:</strong> {{ correcao.alternativaCorretaTexto }}</p><p *ngIf="correcao.explicacao"><strong>Explicação:</strong> {{ correcao.explicacao }}</p></article>
+
+  <section class="content result-content" *ngIf="resultado() as r">
+    <header class="result-hero" [class.approved]="r.aprovado">
+      <p class="result-eyebrow">RESULTADO DO DESAFIO</p>
+      <span class="result-symbol" aria-hidden="true">{{ r.aprovado ? '✦' : '↗' }}</span>
+      <h1>{{ r.aprovado ? 'Quiz concluído!' : 'Continue praticando!' }}</h1>
+      <p>Você acertou <strong>{{ r.acertos }} de {{ r.totalQuestoes }}</strong> questões.</p>
+      <div class="score-pill">{{ r.percentual }}%</div>
+      <p class="reward" *ngIf="r.navecoinsGanhos > 0">✦ Você ganhou <strong>{{ r.navecoinsGanhos }} Navecoins</strong>!</p>
+      <p class="reward muted" *ngIf="r.aprovado && r.navecoinsGanhos === 0">Você já recebeu a recompensa pela primeira aprovação.</p>
+    </header>
+
+    <section class="corrections" aria-labelledby="corrections-title">
+      <div class="corrections-heading"><div><p class="result-eyebrow">REVISE E EVOLUA</p><h2 id="corrections-title">Gabarito comentado</h2></div><p>Cada resposta é uma chance de entender melhor o conteúdo.</p></div>
+      <div class="feedback-list">
+        <article class="feedback" *ngFor="let correcao of r.correcoes; let i = index">
+          <header><span class="feedback-number">{{ i + 1 }}</span><div><p class="feedback-label">QUESTÃO {{ i + 1 }}</p><h3>{{ correcao.enunciado }}</h3></div></header>
+          <section class="correct-answer"><span class="answer-icon" aria-hidden="true">✓</span><div><p>Resposta correta</p><strong>{{ correcao.alternativaCorretaTexto }}</strong></div></section>
+          <section class="explanation" *ngIf="correcao.explicacao"><span aria-hidden="true">💡</span><div><p>Por que essa é a resposta?</p><span>{{ correcao.explicacao }}</span></div></section>
+          <p class="no-explanation" *ngIf="!correcao.explicacao">Sem explicação adicional para esta questão.</p>
+        </article>
+      </div>
+    </section>
     <app-button buttonText="Voltar ao módulo" buttonLevel="primary" buttonTheme="dark" (click)="voltar()" />
   </section>
 </main>

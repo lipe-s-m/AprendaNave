@@ -2,9 +2,55 @@
 <main class="quiz-editor">
   <app-loader *ngIf="carregando()" />
   <ng-container *ngIf="!carregando()">
-    <div class="heading"><div><p class="eyebrow">PAINEL DO CRIADOR</p><h1>Quiz final do módulo</h1><p>Crie questões de quatro alternativas. O quiz só fica público após a revisão administrativa.</p></div><app-button buttonText="Voltar" buttonLevel="secondary" buttonTheme="dark" (click)="voltar()" /></div>
-    <section class="card"><h2>Configuração</h2><label>Título<input [(ngModel)]="titulo" maxlength="100" /></label><label>Descrição (opcional)<textarea [(ngModel)]="descricao" maxlength="255"></textarea></label><label>Nota mínima (%)<input type="number" min="1" max="100" [(ngModel)]="notaMinima" /></label><label>Tempo por questão em segundos (opcional)<input type="number" min="5" max="300" [(ngModel)]="tempoPorQuestaoSegundos" placeholder="Sem limite" /><small>Entre 5 e 300 segundos. Vazio significa sem cronômetro.</small></label><app-button buttonText="Salvar quiz" buttonLevel="primary" buttonTheme="dark" [buttonDisabled]="salvando()" (click)="salvarQuiz()" /></section>
-    <section class="card" *ngIf="quiz() as q"><div class="section-title"><div><h2>Questões</h2><p>{{ q.questoes?.length || 0 }} cadastrada(s) · status do quiz: {{ q.status }}</p></div><app-button buttonText="Enviar para aprovação" buttonLevel="secondary" buttonTheme="dark" (click)="enviar()" /></div><article class="question" *ngFor="let questao of q.questoes"><strong>{{ questao.ordem }}. {{ questao.enunciado }}</strong><span class="status">{{ questao.status }}</span><ol><li *ngFor="let a of questao.alternativas" [class.correct]="a.correta">{{ a.texto }}</li></ol><button type="button" class="link-danger" (click)="excluirQuestao(questao)">Excluir</button></article></section>
-    <section class="card" *ngIf="quiz()"><h2>Adicionar questão</h2><label>Enunciado<textarea [(ngModel)]="enunciado"></textarea></label><label>Explicação após a resposta (opcional)<textarea [(ngModel)]="explicacao"></textarea></label><div class="answers"><label *ngFor="let alternativa of alternativas; let i = index"><input type="radio" name="correta" [value]="i" [(ngModel)]="correta" /> Alternativa {{ i + 1 }}<input [(ngModel)]="alternativas[i]" /></label></div><app-button buttonText="Adicionar questão" buttonLevel="primary" buttonTheme="dark" [buttonDisabled]="salvando()" (click)="adicionarQuestao()" /></section>
+    <header class="heading">
+      <div>
+        <p class="eyebrow">PAINEL DO CRIADOR</p>
+        <h1>Quiz final do módulo</h1>
+        <p>Monte uma experiência curta, clara e divertida para validar o aprendizado.</p>
+      </div>
+      <app-button buttonText="Voltar" buttonLevel="secondary" buttonTheme="dark" (click)="voltar()" />
+    </header>
+
+    <section class="card settings-card">
+      <div class="card-intro"><span aria-hidden="true">⚙</span><div><h2>Configuração do quiz</h2><p>Defina como o desafio será apresentado aos alunos.</p></div></div>
+      <div class="form-grid">
+        <label class="full-width">Título<input [(ngModel)]="titulo" maxlength="100" placeholder="Ex.: Desafio final de frações" /></label>
+        <label class="full-width">Descrição <span>(opcional)</span><textarea [(ngModel)]="descricao" maxlength="255" placeholder="Explique em uma frase o que será praticado."></textarea></label>
+        <label>Nota mínima (%)<input type="number" min="1" max="100" [(ngModel)]="notaMinima" /></label>
+        <label>Tempo por questão <span>(opcional)</span><input type="number" min="5" max="300" [(ngModel)]="tempoPorQuestaoSegundos" placeholder="Sem limite" /><small>De 5 a 300 segundos. Vazio significa sem cronômetro.</small></label>
+      </div>
+      <app-button buttonText="Salvar quiz" buttonLevel="primary" buttonTheme="dark" [buttonDisabled]="salvando()" (click)="salvarQuiz()" />
+    </section>
+
+    <section class="card" *ngIf="quiz() as q">
+      <div class="section-title"><div><h2>Questões criadas</h2><p>{{ q.questoes?.length || 0 }} cadastrada(s) · status do quiz: {{ q.status }}</p></div><app-button buttonText="Enviar para aprovação" buttonLevel="secondary" buttonTheme="dark" (click)="enviar()" /></div>
+      <div class="questions-list" *ngIf="q.questoes?.length; else noQuestions">
+        <article class="question" *ngFor="let questao of q.questoes"><div class="question-header"><strong><span>{{ questao.ordem }}</span>{{ questao.enunciado }}</strong><span class="status">{{ questao.status }}</span></div><ol><li *ngFor="let a of questao.alternativas" [class.correct]="a.correta"><span aria-hidden="true">{{ a.correta ? '✓' : '•' }}</span>{{ a.texto }}</li></ol><button type="button" class="link-danger" (click)="excluirQuestao(questao)">Excluir questão</button></article>
+      </div>
+      <ng-template #noQuestions><p class="empty-questions">Nenhuma questão criada ainda. Comece pelo formulário abaixo.</p></ng-template>
+    </section>
+
+    <section class="card add-question" *ngIf="quiz()">
+      <div class="card-intro"><span aria-hidden="true">✦</span><div><h2>Adicionar questão</h2><p>Escreva a pergunta, marque a resposta correta e preencha as quatro opções.</p></div></div>
+      <label>Enunciado<textarea [(ngModel)]="enunciado" maxlength="1000" placeholder="Ex.: Quanto é 25% de 80?"></textarea></label>
+      <label>Explicação após a resposta <span>(opcional)</span><textarea [(ngModel)]="explicacao" maxlength="2000" placeholder="Explique de forma simples por que a resposta está correta."></textarea></label>
+
+      <div class="answers-heading"><div><h3>Alternativas</h3><p>Toque no círculo grande para definir a resposta correta.</p></div><span>{{ quantidadeAlternativasPreenchidas() }}/4 preenchidas</span></div>
+      <div class="answers">
+        <div class="answer-option" *ngFor="let alternativa of alternativas; let i = index; trackBy: trackByAlternativa" [class.is-correct]="correta === i">
+          <div class="answer-meta">
+            <label class="correct-selector" [for]="'alternativa-correta-' + i">
+              <input [id]="'alternativa-correta-' + i" type="radio" name="correta" [value]="i" [(ngModel)]="correta" />
+              <span class="radio-control" aria-hidden="true">✓</span>
+              <span>Correta</span>
+            </label>
+            <span class="answer-order">Alternativa {{ letraAlternativa(i) }}</span>
+          </div>
+          <label class="answer-input-label" [for]="'alternativa-texto-' + i">Texto da alternativa</label>
+          <input [id]="'alternativa-texto-' + i" [name]="'alternativa-texto-' + i" [(ngModel)]="alternativas[i]" maxlength="500" autocomplete="off" placeholder="Digite a alternativa {{ letraAlternativa(i) }}" />
+        </div>
+      </div>
+      <app-button buttonText="Adicionar questão" buttonLevel="primary" buttonTheme="dark" [buttonDisabled]="salvando() || !podeAdicionarQuestao()" (click)="adicionarQuestao()" />
+    </section>
   </ng-container>
 </main>

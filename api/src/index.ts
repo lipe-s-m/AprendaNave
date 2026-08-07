@@ -13,6 +13,7 @@ import { adminRoutes } from './routes/admin'
 import { conquistasRoutes } from './routes/conquistas'
 import { quizRoutes } from './routes/quiz'
 import { desafioEventosRoutes } from './routes/desafio-eventos'
+import { aprendabotRoutes } from './routes/aprendabot'
 
 const app = new Hono()
 
@@ -22,6 +23,7 @@ app.use('*', cors({
   credentials: true,
   allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization', 'X-Desafio-Session'],
+  exposeHeaders: ['X-Has-More'],
 }))
 
 // Health check
@@ -40,6 +42,7 @@ app.route('/rankings', rankingRoutes)
 app.route('/guests', guestsRoutes)
 app.route('/admin', adminRoutes)
 app.route('/conquistas', conquistasRoutes)
+app.route('/aprendabot', aprendabotRoutes)
 
 const port = parseInt(process.env.PORT || '3000')
 

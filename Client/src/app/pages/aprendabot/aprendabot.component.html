@@ -1,14 +1,59 @@
-<div class="container">
+<main class="container">
   <app-subheader></app-subheader>
 
   <div class="aprendabot-container">
-    <h1>AprendaBot - Seu Tutor IA</h1>
-    <p>
-      Bem-vindo ao AprendaBot! Aqui você pode tirar suas dúvidas e aprender mais
-      sobre diversos assuntos.
-    </p>
-    <div class="content">
-      <app-input inputSize="large"></app-input>
-    </div>
+    <header class="bot-header">
+      <div class="bot-avatar" aria-hidden="true">✦</div>
+      <div>
+        <p class="eyebrow">TUTOR IA</p>
+        <h1>AprendaBot</h1>
+        <p>Seu parceiro de estudos para perguntar, praticar e evoluir.</p>
+      </div>
+    </header>
+
+    <section class="chat-card" aria-label="Conversa com o AprendaBot">
+      <div class="messages" #historicoChat aria-live="polite">
+        <article
+          *ngFor="let mensagem of mensagens()"
+          class="message"
+          [class.user]="mensagem.role === 'user'"
+          [class.assistant]="mensagem.role === 'assistant'"
+        >
+          <span class="message-label">{{ mensagem.role === 'user' ? 'Voce' : 'AprendaBot' }}</span>
+          <p [innerHTML]="formatarMensagem(mensagem.content)"></p>
+        </article>
+        <article class="message assistant thinking" *ngIf="enviando() && !recebendoResposta()">
+          <span class="message-label">AprendaBot</span>
+          <p><span></span><span></span><span></span></p>
+        </article>
+      </div>
+
+      <div class="suggestions" *ngIf="mensagens().length === 1">
+        <p>Experimente perguntar:</p>
+        <button type="button" *ngFor="let sugestao of sugestoes" (click)="usarSugestao(sugestao)">
+          {{ sugestao }}
+        </button>
+      </div>
+
+      <form class="composer" (ngSubmit)="enviarMensagem()">
+        <label for="mensagem-aprendabot">Sua pergunta</label>
+        <textarea
+          id="mensagem-aprendabot"
+          name="mensagem"
+          [(ngModel)]="mensagemAtual"
+          [disabled]="enviando()"
+          maxlength="2000"
+          rows="2"
+          placeholder="Digite sua duvida..."
+          (keydown.enter)="enviarComEnter($event)"
+        ></textarea>
+        <div class="composer-footer">
+          <span>Enter para enviar · Shift + Enter para quebrar linha</span>
+          <button type="submit" [disabled]="!mensagemAtual.trim() || enviando()">
+            {{ enviando() ? 'Pensando...' : 'Enviar ✦' }}
+          </button>
+        </div>
+      </form>
+    </section>
   </div>
-</div>
+</main>

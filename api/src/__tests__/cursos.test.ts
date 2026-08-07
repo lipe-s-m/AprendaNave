@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { Hono } from 'hono'
-import { prismaMock, authCookie, jsonBody } from './setup'
+import { prismaMock, cloudinaryMock, authCookie, jsonBody } from './setup'
 import { cursosRoutes } from '../routes/cursos'
 
 const app = new Hono()
@@ -10,6 +10,7 @@ beforeEach(() => {
   Object.values(prismaMock).forEach((model) =>
     Object.values(model).forEach((fn) => (fn as any).mockReset())
   )
+  cloudinaryMock.uploader.upload.mockReset()
 })
 
 const fakeCurso = {
@@ -38,10 +39,24 @@ describe('GET /cursos/aprovados', () => {
     })
   })
 
-  it('retorna 404 quando nao ha cursos', async () => {
+  it('retorna uma lista vazia quando nao ha cursos', async () => {
     prismaMock.curso.findMany.mockResolvedValue([])
     const res = await app.request('http://localhost/cursos/aprovados')
-    expect(res.status).toBe(404)
+    expect(res.status).toBe(200)
+    expect(await jsonBody(res)).toEqual([])
+    expect(res.headers.get('cache-control')).toContain('no-store')
+  })
+
+  it('informa quando existe outra página de cursos', async () => {
+    prismaMock.curso.findMany.mockResolvedValue(
+      Array.from({ length: 7 }, (_, indice) => ({ ...fakeCurso, id: indice + 1 }))
+    )
+
+    const res = await app.request('http://localhost/cursos/aprovados?pagina=1')
+
+    expect(res.status).toBe(200)
+    expect(await jsonBody(res)).toHaveLength(6)
+    expect(res.headers.get('x-has-more')).toBe('true')
   })
 })
 
@@ -72,6 +87,45 @@ describe('POST /cursos (criar curso)', () => {
     expect(body).toHaveProperty('id')
     expect(body).toHaveProperty('autorNome')
     expect(body).toHaveProperty('autorId')
+  })
+})
+
+describe('POST /cursos/upload-logo', () => {
+  it('envia uma imagem válida ao Cloudinary e devolve a URL segura', async () => {
+    cloudinaryMock.uploader.upload.mockResolvedValue({
+      secure_url: 'https://res.cloudinary.com/demo/course-cover.webp',
+    })
+    const formData = new FormData()
+    formData.append('file', new File(['imagem'], 'capa.png', { type: 'image/png' }))
+
+    const res = await app.request('http://localhost/cursos/upload-logo', {
+      method: 'POST',
+      headers: { Cookie: authCookie(7) },
+      body: formData,
+    })
+
+    expect(res.status).toBe(201)
+    expect(await jsonBody(res)).toEqual({
+      logoUrl: 'https://res.cloudinary.com/demo/course-cover.webp',
+    })
+    expect(cloudinaryMock.uploader.upload).toHaveBeenCalledWith(
+      expect.stringMatching(/^data:image\/png;base64,/),
+      expect.objectContaining({ folder: 'courses/logos' })
+    )
+  })
+
+  it('recusa arquivos que não são imagens aceitas', async () => {
+    const formData = new FormData()
+    formData.append('file', new File(['texto'], 'capa.txt', { type: 'text/plain' }))
+
+    const res = await app.request('http://localhost/cursos/upload-logo', {
+      method: 'POST',
+      headers: { Cookie: authCookie(1) },
+      body: formData,
+    })
+
+    expect(res.status).toBe(400)
+    expect(cloudinaryMock.uploader.upload).not.toHaveBeenCalled()
   })
 })
 

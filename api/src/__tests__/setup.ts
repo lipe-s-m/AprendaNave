@@ -16,7 +16,12 @@ export const prismaMock = {
   ranking_melhor_pontuacao: { findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn() },
 }
 
+export const cloudinaryMock = {
+  uploader: { upload: vi.fn() },
+}
+
 vi.mock('../lib/prisma', () => ({ default: prismaMock }))
+vi.mock('../lib/cloudinary', () => ({ default: cloudinaryMock }))
 
 // Set PRIVATE_KEY for JWT tests
 process.env.PRIVATE_KEY = 'test-secret-key-for-tests'

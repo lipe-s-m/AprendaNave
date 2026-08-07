@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { Router, RouterModule, NavigationStart } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { LoginService } from '../../../services/login/login.service';
@@ -16,6 +16,7 @@ import { ButtonComponent } from '../button/button.component';
   styleUrl: './subheader.component.scss',
 })
 export class SubheaderComponent {
+  @Input() infoMode: 'default' | 'meus-cursos' = 'default';
   isDarkMode = true;
   trilhas: any[] = [];
   isLoading = true;
@@ -47,7 +48,15 @@ export class SubheaderComponent {
     });
     this.url = this.router.url;
 
-    if (
+    if (this.infoMode === 'meus-cursos') {
+      const userId = this.userService.getUserSignal()()?.id ?? 'anonimo';
+      const tutorialKey = `aprendanave:tutorial-meus-cursos:v1:${userId}`;
+
+      if (!localStorage.getItem(tutorialKey)) {
+        this.showInfoModal = true;
+        localStorage.setItem(tutorialKey, 'visto');
+      }
+    } else if (
       sessionStorage.getItem('exibirTutorial') === 'true' &&
       this.url.startsWith('/home')
     ) {

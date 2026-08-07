@@ -76,7 +76,23 @@
   <div class="list" *ngIf="abaAtiva() === 'gerenciar' && !isLoading() && !error()">
     <article class="card" *ngFor="let curso of cursosGerenciaveis()">
       <div class="info"><div class="info-top"><app-status-badge [label]="curso.status" [status]="curso.status === 'Aprovado' ? 'success' : curso.status === 'Rejeitado' ? 'error' : 'warning'" /><strong>{{ curso.nome }}</strong></div><span class="meta">Autor: {{ curso.autorNome }}</span><p class="descricao">{{ curso.descricao }}</p></div>
-      <div class="actions"><app-button buttonText="Editar conteúdo" [buttonVariant]="'primary'" (click)="gerenciarCurso(curso.id)" /></div>
+      <div class="actions">
+        <app-button
+          *ngIf="curso.status !== 'Aprovado'"
+          [buttonText]="processando() === 'cursos:' + curso.id ? 'Publicando…' : 'Publicar na Home'"
+          [buttonVariant]="'success'"
+          [buttonDisabled]="processando() !== null"
+          (click)="aprovar('cursos', curso.id)"
+        />
+        <app-button
+          *ngIf="curso.status === 'Aprovado'"
+          buttonText="Retirar da Home"
+          [buttonVariant]="'danger'"
+          [buttonDisabled]="processando() !== null"
+          (click)="pedirRejeicao('cursos', curso)"
+        />
+        <app-button buttonText="Editar conteúdo" [buttonVariant]="'primary'" [buttonDisabled]="processando() !== null" (click)="gerenciarCurso(curso.id)" />
+      </div>
     </article>
     <app-empty-state *ngIf="cursosGerenciaveis().length === 0" title="Nenhum curso encontrado" description="Ainda não há conteúdos para gerenciar." icon="school" />
   </div>

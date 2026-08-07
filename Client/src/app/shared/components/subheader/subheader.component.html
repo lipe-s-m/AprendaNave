@@ -100,7 +100,36 @@
   </div>
 </header>
 
-<div class="overlay overlay-info" *ngIf="showInfoModal === true" (click)="showInfoModal = false">
+<div
+  class="overlay overlay-info"
+  *ngIf="showInfoModal && infoMode === 'meus-cursos'"
+  (click)="showInfoModal = false"
+>
+  <section class="info-container creator-guide" role="dialog" aria-modal="true" aria-labelledby="creator-guide-title" (click)="$event.stopPropagation()">
+    <p class="guide-eyebrow">GUIA DO CRIADOR</p>
+    <h2 id="creator-guide-title" class="info-title">Sua ideia pode virar uma trilha</h2>
+    <p class="info-text guide-intro">Use este espaço para montar seu curso com calma. Você controla o conteúdo; a publicação passa pela aprovação da equipe.</p>
+
+    <ol class="guide-steps">
+      <li>
+        <span>1</span>
+        <div><strong>Crie o curso</strong><p>Dê um nome, uma capa e conte o que o aluno vai aprender.</p></div>
+      </li>
+      <li>
+        <span>2</span>
+        <div><strong>Organize em módulos</strong><p>Divida a jornada em etapas curtas e progressivas.</p></div>
+      </li>
+      <li>
+        <span>3</span>
+        <div><strong>Adicione aulas e quiz</strong><p>Inclua vídeos do YouTube e um desafio final quando fizer sentido.</p></div>
+      </li>
+    </ol>
+
+    <app-button buttonText="Começar a criar" buttonTheme="dark" (click)="showInfoModal = false" aria-label="Fechar guia do criador"></app-button>
+  </section>
+</div>
+
+<div class="overlay overlay-info" *ngIf="showInfoModal && infoMode !== 'meus-cursos'" (click)="showInfoModal = false">
 
   <div class="info-container">
 

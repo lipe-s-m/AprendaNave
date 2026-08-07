@@ -20,12 +20,28 @@
             </span>
           </div>
 
-          <div class="form-group">
-            <label for="logo">Logo (URL) *</label>
-            <app-input placeholder="https://exemplo.com/logo.png" inputName="logo" inputSize="large" inputType="url" formControlName="logo" />
-            <span class="error-message" *ngIf="isFieldInvalid('logo')">
-              {{ getErrorMessage('logo') }}
-            </span>
+          <div class="form-group logo-upload-group">
+            <label for="logo">Imagem de capa *</label>
+            <input
+              #logoInput
+              id="logo"
+              class="visually-hidden"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              (change)="onLogoSelecionada($event)"
+            />
+            <div class="logo-upload">
+              <img *ngIf="logoPreview" [src]="logoPreview" alt="Prévia da capa do curso" />
+              <span *ngIf="!logoPreview" class="material-icons" aria-hidden="true">add_photo_alternate</span>
+              <div class="logo-upload-copy">
+                <strong>{{ logoFile ? logoFile.name : 'Escolha a capa do curso' }}</strong>
+                <span>JPG, PNG ou WebP · até 5 MB</span>
+              </div>
+              <label class="upload-trigger" for="logo">{{ logoFile ? 'Trocar' : 'Enviar imagem' }}</label>
+            </div>
+            <button *ngIf="logoFile" class="remove-logo" type="button" (click)="removerLogo(); logoInput.value = ''">
+              Remover imagem
+            </button>
           </div>
 
           <div class="form-group">
@@ -46,7 +62,7 @@
       </div>
 
       <div class="form-actions">
-        <app-button buttonText="Criar Curso" buttonSize="large" buttonLevel="primary" buttonTheme="dark" buttonType="submit" [buttonDisabled]="formCriarCurso.invalid || isLoading()" />
+        <app-button buttonText="Criar Curso" buttonSize="large" buttonLevel="primary" buttonTheme="dark" buttonType="submit" [buttonDisabled]="formCriarCurso.invalid || !logoFile || isLoading()" />
         <app-button buttonText="Cancelar" buttonSize="large" buttonLevel="secondary" buttonTheme="dark" buttonType="button" (click)="goToMeusCursos()" />
       </div>
     </form>
