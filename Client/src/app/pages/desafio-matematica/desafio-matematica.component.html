@@ -7,7 +7,7 @@
       <p class="tempo-restante"><strong>{{tempoRestante}}</strong></p>
     </div>
     <div class="content-game">
-      <h1>{{number1}} {{this.resultOp()}} {{number2}} = ?</h1>
+      <h1>{{ expressao }} = ?</h1>
       <div class="options">
         <app-button *ngFor="let q of questions" buttonText="{{q | number:'1.0-3' }}" buttonLevel="primary" buttonTheme="dark" buttonSize="large" (click)="checkAnswer(q)" />
       </div>

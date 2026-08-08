@@ -35,6 +35,7 @@ export class DesafioMatematicaComponent {
   number2: number = 0;
   result: number = 0;
   opIndex: number = 0;
+  expressao: string = '';
   questions: number[] = [0, 0, 0, 0];
   points: number = 0;
   erros: number = 0;
@@ -61,8 +62,6 @@ export class DesafioMatematicaComponent {
   ngOnInit(): void {
     // Initialize component
     this.handlerInitializingGame();
-    this.number1 = this.randNumber1();
-    this.number2 = this.randNumber2();
     this.resultNumber();
     this.obterUser();
     this.authService.isLogged().subscribe({});
@@ -104,78 +103,21 @@ export class DesafioMatematicaComponent {
         this.initializingGame = false;
         this.resetingGame = false;
         this.points = 0;
+        this.erros = 0;
         this.questionIndex = 0;
+        this.resultNumber();
         this.iniciarContagemTempoRestante();
       }
     }, 1000);
   }
-  randNumber1(): number {
-    let number1 = 0;
-    if (this.questionIndex < 15) {
-      number1 = Math.floor(Math.random() * 10);
-    } else if (this.questionIndex >= 15 && this.questionIndex < 30) {
-      number1 = Math.floor(Math.random() * 15);
-    } else if (this.questionIndex >= 30 && this.questionIndex < 60) {
-      number1 = Math.floor(Math.random() * 15);
-    }
-    return number1;
-  }
-  randNumber2(): number {
-    let number2 = Math.floor(Math.random() * 10);
-    if (this.questionIndex > 45 && this.questionIndex < 60) {
-      number2 = Math.floor(Math.random() * 12);
-    } else if (this.questionIndex > 60) {
-      number2 = Math.floor(Math.random() * 15);
-    }
-    return number2;
-  }
   resultNumber(): void {
-    this.opIndex = this.balancearDificuldade(this.questionIndex);
-
-    const question = this.mathGameService.generateQuestion(
-      this.number1,
-      this.number2,
-      this.opIndex
-    );
+    const question = this.mathGameService.generateProgressiveQuestion(this.points);
     this.number1 = question.num1;
     this.number2 = question.num2;
+    this.opIndex = question.opIndex;
     this.result = question.result;
-
+    this.expressao = question.expression || `${question.num1} ${question.operator} ${question.num2}`;
     this.questions = this.mathGameService.generateOptions(this.result);
-  }
-  balancearDificuldade(questionIndex: number): number {
-    let opIndex: number = 0;
-    if (questionIndex < 6) return Math.floor(Math.random() * 2);
-    if (questionIndex >= 6 && questionIndex < 10)
-      return Math.floor(Math.random() * 3);
-
-    opIndex = Math.floor(Math.random() * 4);
-    if (questionIndex >= 10 && questionIndex < 20) {
-      if (opIndex === 3 && this.number2 !== 0) {
-        while (
-          this.isFloat(this.number1 / this.number2) ||
-          this.number1 % this.number2 !== 0
-        ) {
-          this.number1 = this.randNumber1();
-          this.number2 = this.randNumber2();
-        }
-      }
-    } else if (questionIndex >= 20) {
-      opIndex = Math.floor(Math.random() * 4);
-    }
-
-    return opIndex;
-  }
-  isFloat(x: any): boolean {
-    if (!isNaN(x)) {
-      if (parseInt(x) != parseFloat(x)) {
-        return true;
-      }
-    }
-    return false;
-  }
-  resultOp(): string {
-    return this.mathGameService.getOperatorSymbol(this.opIndex);
   }
   checkAnswer(answer: number | null) {
     let audio = new Audio();
@@ -217,16 +159,16 @@ export class DesafioMatematicaComponent {
       return;
     }
 
-    this.rankingService.registrarResultadoDesafioMatematica(this.points).subscribe({
+    this.rankingService.registrarResultadoDesafioArcade(this.points).subscribe({
       next: (res) => {
-        if (res.melhorou) {
+        if (res.diario.melhorou || res.semanal.melhorou) {
           this.toastr.success(
-            `Novo recorde! Você fez ${this.points} pontos.`,
-            'Recorde!'
+            `Pontuação registrada! Hoje: ${res.diario.melhorPontuacao} • Semana: ${res.semanal.melhorPontuacao}.`,
+            'Recorde Arcade!'
           );
         } else {
           this.toastr.info(
-            `Sua melhor marca continua em ${res.melhorPontuacao} pontos. Continue tentando!`
+            `Seus recordes continuam: hoje ${res.diario.melhorPontuacao} e semana ${res.semanal.melhorPontuacao} pontos. Continue tentando!`
           );
         }
       },
@@ -238,10 +180,7 @@ export class DesafioMatematicaComponent {
   }
   nextQuestion() {
     this.questionIndex += 1;
-    this.number1 = this.randNumber1();
-    this.number2 = this.randNumber2();
     this.resultNumber();
-    this.resultOp();
     this.iniciarContagemTempoRestante();
   }
 
@@ -258,7 +197,7 @@ export class DesafioMatematicaComponent {
     this.router.navigate(['/home']);
   }
   voltarParaRanking() {
-    this.router.navigate(['/desafiojcc']);
+    this.router.navigate(['/ranking']);
   }
   getDificuldade(): number {
     if (this.points <= 8) return 13;

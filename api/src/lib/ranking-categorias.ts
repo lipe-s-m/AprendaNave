@@ -1,5 +1,7 @@
 export type RankingSlug =
   | 'desafio-matematica'
+  | 'desafio-arcade-diario'
+  | 'desafio-arcade-semanal'
   | 'navecoins'
   | 'aulas-concluidas'
   | 'modulos-concluidos'
@@ -24,6 +26,22 @@ export const RANKING_CATEGORIAS: RankingCategoria[] = [
     nome: 'Desafio Matemática',
     descricao: 'Quem alcançou a maior pontuação em uma partida.',
     icone: 'calculate',
+    unidade: 'pontos',
+    tipo: 'melhor-pontuacao',
+  },
+  {
+    slug: 'desafio-arcade-diario',
+    nome: 'Arcade — hoje',
+    descricao: 'A melhor partida de cada pessoa no Desafio Matemático Arcade de hoje.',
+    icone: 'sports_esports',
+    unidade: 'pontos',
+    tipo: 'melhor-pontuacao',
+  },
+  {
+    slug: 'desafio-arcade-semanal',
+    nome: 'Arcade — semana',
+    descricao: 'A melhor partida de cada pessoa no Desafio Matemático Arcade nesta semana.',
+    icone: 'emoji_events',
     unidade: 'pontos',
     tipo: 'melhor-pontuacao',
   },

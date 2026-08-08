@@ -25,3 +25,8 @@ export interface RegistrarResultadoResposta {
   melhorou: boolean;
   melhorPontuacao: number;
 }
+
+export interface RegistrarResultadoArcadeResposta {
+  diario: RegistrarResultadoResposta;
+  semanal: RegistrarResultadoResposta;
+}

@@ -27,7 +27,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   carregandoMaisCursos = false;
   temMaisCursos = false;
   error: string | null = null;
-  qtdDesafiantesJCC: number = 0;
+  qtdParticipantesDesafio: number = 0;
+  mostrarModalDesafios = false;
   private themeSubscription?: Subscription;
   private cursoSubscription?: Subscription;
   private readonly navState = inject(NavigationStateService);
@@ -53,7 +54,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     // Carrega as trilhas
     this.loadCursos();
-    this.loadDesafiantesJCC();
+    this.loadParticipantesDesafio();
   }
 
   ngOnDestroy() {
@@ -100,12 +101,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   carregarMaisCursos(): void {
     this.loadCursos(false);
   }
-  loadDesafiantesJCC(): void {
+  loadParticipantesDesafio(): void {
     this.isLoading = true;
-    this.desafioJccService.obterTodosDesafiantes().subscribe({
-      next: (desafiantes) => {
-        // Processar os desafiantes conforme necessário
-        this.qtdDesafiantesJCC = desafiantes.length;
+    this.desafioJccService.obterTotalParticipantesDesafios().subscribe({
+      next: ({ total }) => {
+        this.qtdParticipantesDesafio = total;
       },
       error: (err) => {
         this.error = 'Erro ao carregar desafiantes: ' + err.message;
@@ -121,7 +121,22 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.navState.setCurso(id, nome);
     this.router.navigate(['/trilha', id]);
   }
-  goToDesafioJCC() {
+  abrirModalDesafios() {
+    this.mostrarModalDesafios = true;
+  }
+  fecharModalDesafios() {
+    this.mostrarModalDesafios = false;
+  }
+  goToDesafioArcade() {
+    this.fecharModalDesafios();
+    this.router.navigate(['/desafio-arcade']);
+  }
+  goToRankingAfs() {
+    this.fecharModalDesafios();
+    this.router.navigate(['/desafio/jcc-afs-2026']);
+  }
+  goToRankingJcc() {
+    this.fecharModalDesafios();
     this.router.navigate(['/desafiojcc']);
   }
   goToAprendaBot() {

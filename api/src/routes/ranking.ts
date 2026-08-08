@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import prisma from '../lib/prisma'
 import { getCurrentUserId, authRequired } from '../middleware/auth'
 import { RANKING_CATEGORIAS, getRankingCategoria } from '../lib/ranking-categorias'
-import { obterRanking, registrarMelhorPontuacao } from '../services/ranking.service'
+import { obterRanking, registrarMelhorPontuacao, registrarResultadoArcade } from '../services/ranking.service'
 
 export const rankingRoutes = new Hono()
 
@@ -40,6 +40,41 @@ rankingRoutes.post('/desafio-matematica/resultado', authRequired, async (c) => {
       return c.json({ error: ex.message }, 400)
     }
     return c.json({ error: 'Erro ao registrar pontuação' }, 500)
+  }
+})
+
+// POST /rankings/desafio-arcade/resultado - atualiza o recorde diário e semanal (auth)
+rankingRoutes.post('/desafio-arcade/resultado', authRequired, async (c) => {
+  try {
+    const userId = getCurrentUserId(c)!
+    const body = await c.req.json()
+    const resultado = await registrarResultadoArcade(userId, body.pontos)
+    return c.json(resultado, 201)
+  } catch (ex: any) {
+    if (ex?.message?.startsWith('Pontuação inválida')) {
+      return c.json({ error: ex.message }, 400)
+    }
+    return c.json({ error: 'Erro ao registrar pontuação do Arcade' }, 500)
+  }
+})
+
+// GET /rankings/desafios-matematicos/participantes - total agregado para a Home
+rankingRoutes.get('/desafios-matematicos/participantes', async (c) => {
+  try {
+    const [jcc, afs, arcade] = await Promise.all([
+      prisma.desafio_jcc.findMany({ select: { id_aluno: true, nome_aluno: true } }),
+      prisma.desafio_evento_score.count({ where: { evento: { slug: 'jcc-afs-2026' } } }),
+      prisma.ranking_melhor_pontuacao.findMany({
+        where: { categoria: { startsWith: 'arcade-matematica:' } },
+        select: { id_aluno: true },
+      }),
+    ])
+
+    const totalJcc = new Set(jcc.map((participante) => `${participante.id_aluno}:${participante.nome_aluno}`)).size
+    const totalArcade = new Set(arcade.map((pontuacao) => pontuacao.id_aluno)).size
+    return c.json({ total: totalJcc + afs + totalArcade, jcc: totalJcc, afs, arcade: totalArcade })
+  } catch (ex) {
+    return c.json({ error: 'Erro ao carregar participantes dos desafios' }, 500)
   }
 })
 

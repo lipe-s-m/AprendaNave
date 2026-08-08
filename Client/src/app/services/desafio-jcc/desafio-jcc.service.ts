@@ -31,4 +31,9 @@ export class DesafioJccService {
       `${this.apiUrl}/desafio/desafio-jcc/desafiantes`
     );
   }
+  obterTotalParticipantesDesafios() {
+    return this.httpClient.get<{ total: number }>(
+      `${this.apiUrl}/rankings/desafios-matematicos/participantes`
+    );
+  }
 }

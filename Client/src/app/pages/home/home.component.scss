@@ -191,3 +191,43 @@
     transform: translateY(-2px) scale(1.04);
   }
 }
+
+.challenge-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  background: var(--overlay-background);
+  backdrop-filter: blur(0.6rem);
+}
+
+.challenge-modal {
+  position: relative;
+  width: min(54rem, 100%);
+  padding: 3.2rem;
+  border: 0.1rem solid var(--border-color);
+  border-radius: 2rem;
+  background: var(--surface-card-gradient);
+  box-shadow: 0 2.4rem 6rem rgba(0, 0, 0, 0.35);
+
+  h2 { margin: 0.7rem 3rem 1rem 0; font-size: 2.8rem; color: var(--text-primary); }
+  > p { margin: 0 0 2.2rem; font-size: 1.6rem; line-height: 1.5; color: var(--text-secondary); }
+}
+
+.challenge-modal-eyebrow { color: var(--accent-primary); font-size: 1.3rem; font-weight: 800; letter-spacing: 0.12em; }
+.challenge-modal-close { position: absolute; top: 1.6rem; right: 1.8rem; border: 0; background: transparent; color: var(--text-secondary); font-size: 3.2rem; line-height: 1; cursor: pointer; }
+.challenge-options { display: grid; gap: 1.2rem; }
+.challenge-option { display: flex; align-items: center; gap: 1.4rem; width: 100%; padding: 1.6rem; border: 0.1rem solid var(--border-color); border-radius: 1.4rem; background: var(--background-secondary); color: var(--text-primary); text-align: left; cursor: pointer; transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease; }
+.challenge-option:hover { transform: translateY(-0.2rem); border-color: var(--accent-primary); background: var(--background-tertiary); }
+.challenge-option.arcade { border-color: var(--accent-primary); }
+.challenge-option .material-icons { color: var(--accent-primary); font-size: 3rem; }
+.challenge-option span:last-child { display: grid; gap: 0.35rem; }
+.challenge-option strong { font-size: 1.8rem; }
+.challenge-option small { font-size: 1.4rem; color: var(--text-secondary); }
+
+@media (max-width: 600px) {
+  .challenge-modal { padding: 2.4rem 2rem; }
+  .challenge-modal h2 { font-size: 2.4rem; }
+}

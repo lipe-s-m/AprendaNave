@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import {
   RankingCategoria,
   RankingResposta,
+  RegistrarResultadoArcadeResposta,
   RegistrarResultadoResposta,
 } from '../../shared/interfaces/ranking.interface';
 
@@ -29,6 +30,13 @@ export class RankingService {
   registrarResultadoDesafioMatematica(pontos: number): Observable<RegistrarResultadoResposta> {
     return this.http.post<RegistrarResultadoResposta>(
       `${this.apiUrl}/rankings/desafio-matematica/resultado`,
+      { pontos }
+    );
+  }
+
+  registrarResultadoDesafioArcade(pontos: number): Observable<RegistrarResultadoArcadeResposta> {
+    return this.http.post<RegistrarResultadoArcadeResposta>(
+      `${this.apiUrl}/rankings/desafio-arcade/resultado`,
       { pontos }
     );
   }

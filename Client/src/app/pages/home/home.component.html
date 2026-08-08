@@ -26,7 +26,7 @@
           </div>
         </div>
       </div>
-      <div class="course-card" (click)="goToDesafioJCC()">
+      <div class="course-card" (click)="abrirModalDesafios()">
         <span class="tag">DESAFIO</span>
 
         <div class="course-icon challenge-icon">
@@ -36,14 +36,14 @@
         <div class="card-content">
           <span class="title-section">
             <h3>Desafio Matemático</h3>
-            <div class="modules">4 módulos</div>
+            <div class="modules">3 modalidades</div>
           </span>
           <div class="info-row">
             <div class="instructor">
               <img src="assets/logo.svg" alt="Instrutor" class="instructor-avatar" />
-              <span>Boa Sorte</span>
+              <span>Jogue no Arcade ou confira os rankings históricos.</span>
             </div>
-            <div class="enrollments">{{ qtdDesafiantesJCC }} desafiantes</div>
+            <div class="enrollments">{{ qtdParticipantesDesafio }} participantes</div>
           </div>
         </div>
       </div>
@@ -75,6 +75,28 @@
       </button>
     </div>
   </main>
+</div>
+<div class="challenge-modal-backdrop" *ngIf="mostrarModalDesafios" (click)="fecharModalDesafios()">
+  <section class="challenge-modal" role="dialog" aria-modal="true" aria-labelledby="challenge-modal-title" (click)="$event.stopPropagation()">
+    <button class="challenge-modal-close" type="button" aria-label="Fechar opções de desafio" (click)="fecharModalDesafios()">×</button>
+    <span class="challenge-modal-eyebrow">DESAFIO MATEMÁTICO</span>
+    <h2 id="challenge-modal-title">Qual modalidade você quer abrir?</h2>
+    <p>O Arcade é permanente; os eventos JCC e AFS permanecem isolados como históricos.</p>
+    <div class="challenge-options">
+      <button type="button" class="challenge-option arcade" (click)="goToDesafioArcade()">
+        <span class="material-icons" aria-hidden="true">sports_esports</span>
+        <span><strong>Arcade</strong><small>Jogue e dispute os rankings diário e semanal.</small></span>
+      </button>
+      <button type="button" class="challenge-option" (click)="goToRankingAfs()">
+        <span class="material-icons" aria-hidden="true">emoji_events</span>
+        <span><strong>JCC + AFS</strong><small>Veja o ranking final do evento AFS.</small></span>
+      </button>
+      <button type="button" class="challenge-option" (click)="goToRankingJcc()">
+        <span class="material-icons" aria-hidden="true">history</span>
+        <span><strong>JCC 2025</strong><small>Veja o ranking histórico da edição de 2025.</small></span>
+      </button>
+    </div>
+  </section>
 </div>
 <button class="create-course-button" (click)="goToMeusCursos()">
   <span>Meus Cursos</span>

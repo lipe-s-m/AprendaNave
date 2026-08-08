@@ -12,6 +12,42 @@ type RankingValor = {
   nomeReferencia?: string
 }
 
+type PeriodoArcade = 'diario' | 'semanal'
+
+/**
+ * A pontuação é associada ao calendário de São Paulo, e não ao UTC do servidor.
+ * Assim, o ranking diário vira à meia-noite local e o semanal usa a semana ISO.
+ */
+function dataSaoPaulo(agora = new Date()): { ano: number; mes: number; dia: number } {
+  const partes = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Sao_Paulo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(agora)
+  const valor = (tipo: Intl.DateTimeFormatPartTypes) => Number(partes.find((parte) => parte.type === tipo)?.value)
+  return { ano: valor('year'), mes: valor('month'), dia: valor('day') }
+}
+
+function semanaIso(ano: number, mes: number, dia: number): { ano: number; semana: number } {
+  const data = new Date(Date.UTC(ano, mes - 1, dia))
+  const diaDaSemana = data.getUTCDay() || 7
+  data.setUTCDate(data.getUTCDate() + 4 - diaDaSemana)
+  const anoIso = data.getUTCFullYear()
+  const inicioAno = new Date(Date.UTC(anoIso, 0, 1))
+  const semana = Math.ceil((((data.getTime() - inicioAno.getTime()) / 86_400_000) + 1) / 7)
+  return { ano: anoIso, semana }
+}
+
+export function chavePeriodoArcade(periodo: PeriodoArcade, agora = new Date()): string {
+  const { ano, mes, dia } = dataSaoPaulo(agora)
+  if (periodo === 'diario') {
+    return `arcade-matematica:diario:${ano}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`
+  }
+  const iso = semanaIso(ano, mes, dia)
+  return `arcade-matematica:semanal:${iso.ano}-W${String(iso.semana).padStart(2, '0')}`
+}
+
 /** Valor por aluno de uma categoria, calculado a partir da fonte de verdade. */
 async function obterValoresPorCategoria(slug: RankingSlug): Promise<RankingValor[]> {
   switch (slug) {
@@ -48,6 +84,18 @@ async function obterValoresPorCategoria(slug: RankingSlug): Promise<RankingValor
         }
       }
       return [...melhores.values()]
+    }
+    case 'desafio-arcade-diario':
+    case 'desafio-arcade-semanal': {
+      const periodo: PeriodoArcade = slug === 'desafio-arcade-diario' ? 'diario' : 'semanal'
+      const pontuacoes = await prisma.ranking_melhor_pontuacao.findMany({
+        where: { categoria: chavePeriodoArcade(periodo) },
+      })
+      return pontuacoes.map((pontuacao) => ({
+        idAluno: pontuacao.id_aluno,
+        valor: pontuacao.pontos,
+        origem: 'aluno' as const,
+      }))
     }
     case 'navecoins': {
       const alunos = await prisma.aluno.findMany({ where: { pontos: { gt: 0 } }, orderBy: [{ pontos: 'desc' }, { id: 'asc' }] })
@@ -104,11 +152,11 @@ export async function obterRanking(slug: RankingSlug, currentUserId: number | nu
   return { categoria, entradas, totalParticipantes: comPosicoes.length, meuRanking: entradaDoUsuario ? montarEntrada(entradaDoUsuario) : null }
 }
 
-export async function registrarMelhorPontuacao(userId: number, slug: 'desafio-matematica', pontos: number): Promise<{ melhorou: boolean; melhorPontuacao: number }> {
+export async function registrarMelhorPontuacao(userId: number, categoria: string, pontos: number): Promise<{ melhorou: boolean; melhorPontuacao: number }> {
   if (!Number.isInteger(pontos) || pontos < 0) throw new Error('Pontuação inválida: deve ser um inteiro maior ou igual a 0')
-  const existente = await prisma.ranking_melhor_pontuacao.findFirst({ where: { id_aluno: userId, categoria: slug } })
+  const existente = await prisma.ranking_melhor_pontuacao.findFirst({ where: { id_aluno: userId, categoria } })
   if (!existente) {
-    await prisma.ranking_melhor_pontuacao.create({ data: { id_aluno: userId, categoria: slug, pontos, criado_em: new Date() } })
+    await prisma.ranking_melhor_pontuacao.create({ data: { id_aluno: userId, categoria, pontos, criado_em: new Date() } })
     return { melhorou: true, melhorPontuacao: pontos }
   }
   if (pontos > existente.pontos) {
@@ -116,4 +164,13 @@ export async function registrarMelhorPontuacao(userId: number, slug: 'desafio-ma
     return { melhorou: true, melhorPontuacao: atualizado.pontos }
   }
   return { melhorou: false, melhorPontuacao: existente.pontos }
+}
+
+/** Registra uma mesma partida nos rankings diário e semanal vigentes. */
+export async function registrarResultadoArcade(userId: number, pontos: number) {
+  const [diario, semanal] = await Promise.all([
+    registrarMelhorPontuacao(userId, chavePeriodoArcade('diario'), pontos),
+    registrarMelhorPontuacao(userId, chavePeriodoArcade('semanal'), pontos),
+  ])
+  return { diario, semanal }
 }

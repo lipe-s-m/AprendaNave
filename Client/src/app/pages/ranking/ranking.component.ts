@@ -22,7 +22,7 @@ import {
 })
 export class RankingComponent implements OnInit, OnDestroy {
   categorias = signal<RankingCategoria[]>([]);
-  categoriaSelecionada = signal<string>('desafio-matematica');
+  categoriaSelecionada = signal<string>('desafio-arcade-diario');
   ranking = signal<RankingResposta | null>(null);
   isLoading = signal(true);
   error = signal<string | null>(null);
@@ -47,7 +47,7 @@ export class RankingComponent implements OnInit, OnDestroy {
       next: (cats) => {
         this.categorias.set(cats);
         const inicial =
-          cats.find((c) => c.slug === 'desafio-matematica') ?? cats[0];
+          cats.find((c) => c.slug === 'desafio-arcade-diario') ?? cats[0];
         if (inicial) {
           this.categoriaSelecionada.set(inicial.slug);
           this.slugSubject.next(inicial.slug);
@@ -129,20 +129,24 @@ export class RankingComponent implements OnInit, OnDestroy {
   }
 
   emptyActionText(): string {
-    return this.categoriaSelecionada() === 'desafio-matematica'
+    return this.ehCategoriaArcade()
       ? 'Seja o primeiro a jogar'
       : 'Começar a estudar';
   }
 
   emptyAction(): void {
-    if (this.categoriaSelecionada() === 'desafio-matematica') {
-      this.router.navigate(['/desafio-matematica']);
+    if (this.ehCategoriaArcade()) {
+      this.router.navigate(['/desafio-arcade']);
     } else {
       this.router.navigate(['/home']);
     }
   }
 
   jogarDesafio(): void {
-    this.router.navigate(['/desafio-matematica']);
+    this.router.navigate(['/desafio-arcade']);
+  }
+
+  ehCategoriaArcade(slug = this.categoriaSelecionada()): boolean {
+    return slug === 'desafio-arcade-diario' || slug === 'desafio-arcade-semanal';
   }
 }

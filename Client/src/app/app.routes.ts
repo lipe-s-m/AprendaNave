@@ -75,6 +75,12 @@ export const routes: Routes = [
   {
     path: 'desafio-matematica',
     component: DesafioMatematicaComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'desafio-arcade',
+    component: DesafioMatematicaComponent,
+    canActivate: [authGuard],
   },
   { path: 'desafio/:slug', component: DesafioEventoComponent },
   {

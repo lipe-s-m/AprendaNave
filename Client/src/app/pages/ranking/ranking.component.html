@@ -94,7 +94,7 @@
             • {{ rankingAtual.meuRanking!.valor }} {{ rankingAtual.categoria.unidade }}
           </p>
         </div>
-        <button class="btn-jogar" type="button" *ngIf="categoriaSelecionada() === 'desafio-matematica'" (click)="jogarDesafio()">
+        <button class="btn-jogar" type="button" *ngIf="ehCategoriaArcade()" (click)="jogarDesafio()">
           <span class="material-icons" aria-hidden="true">sports_esports</span>
           Jogar desafio
         </button>

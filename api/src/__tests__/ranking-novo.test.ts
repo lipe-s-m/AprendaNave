@@ -24,6 +24,8 @@ describe('GET /rankings/categorias', () => {
     const body = await jsonBody(res)
     expect(body.map((c: any) => c.slug)).toEqual([
       'desafio-matematica',
+      'desafio-arcade-diario',
+      'desafio-arcade-semanal',
       'navecoins',
       'aulas-concluidas',
       'modulos-concluidos',
@@ -185,5 +187,42 @@ describe('GET /rankings/desafio-matematica — melhor pontuação', () => {
       valor: 42,
     })
     expect(body.entradas[1].fotoPerfil).toBeNull()
+  })
+})
+
+describe('POST /rankings/desafio-arcade/resultado', () => {
+  it('sem cookie retorna 401', async () => {
+    const res = await app.request('http://localhost/rankings/desafio-arcade/resultado', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pontos: 42 }),
+    })
+    expect(res.status).toBe(401)
+  })
+
+  it('registra a mesma partida nos recordes diário e semanal do usuário autenticado', async () => {
+    prismaMock.ranking_melhor_pontuacao.findFirst
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(null)
+
+    const res = await app.request('http://localhost/rankings/desafio-arcade/resultado', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Cookie: authCookie(7) },
+      body: JSON.stringify({ pontos: 42, idAluno: 999 }),
+    })
+
+    expect(res.status).toBe(201)
+    const body = await jsonBody(res)
+    expect(body).toEqual({
+      diario: { melhorou: true, melhorPontuacao: 42 },
+      semanal: { melhorou: true, melhorPontuacao: 42 },
+    })
+    const categorias = prismaMock.ranking_melhor_pontuacao.create.mock.calls.map((call: any[]) => call[0].data.categoria)
+    expect(categorias).toHaveLength(2)
+    expect(categorias).toContainEqual(expect.stringMatching(/^arcade-matematica:diario:\d{4}-\d{2}-\d{2}$/))
+    expect(categorias).toContainEqual(expect.stringMatching(/^arcade-matematica:semanal:\d{4}-W\d{2}$/))
+    for (const call of prismaMock.ranking_melhor_pontuacao.create.mock.calls) {
+      expect(call[0].data.id_aluno).toBe(7)
+    }
   })
 })
